@@ -1,0 +1,470 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>3D Model Viewer with Thumbnails</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js",
+        "OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js",
+        "GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js",
+        "STLLoader": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/STLLoader.js"
+      }
+    }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'OrbitControls';
+    import { GLTFLoader } from 'GLTFLoader';
+    import { STLLoader } from 'STLLoader';
+	
+    // Crear la escena
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight * 0.8);
+    document.body.appendChild(renderer.domElement);
+	
+	// Variables para control de la luz
+	var lightPosition = { theta: Math.PI / 4, phi: Math.PI / 4 }; // Ángulos iniciales de la luz
+	var radius = 5; // Distancia de la luz al origen (0, 0, 0)
+	var draggingLight = false; // Bandera para saber si estamos arrastrando la luz
+	var lastMousePosition = { x: 0, y: 0 };
+	const maxLightIntensity = 5;
+	
+	// Añadir iluminación fija
+    var ambientLight = new THREE.AmbientLight(0x404040); // Luz ambiental
+    scene.add(ambientLight);
+
+	// Añadir iluminación direccional
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+	directionalLight.position.set(5, 5, 5);
+	scene.add(directionalLight);
+	
+	const modelConfigs = {};
+	
+	function defaultModelConfig(modelName) {
+		modelConfigs[modelName] = {
+			description: "No description available",
+			cameraPosition: {x: 1, y: 1,z: 1},
+			lightPosition: {x: 1, y: 1, z: 1},
+			lightIntensity: 1
+		};
+	}
+	
+	function saveModelConfig(modelName) {
+		modelConfigs[modelName] = {
+		    description: modelConfigs[modelName].description,
+			cameraPosition: {
+				x: camera.position.x,
+				y: camera.position.y,
+				z: camera.position.z
+			},
+			lightPosition: {
+				x: directionalLight.position.x,
+				y: directionalLight.position.y,
+				z: directionalLight.position.z
+			},
+			lightIntensity: directionalLight.intensity
+		};
+	}
+	
+	function applyModelConfig(modelName) {
+		const config = modelConfigs[modelName];
+
+		if (config) {
+			// Restaurar la descripción
+			document.getElementById('description-panel').innerText = config.description;
+			// Restaurar la posición de la cámara
+			camera.position.set(
+				config.cameraPosition.x,
+				config.cameraPosition.y,
+				config.cameraPosition.z
+			);
+
+			// Restaurar la posición de la luz
+			directionalLight.position.set(
+				config.lightPosition.x,
+				config.lightPosition.y,
+				config.lightPosition.z
+			);
+
+			// Restaurar la intensidad de la luz
+			directionalLight.intensity = config.lightIntensity;
+
+			// Asegurarse de que la cámara esté mirando hacia el centro de la escena (opcional)
+			camera.lookAt(0, 0, 0);
+		} else {
+			console.log(`No se encontró configuración guardada para el modelo: ${modelName}`);
+			// Si no hay configuración guardada, podrías aplicar una configuración por defecto
+			resetToDefaultCameraAndLight();
+		}
+
+		// Renderizar la escena con la nueva configuración
+		renderer.render(scene, camera);
+	}
+
+	function resetToDefaultCameraAndLight() {
+		camera.position.set(1, 1, 1); // Ajusta a tu valor por defecto
+		directionalLight.position.set(1, 1, 1); // Ajusta a tu valor por defecto
+		directionalLight.intensity = 1; // Ajusta a tu valor por defecto
+		camera.lookAt(0, 0, 0);
+		console.log('Configuración por defecto aplicada');
+	}
+
+	camera.add(directionalLight.target);
+
+    // Añadir controles de órbita
+    var controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Suaviza el movimiento
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
+	
+	controls.mouseButtons = {
+      LEFT: THREE.MOUSE.ROTATE,    // Mantén el botón izquierdo para rotar
+      MIDDLE: null,                // Desactiva el botón central (rueda)
+      RIGHT: THREE.MOUSE.PAN       // Mantén el botón derecho para hacer pan
+	};
+
+    camera.position.z = 2;
+	camera.lookAt(new THREE.Vector3(0, 0, 0));	
+	scene.add(camera);
+
+    // Cargar modelos 3D
+    var gltfLoader = new GLTFLoader();
+    var stlLoader = new STLLoader();
+    var models = [];
+    var thumbnailExtensions = ['.jpg', '.png', '.gif']; // Extensiones de miniaturas
+
+    var currentModelIndex = 0;
+    var currentModel;
+
+	// Función para calcular la luminancia media ignorando los píxeles negros (fondo)
+	function calculateLuminanceFromRenderedImage(renderer, scene, camera) {
+		// Renderizar la escena en una resolución más baja
+		const width = 32;  // Ancho reducido
+		const height = 32; // Alto reducido
+		const pixelBuffer = new Uint8Array(width * height * 4); // Buffer para almacenar los píxeles RGBA
+
+		// Crear un render target temporal
+		const renderTarget = new THREE.WebGLRenderTarget(width, height);
+		
+		// Renderizar la escena en el render target
+		renderer.setRenderTarget(renderTarget);
+		renderer.render(scene, camera);
+
+		// Leer los datos de píxeles del render
+		renderer.readRenderTargetPixels(renderTarget, 0, 0, width, height, pixelBuffer);
+
+		let totalLuminance = 0;
+		let validPixelCount = 0;
+
+		// Recorrer los píxeles del render
+		for (let i = 0; i < pixelBuffer.length; i += 4) {
+			const r = pixelBuffer[i];     // Componente rojo
+			const g = pixelBuffer[i + 1]; // Componente verde
+			const b = pixelBuffer[i + 2]; // Componente azul
+
+			// Ignorar píxeles negros (fondo)
+			if (r === 0 && g === 0 && b === 0) {
+				continue;
+			}
+
+			// Calcular la luminancia usando la fórmula perceptual
+			const luminance = r + g + b;
+
+			totalLuminance += luminance;
+			validPixelCount++;
+		}
+
+		// Si no hay píxeles válidos, devolver una luminancia predeterminada
+		if (validPixelCount === 0) {
+			return 128; // Valor predeterminado (un gris medio)
+		}
+
+		// Luminancia media
+		const averageLuminance = totalLuminance / validPixelCount;
+		return averageLuminance;
+	}
+	
+	// Función para ajustar la luz en función de la luminancia
+	function adjustLightBasedOnLuminance(averageLuminance) {
+		// Mapear la luminancia a un rango de intensidad de luz (por ejemplo, 0.5 a 2)
+		const maxLuminance = 255; // Luminancia máxima (blanco)
+		const minIntensity = 0.2;  // Intensidad mínima de la luz
+		const maxIntensity = maxLightIntensity;    // Intensidad máxima de la luz
+
+		// Escalar la luminancia media al rango de intensidad de la luz
+		let intensity = maxIntensity - ((averageLuminance * maxIntensity) / maxLuminance);
+		
+		intensity = Math.max(minIntensity, intensity);
+
+		// Ajustar la intensidad de la luz
+		directionalLight.intensity = intensity;
+	}
+	
+	// Función para ajustar la luz en función de la luminancia calculada
+	function adjustLightBasedOnCalculatedLuminance() {
+		const averageLuminance = calculateLuminanceFromRenderedImage(renderer, scene, camera);
+		console.log(averageLuminance);
+		adjustLightBasedOnLuminance(averageLuminance);
+		renderer.setRenderTarget(null);
+		renderer.render(scene, camera);
+	}
+
+	function normalizeModel(model) {
+	  const box = new THREE.Box3().setFromObject(model);
+	  const size = new THREE.Vector3();
+	  box.getSize(size);
+
+	  const maxAxis = Math.max(size.x, size.y, size.z);
+	  model.scale.multiplyScalar(1 / maxAxis);
+	  
+	  // Centrar el modelo
+	  box.setFromObject(model); // Volver a calcular el Box3 después de escalar
+	  const center = box.getCenter(new THREE.Vector3()); // Obtener el centro
+	  model.position.sub(center); // Mover el modelo para que esté centrado en la escena
+	}
+	
+    function loadModel(index) {
+      if (currentModel) {
+        scene.remove(currentModel);
+      }
+      var modelPath = `models/${models[index]}`;
+	  const modelName = `${models[index].replace(/\.[^/.]+$/, "")}`
+      if (modelPath.endsWith('.glb') || modelPath.endsWith('.gltf')) {
+        gltfLoader.load(modelPath, function(gltf) {
+          currentModel = gltf.scene;
+		  normalizeModel(currentModel);						   
+          scene.add(currentModel);
+		  adjustLightBasedOnCalculatedLuminance()
+        });
+      } else if (modelPath.endsWith('.stl')) {
+        stlLoader.load(modelPath, function(geometry) {
+          var material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+          currentModel = new THREE.Mesh(geometry, material);
+		  normalizeModel(currentModel);
+          scene.add(currentModel);
+		  adjustLightBasedOnCalculatedLuminance()
+        });
+      }
+	  //loadDescription(index);
+	  applyModelConfig(modelName);
+    }
+
+	function updateLightPosition() {
+	console.log("llama a updateLightPosition");
+	  var x = radius * Math.sin(lightPosition.phi) * Math.cos(lightPosition.theta);
+	  var z = radius * Math.sin(lightPosition.phi) * Math.sin(lightPosition.theta);
+	  var y = radius * Math.cos(lightPosition.phi);
+
+	  directionalLight.position.set(x, y, z);
+	}
+
+	// Eventos del ratón en el canvas
+	renderer.domElement.addEventListener('pointerdown', (event) => {
+	  if (event.button === 1) {  // Rueda del ratón pulsada (button 1)
+		draggingLight = true;
+		lastMousePosition.x = event.clientX;
+		lastMousePosition.y = event.clientY;
+	  }
+	});
+
+	renderer.domElement.addEventListener('pointermove', (event) => {
+	  if (draggingLight) {
+		var deltaX = event.clientX - lastMousePosition.x;
+		var deltaY = event.clientY - lastMousePosition.y;
+
+		// Actualizar ángulos theta y phi basados en el movimiento del ratón
+		lightPosition.theta -= deltaX * 0.005;  // Sensibilidad de movimiento horizontal
+		lightPosition.phi -= deltaY * 0.005;    // Sensibilidad de movimiento vertical
+
+		// Limitar el valor de phi para evitar invertir la luz
+		lightPosition.phi = Math.max(0.1, Math.min(Math.PI - 0.1, lightPosition.phi));
+
+		// Actualizar la posición de la luz
+		updateLightPosition();
+
+		lastMousePosition.x = event.clientX;
+		lastMousePosition.y = event.clientY;
+	  }
+	});
+
+	renderer.domElement.addEventListener('pointerup', (event) => {
+	  if (event.button === 1) {  // Soltar la rueda del ratón
+		draggingLight = false;
+	  }
+	});
+	
+	document.addEventListener('keydown', (event) => {
+	  if (event.key === '+') {
+		// Incrementa la intensidad de la luz
+		directionalLight.intensity = Math.min(directionalLight.intensity + 0.1, maxLightIntensity); // Limita a un máximo de 5
+		console.log("light adjusted to " + directionalLight.intensity + " for model: " + `${models[currentModelIndex].replace(/\.[^/.]+$/, "")}`);
+	  } else if (event.key === '-') {
+		// Disminuye la intensidad de la luz
+		directionalLight.intensity = Math.max(directionalLight.intensity - 0.1, 0); // Limita a un mínimo de 0
+		console.log("light adjusted to " + directionalLight.intensity + " for model: " + `${models[currentModelIndex].replace(/\.[^/.]+$/, "")}`);
+	  }
+	});
+
+	// Llamamos una vez para posicionar la luz inicialmente
+	updateLightPosition();
+
+    async function checkFileExists(url) {
+      return new Promise((resolve) => {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, true);
+        xhr.onload = function() {
+          resolve(xhr.status != 404);
+        };
+        xhr.send();
+      });
+    }
+
+	async function loadEverything() {
+		try {
+			const response = await fetch('/models');
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			const data = await response.json();
+			models = data;
+			
+			for (const [index, model] of models.entries()) {
+				let thumbnailPath = 'models/not_found.png'; // Valor por defecto
+				const modelName = `${model.replace(/\.[^/.]+$/, "")}`;
+				defaultModelConfig(modelName); // Establecer la configuración por defecto
+				
+				// Cargar la descripción asíncronamente y actualizar el modelConfig
+				try {
+					const descriptionResponse = await fetch(`models/${modelName}.txt`);
+					if (descriptionResponse.ok) {
+						const description = await descriptionResponse.text();
+						modelConfigs[modelName].description = description; // Actualizar descripción
+					} else {
+						console.warn(`No se pudo cargar el archivo ${modelName}.txt`);
+					}
+				} catch (error) {
+					console.error(`Error al cargar el archivo ${modelName}.txt:`, error);
+				}
+
+				// Buscar la miniatura con las extensiones disponibles
+				for (const extension of thumbnailExtensions) {
+					const potentialPath = `models/${modelName + extension}`;
+					const thumbExists = await checkFileExists(potentialPath);
+					if (thumbExists) {
+						thumbnailPath = potentialPath;
+						break;
+					}
+				}
+
+				// Crear el elemento img para la miniatura
+				var img = document.createElement('img');
+				img.src = thumbnailPath;
+				img.className = 'thumbnail';
+				if (index === currentModelIndex) {
+					img.classList.add('active');
+				}
+				
+				img.addEventListener('click', () => {
+					saveModelConfig(`${models[currentModelIndex].replace(/\.[^/.]+$/, "")}`);
+					currentModelIndex = index;
+					loadModel(currentModelIndex);
+					updateThumbnails();
+				});
+
+				thumbnailContainer.appendChild(img);
+			}
+
+			// Cargar el primer modelo
+			loadModel(currentModelIndex);
+		} catch (error) {
+			console.error('Error fetching models:', error);
+		}
+	}
+
+    loadEverything();
+
+    // Crear contenedor de miniaturas
+    var thumbnailContainer = document.createElement('div');
+    thumbnailContainer.id = 'thumbnail-container';
+    document.body.appendChild(thumbnailContainer);
+
+    // Añadir flechas de navegación
+    var leftArrow = document.createElement('div');
+    leftArrow.className = 'arrow left';
+    leftArrow.innerHTML = "\u2329"; // Unicode para la flecha izquierda
+    leftArrow.addEventListener('click', () => {
+      saveModelConfig(`${models[currentModelIndex].replace(/\.[^/.]+$/, "")}`)
+      currentModelIndex = (currentModelIndex - 1 + models.length) % models.length;
+      loadModel(currentModelIndex);
+      updateThumbnails();
+    });
+    thumbnailContainer.appendChild(leftArrow);
+
+    var rightArrow = document.createElement('div');
+    rightArrow.className = 'arrow right';
+    rightArrow.innerHTML = "\u232A"; // Unicode para la flecha derecha
+    rightArrow.addEventListener('click', () => {
+	  saveModelConfig(`${models[currentModelIndex].replace(/\.[^/.]+$/, "")}`)
+      currentModelIndex = (currentModelIndex + 1) % models.length;
+      loadModel(currentModelIndex);
+      updateThumbnails();
+    });
+    thumbnailContainer.appendChild(rightArrow);
+
+    function updateThumbnails() {
+      var thumbnails = document.querySelectorAll('.thumbnail');
+      thumbnails.forEach((thumbnail, index) => {
+        thumbnail.classList.remove('active');
+        if (index === currentModelIndex) {
+          thumbnail.classList.add('active');
+        }
+      });
+    }
+
+    // Desplazamiento cíclico de miniaturas
+    thumbnailContainer.addEventListener('wheel', (event) => {
+      if (event.deltaY > 0) {
+        currentModelIndex = (currentModelIndex + 1) % models.length;
+      } else {
+        currentModelIndex = (currentModelIndex - 1 + models.length) % models.length;
+      }
+      loadModel(currentModelIndex);
+      updateThumbnails();
+    }, { passive: true });
+
+	// Crear y añadir el panel de descripción
+    var descriptionPanel = document.createElement('div');
+    descriptionPanel.id = 'description-panel';
+	descriptionPanel.style.display = 'none';
+    document.body.appendChild(descriptionPanel);
+
+    // Crear y añadir el botón de mostrar/ocultar
+    var toggleButton = document.createElement('button');
+    toggleButton.id = 'toggle-button';
+    toggleButton.innerText = 'Toggle Description';
+    toggleButton.addEventListener('click', () => {
+      if (descriptionPanel.style.display === 'none') {
+        descriptionPanel.style.display = 'block';
+      } else {
+        descriptionPanel.style.display = 'none';
+      }
+    });
+    document.body.appendChild(toggleButton);
+	
+    // Animar la escena
+    var animate = function () {
+      requestAnimationFrame(animate);
+      controls.update(); // Actualizar los controles
+      renderer.render(scene, camera);
+    };
+
+    animate();
+  </script>
+</body>
+</html>

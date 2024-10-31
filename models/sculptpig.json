@@ -1,0 +1,57 @@
+{
+  "modelFile": "sculptpig.glb",
+  "thumbnailFile": "sculptpig.png",
+  "description": "Puerco Esculpido.\n\nTuve bastantes problemas para dominar el sculpting. Cuando le pillé el truco, esta fue mi primera creación.",
+  "backgroundColor": "#242718",
+  "camera": {
+    "position": [
+      17.7537,
+      -0.7186,
+      24.4528
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "lookAt": [
+      2.8636,
+      -4.3105,
+      -3.0704
+    ],
+    "zoom": 1.5
+  },
+  "scale": [
+    1,
+    1,
+    1
+  ],
+  "animation": {
+    "enabled": false,
+    "loop": false
+  },
+  "ambientLight": {
+    "intensity": 0.6,
+    "color": "#ffffff"
+  },
+  "lights": [
+    {
+      "position": [
+        0,
+        -21.86,
+        16.75
+      ],
+      "intensity": 0.8,
+      "color": "#ffffff"
+    },
+    {
+      "position": [
+        0,
+        10.97,
+        -13.43
+      ],
+      "intensity": 0.8,
+      "color": "#ffffff"
+    }
+  ]
+}

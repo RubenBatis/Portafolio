@@ -1,0 +1,164 @@
+:root {
+	--minouc: #ffcc00; /*var(--minouc);*/
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: linear-gradient(45deg, var(--minouc) 0%,
+		var(--minouc) 2%, black 2%, black 4%, var(--minouc) 4%, var(--minouc) 6%, black 6%, black 8%, var(--minouc) 8%, var(--minouc) 10%, black 10%, 
+		black 12%, var(--minouc) 12%, var(--minouc) 14%, black 14%, black 16%, var(--minouc) 16%, var(--minouc) 18%, black 18%, black 20%, var(--minouc) 20%, 
+		var(--minouc) 22%, black 22%, black 24%, var(--minouc) 24%, var(--minouc) 26%, black 26%, black 28%, var(--minouc) 28%, var(--minouc) 30%, black 30%, 
+		black 32%, var(--minouc) 32%, var(--minouc) 34%, black 34%, black 36%, var(--minouc) 36%, var(--minouc) 38%, black 38%, black 40%, var(--minouc) 40%, 
+		var(--minouc) 42%, black 42%, black 44%, var(--minouc) 44%, var(--minouc) 46%, black 46%, black 48%, var(--minouc) 48%, var(--minouc) 50%, black 50%, 
+		black 52%, var(--minouc) 52%, var(--minouc) 54%, black 54%, black 56%, var(--minouc) 56%, var(--minouc) 58%, black 58%, black 60%, var(--minouc) 60%, 
+		var(--minouc) 62%, black 62%, black 64%, var(--minouc) 64%, var(--minouc) 66%, black 66%, black 68%, var(--minouc) 68%, var(--minouc) 70%, black 70%, 
+		black 72%, var(--minouc) 72%, var(--minouc) 74%, black 74%, black 76%, var(--minouc) 76%, var(--minouc) 78%, black 78%, black 80%, var(--minouc) 80%, 
+		var(--minouc) 82%, black 82%, black 84%, var(--minouc) 84%, var(--minouc) 86%, black 86%, black 88%, var(--minouc) 88%, var(--minouc) 90%, black 90%, 
+		black 92%, var(--minouc) 92%, var(--minouc) 94%, black 94%, black 96%, var(--minouc) 96%, var(--minouc) 98%, black 98%, black 100%);
+	background: -moz-linear-gradient(45deg, var(--minouc) 0%,
+		var(--minouc) 2%, black 2%, black 4%, var(--minouc) 4%, var(--minouc) 6%, black 6%, black 8%, var(--minouc) 8%, var(--minouc) 10%, black 10%, 
+		black 12%, var(--minouc) 12%, var(--minouc) 14%, black 14%, black 16%, var(--minouc) 16%, var(--minouc) 18%, black 18%, black 20%, var(--minouc) 20%, 
+		var(--minouc) 22%, black 22%, black 24%, var(--minouc) 24%, var(--minouc) 26%, black 26%, black 28%, var(--minouc) 28%, var(--minouc) 30%, black 30%, 
+		black 32%, var(--minouc) 32%, var(--minouc) 34%, black 34%, black 36%, var(--minouc) 36%, var(--minouc) 38%, black 38%, black 40%, var(--minouc) 40%, 
+		var(--minouc) 42%, black 42%, black 44%, var(--minouc) 44%, var(--minouc) 46%, black 46%, black 48%, var(--minouc) 48%, var(--minouc) 50%, black 50%, 
+		black 52%, var(--minouc) 52%, var(--minouc) 54%, black 54%, black 56%, var(--minouc) 56%, var(--minouc) 58%, black 58%, black 60%, var(--minouc) 60%, 
+		var(--minouc) 62%, black 62%, black 64%, var(--minouc) 64%, var(--minouc) 66%, black 66%, black 68%, var(--minouc) 68%, var(--minouc) 70%, black 70%, 
+		black 72%, var(--minouc) 72%, var(--minouc) 74%, black 74%, black 76%, var(--minouc) 76%, var(--minouc) 78%, black 78%, black 80%, var(--minouc) 80%, 
+		var(--minouc) 82%, black 82%, black 84%, var(--minouc) 84%, var(--minouc) 86%, black 86%, black 88%, var(--minouc) 88%, var(--minouc) 90%, black 90%, 
+		black 92%, var(--minouc) 92%, var(--minouc) 94%, black 94%, black 96%, var(--minouc) 96%, var(--minouc) 98%, black 98%, black 100%);
+	background:-webkit-linear-gradient(45deg, var(--minouc) 0%,
+		var(--minouc) 2%, black 2%, black 4%, var(--minouc) 4%, var(--minouc) 6%, black 6%, black 8%, var(--minouc) 8%, var(--minouc) 10%, black 10%, 
+		black 12%, var(--minouc) 12%, var(--minouc) 14%, black 14%, black 16%, var(--minouc) 16%, var(--minouc) 18%, black 18%, black 20%, var(--minouc) 20%, 
+		var(--minouc) 22%, black 22%, black 24%, var(--minouc) 24%, var(--minouc) 26%, black 26%, black 28%, var(--minouc) 28%, var(--minouc) 30%, black 30%, 
+		black 32%, var(--minouc) 32%, var(--minouc) 34%, black 34%, black 36%, var(--minouc) 36%, var(--minouc) 38%, black 38%, black 40%, var(--minouc) 40%, 
+		var(--minouc) 42%, black 42%, black 44%, var(--minouc) 44%, var(--minouc) 46%, black 46%, black 48%, var(--minouc) 48%, var(--minouc) 50%, black 50%, 
+		black 52%, var(--minouc) 52%, var(--minouc) 54%, black 54%, black 56%, var(--minouc) 56%, var(--minouc) 58%, black 58%, black 60%, var(--minouc) 60%, 
+		var(--minouc) 62%, black 62%, black 64%, var(--minouc) 64%, var(--minouc) 66%, black 66%, black 68%, var(--minouc) 68%, var(--minouc) 70%, black 70%, 
+		black 72%, var(--minouc) 72%, var(--minouc) 74%, black 74%, black 76%, var(--minouc) 76%, var(--minouc) 78%, black 78%, black 80%, var(--minouc) 80%, 
+		var(--minouc) 82%, black 82%, black 84%, var(--minouc) 84%, var(--minouc) 86%, black 86%, black 88%, var(--minouc) 88%, var(--minouc) 90%, black 90%, 
+		black 92%, var(--minouc) 92%, var(--minouc) 94%, black 94%, black 96%, var(--minouc) 96%, var(--minouc) 98%, black 98%, black 100%);
+}
+canvas {
+	flex: 1;
+	box-sizing: border-box;
+	padding: 10px 10px 0 10px;
+	display: block;
+	width: calc(100% - 10px);
+	height: 80vh;
+}
+#thumbnail-container {
+	flex: 1;
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.8) 50%, transparent 100%);
+	display: flex;
+	overflow: hidden;
+	width: calc(100% - 20px);
+	height: calc(20% - 10px);
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	margin: 0 10px;
+	padding: 10px 0;
+}
+.thumbnail {
+	width: 100px;
+	height: 100px;
+	margin: 0 10px;
+	transition: transform 0.3s;
+}
+
+.thumbnail:hover {
+	-webkit-filter: drop-shadow(0px 0px 7px rgba(255, 255, 255, 0.5));
+	filter: drop-shadow(0px 0px 7px rgba(255, 255, 255, 0.5));
+}
+
+.thumbnail.current-thumbnail {
+	transform: scale(2);
+}
+
+.arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 10vh;
+	color: rgba(255, 255, 255, 0.5);
+	cursor: pointer;
+	user-select: none;
+}
+
+.arrow:hover {
+	color: rgba(255, 255, 255, 1); /* Blanco opaco */
+}
+
+.arrow.left {
+	left: 10px;
+}
+
+.arrow.right {
+	right: 10px;
+}
+
+#description-panel {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 30%;
+	height: 80vh;
+	padding: 40px 40px 0 10px;
+	overflow-y: hidden;
+	display: none;
+	pointer-events: none; /* No recibir eventos de ratón */
+	font-size: 30px;
+	font-family: arial;
+	text-align: right;
+	filter: invert(100%);
+	-webkit-filter: invert(100%);
+	opacity: 0.3;
+	text-shadow: 
+		-1px -1px 0 #000, /* sombra hacia la esquina superior izquierda */
+		1px -1px 0 #000,	/* sombra hacia la esquina superior derecha */
+		-1px 1px 0 #000,	/* sombra hacia la esquina inferior izquierda */
+		1px 1px 0 #000;	 /* sombra hacia la esquina inferior derecha */
+}
+
+#description-panel::first-line {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+#toggle-button, #pause-button {
+	position: absolute;
+	top: 2px;
+	border: none;
+	padding: 5px;
+	font-family: Arial, sans-serif;
+	line-height: 1;
+	vertical-align: middle;
+	background-color: transparent;
+	font-size: 40px;
+	cursor: pointer;
+	z-index: 1000;
+	filter: invert(100%);
+	-webkit-filter: invert(100%);
+}
+
+#toggle-button {
+	right: 10px;
+}
+
+#pause-button {
+	left: 10px;
+	display:none;
+}

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador de JSON</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .group {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="color"], .form-group input[type="file"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="range"] {
+            width: 80%;
+        }
+        .form-group .range-value {
+            display: inline-block;
+            width: 50px;
+        }
+        .vector-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        .vector-inputs input {
+            width: 30%;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        #output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .light-group {
+            border: 1px dashed #aaa;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .collapsed .form-group {
+            display: none;
+        }
+        .light-group button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+		textarea {
+            width: 100%;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Configurador de JSON</h1>
+    <div class="container">
+        <!-- Grupo de archivos -->
+        <div class="group">
+            <h2>Archivos</h2>
+            <div class="form-group">
+                <label for="modelFile">Modelo (gltf):</label>
+                <input type="file" id="modelFile" accept=".gltf,.glb,.stl">
+            </div>
+            <div class="form-group">
+                <label for="thumbnailFile">Miniatura (jpg):</label>
+                <input type="file" id="thumbnailFile" accept=".jpg,.jpeg,.png">
+            </div>
+        </div>
+
+        <!-- Grupo de propiedades generales -->
+        <div class="group">
+            <h2>Propiedades Generales</h2>
+            <div class="form-group">
+                <label for="description">Descripción:</label>
+                <textarea id="description" placeholder="Escribe una descripción..." rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="backgroundColor">Color de Fondo:</label>
+                <input type="color" id="backgroundColor" value="#1a1a1a">
+            </div>
+        </div>
+
+        <!-- Grupo de cámara -->
+        <div class="group">
+            <h2>Cámara</h2>
+            <div class="form-group">
+                <label>Posición de la Cámara:</label>
+                <div class="vector-inputs">
+                    <input type="number" id="cameraPosX" value="5">
+                    <input type="number" id="cameraPosY" value="3">
+                    <input type="number" id="cameraPosZ" value="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Rotación de la Cámara:</label>
+                <div class="vector-inputs">
+                    <input type="number" id="cameraRotX" value="0">
+                    <input type="number" id="cameraRotY" value="0">
+                    <input type="number" id="cameraRotZ" value="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="cameraZoom">Zoom de la Cámara:</label>
+                <input type="range" id="cameraZoom" min="0.1" max="5" step="0.1" value="1.5" oninput="document.getElementById('zoomValue').textContent = this.value">
+                <span class="range-value" id="zoomValue">1.5</span>
+            </div>
+        </div>
+
+        <!-- Grupo de escala -->
+        <div class="group">
+            <h2>Escala del Modelo</h2>
+            <div class="form-group">
+                <label>Escala:</label>
+                <div class="vector-inputs">
+                    <input type="number" id="scaleX" value="1">
+                    <input type="number" id="scaleY" value="1">
+                    <input type="number" id="scaleZ" value="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- Grupo de animación -->
+        <div class="group">
+            <h2>Animación</h2>
+            <div class="form-group">
+                <label>Configuración de Animación:</label>
+                <div>
+                    <input type="checkbox" id="animationEnabled"> Activada
+                    <input type="checkbox" id="animationLoop"> Loop
+                </div>
+            </div>
+        </div>
+
+        <!-- Grupo de luz ambiental -->
+        <div class="group">
+            <h2>Luz Ambiental</h2>
+            <div class="form-group">
+                <label>Intensidad:</label>
+                <input type="range" id="ambientIntensity" min="0" max="1" step="0.1" value="0.5" oninput="document.getElementById('ambientValue').textContent = this.value">
+                <span class="range-value" id="ambientValue">0.5</span>
+            </div>
+            <div class="form-group">
+                <label>Color:</label>
+                <input type="color" id="ambientColor" value="#ffffff">
+            </div>
+        </div>
+
+        <!-- Grupo de luces adicionales -->
+        <div class="group" id="lightsContainer">
+            <h2>Luces</h2>
+
+            <!-- Template de Luz -->
+            <div id="lightTemplate" class="light-group">
+                <label>Luz #<span class="light-number">1</span>:</label>
+                <button type="button" onclick="eliminarLuz(this)">Eliminar</button>
+                <button type="button" onclick="toggleLight(this)">Plegar</button>
+
+                <div class="form-group">
+                    <label>Posición:</label>
+                    <div class="vector-inputs">
+                        <input type="number" class="lightPosX" value="0">
+                        <input type="number" class="lightPosY" value="10">
+                        <input type="number" class="lightPosZ" value="5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Intensidad:</label>
+                    <input type="range" class="lightIntensity" min="0" max="1" step="0.1" value="0.8" oninput="this.nextElementSibling.textContent = this.value">
+                    <span class="range-value">0.8</span>
+                </div>
+                <div class="form-group">
+                    <label>Color:</label>
+                    <input type="color" class="lightColor" value="#ffffff">
+                </div>
+            </div>
+        </div>
+
+        <button id="addLightButton" onclick="agregarLuz()">Añadir Luz</button>
+    </div>
+
+    <!-- Botón flotante para generar JSON -->
+    <button class="floating" onclick="generarJSON()">Generar JSON</button>
+
+    <!-- Resultado JSON -->
+    <pre id="output"></pre>
+
+    <script>
+        let lightCount = 1;
+
+        // Función para añadir luz
+        function agregarLuz() {
+            const template = document.getElementById('lightTemplate');
+            const newLight = template.cloneNode(true);
+            lightCount++;
+
+            // Actualizar el número de la luz
+            newLight.querySelector('.light-number').textContent = lightCount;
+
+            // Restablecer valores a los predeterminados
+            newLight.querySelector('.lightPosX').value = 0;
+            newLight.querySelector('.lightPosY').value = 10;
+            newLight.querySelector('.lightPosZ').value = 5;
+            newLight.querySelector('.lightIntensity').value = 0.8;
+            newLight.querySelector('.lightColor').value = '#ffffff';
+            newLight.classList.remove('collapsed'); // Desplegar la nueva luz
+
+            // Plegar todas las luces anteriores
+            const lights = document.querySelectorAll('.light-group');
+            lights.forEach(light => {
+                if (light !== newLight) {
+                    light.classList.add('collapsed');
+                    light.querySelector('button:nth-of-type(2)').textContent = 'Expandir';
+                }
+            });
+
+            document.getElementById('lightsContainer').appendChild(newLight);
+        }
+
+        // Función para plegar/expandir luces
+        function toggleLight(button) {
+            const lightGroup = button.closest('.light-group');
+            if (lightGroup.classList.contains('collapsed')) {
+                lightGroup.classList.remove('collapsed');
+                button.textContent = 'Plegar';
+            } else {
+                lightGroup.classList.add('collapsed');
+                button.textContent = 'Expandir';
+            }
+        }
+
+        // Función para eliminar una luz
+        function eliminarLuz(button) {
+            button.closest('.light-group').remove();
+        }
+
+        // Función para generar JSON
+        function generarJSON() {
+            const lights = document.querySelectorAll('.light-group');
+            const lightsArray = Array.from(lights).map(light => {
+                return {
+                    position: [
+                        parseFloat(light.querySelector('.lightPosX').value),
+                        parseFloat(light.querySelector('.lightPosY').value),
+                        parseFloat(light.querySelector('.lightPosZ').value)
+                    ],
+                    intensity: parseFloat(light.querySelector('.lightIntensity').value),
+                    color: light.querySelector('.lightColor').value
+                };
+            });
+
+            const data = {
+                model: document.getElementById('modelFile').value,
+                thumbnail: document.getElementById('thumbnailFile').value,
+                description: document.getElementById('description').value,
+                backgroundColor: document.getElementById('backgroundColor').value,
+                cameraPosition: [
+                    parseFloat(document.getElementById('cameraPosX').value),
+                    parseFloat(document.getElementById('cameraPosY').value),
+                    parseFloat(document.getElementById('cameraPosZ').value)
+                ],
+                cameraRotation: [
+                    parseFloat(document.getElementById('cameraRotX').value),
+                    parseFloat(document.getElementById('cameraRotY').value),
+                    parseFloat(document.getElementById('cameraRotZ').value)
+                ],
+                cameraZoom: parseFloat(document.getElementById('cameraZoom').value),
+                scale: [
+                    parseFloat(document.getElementById('scaleX').value),
+                    parseFloat(document.getElementById('scaleY').value),
+                    parseFloat(document.getElementById('scaleZ').value)
+                ],
+                animation: {
+                    enabled: document.getElementById('animationEnabled').checked,
+                    loop: document.getElementById('animationLoop').checked
+                },
+                ambientLight: {
+                    intensity: parseFloat(document.getElementById('ambientIntensity').value),
+                    color: document.getElementById('ambientColor').value
+                },
+                lights: lightsArray
+            };
+
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

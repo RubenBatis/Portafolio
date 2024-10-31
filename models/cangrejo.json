@@ -1,0 +1,66 @@
+{
+  "modelFile": "cangrejo.glb",
+  "thumbnailFile": "cangrejo.png",
+  "description": "Sr. Cangrejo.\n\nDe la famosa serie. Bob Esponja.\nSalvo las pinzas, en las que usé sculpting, el resto del modelo está hecho con modelado poligonal, con modificadores Mirror y Subdivision surface.\nTiempo aproximado: Una hora.",
+  "backgroundColor": "#5acfbe",
+  "camera": {
+    "position": [
+      6.662177529764231,
+      1.6485896489001592,
+      9.910419489131877
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "lookAt": [
+      0,
+      0.4,
+      0
+    ],
+    "zoom": 1.5
+  },
+  "scale": [
+    1,
+    1,
+    1
+  ],
+  "animation": {
+    "enabled": false,
+    "loop": false
+  },
+  "ambientLight": {
+    "intensity": 0.5,
+    "color": "#5acfbe"
+  },
+  "lights": [
+    {
+      "position": [
+        3.2,
+        5.01,
+        -3.11
+      ],
+      "intensity": 0.3,
+      "color": "#bbffdc"
+    },
+    {
+      "position": [
+        -0.86,
+        -5.9,
+        5.27
+      ],
+      "intensity": 0.3,
+      "color": "#4fc4ff"
+    },
+    {
+      "position": [
+        -1.06,
+        0,
+        6.4
+      ],
+      "intensity": 1,
+      "color": "#ffffff"
+    }
+  ]
+}
