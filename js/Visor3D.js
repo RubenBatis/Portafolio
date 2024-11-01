@@ -1,15 +1,17 @@
-import { Loader } from './js/Loader.js';
+import { Loader } from './Loader.js';
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js";
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
 export class Visor3D {
-	constructor(contentFolder, parentElement) {
+	constructor(contentFolder, parentElement, initModel = 0) {
 		// Crear la escena y el renderer
+		console.log("1");
 		this.loader = new Loader(contentFolder);
 		this.parentElement = parentElement;
 		this.currentItemIndex = 0;
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
-		renderer.setSize(window.innerWidth * 2, window.innerHeight * 2);
-		this.canvas = renderer.domElement;
+		this.renderer.setSize(window.innerWidth * 2, window.innerHeight * 2);
+		this.canvas = this.renderer.domElement;
 		
 		//Ajustar el tamaño del canvas
 		this.canvas.style.width = window.innerWidth + 'px';
@@ -17,16 +19,20 @@ export class Visor3D {
 		
 		this.camera = null;
 		this.controls = null;
-		
+
 		this.#setupControlsAndCamera();
 		
 		let ambientLight = new THREE.AmbientLight(0x404040); // Luz ambiental // también está fatal
 		this.scene.add(ambientLight);
 		
-		this.createDescriptionPanel();
-		this.createAnimControls();
+		this.#createDescriptionPanel();
+		this.#createAnimControls();
 		
-		this.parentElement.appendChild(renderer.domElement);
+		this.parentElement.appendChild(this.canvas);
+		
+		this.applyModelConfig(this.loader.modelNames[initModel]);
+		
+		this.animate();
 	}
 	
 	// Función para configurar el tamaño del canvas y renderer
@@ -35,13 +41,13 @@ export class Visor3D {
 		const height = window.innerHeight * 0.8;
 
 		this.renderer.setSize(width * 2, height * 2, false);
-		this.renderer.domElement.style.width = width + 'px';
-		this.renderer.domElement.style.height = height + 'px';
+		this.canvas.style.width = width + 'px';
+		this.canvas.style.height = height + 'px';
 	}
 	
 	async #setupCamera() {
 		// Esperamos hasta que el canvas tenga un tamaño mayor que 0
-		while (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+		while (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
 			console.log("Esperando que el canvas tenga dimensiones...");
 			await new Promise(resolve => setTimeout(resolve, 100)); // Esperar 100ms antes de verificar de nuevo
 		}
@@ -55,11 +61,11 @@ export class Visor3D {
 
 	async #setupControlsAndCamera() {
 	try {
-		this.camera = await this.setupCamera();
+		this.camera = await this.#setupCamera();
 		this.scene.add(this.camera);
 
 		// Añadir controles de órbita
-		this.controls = new OrbitControls(this.camera, renderer.domElement);
+		this.controls = new OrbitControls(this.camera, this.canvas);
 		this.controls.enableDamping = true; // Suaviza el movimiento
 		this.controls.dampingFactor = 0.25;
 		this.controls.enableZoom = true;
@@ -89,7 +95,7 @@ export class Visor3D {
 	}
 	
 	// Crear y añadir el panel de descripción
-	createDescriptionPanel() {
+	#createDescriptionPanel() {
 		let descriptionPanel = document.createElement('div');
 		descriptionPanel.id = 'description-panel';
 		descriptionPanel.style.display = 'none';
@@ -112,11 +118,11 @@ export class Visor3D {
 	}
 	
 	// Crear y añadir el botón de pausa
-	createAnimControls() {
+	#createAnimControls() {
 		this.pauseButton = document.createElement('button');
 		this.pauseButton.id = 'pause-button';
 		this.pauseButton.innerHTML = '⏸';
-		this.parentElement.appendChild(pauseButton);
+		this.parentElement.appendChild(this.pauseButton);
 		this.isPaused = false;
 		
 		// Alternar la animación al hacer clic en el botón
@@ -132,7 +138,7 @@ export class Visor3D {
 	
 	// Método para alternar la pausa/reproducción
 	#toggleAnimationPause() {
-		let mixer = this.loader.mixers[this.loader.modelNames[currentItemIndex]];
+		let mixer = this.loader.mixers[this.loader.modelNames[this.currentItemIndex]];
 		if (mixer) {
 			mixer._actions.forEach(action => {
 				action.paused = !action.paused;
@@ -208,7 +214,7 @@ export class Visor3D {
 	applyModelConfig(modelName) {
 		const config = this.loader.modelConfigs[modelName];
 		// Eliminar todos los elementos de la escena
-		this.clearScene(this.scene);
+		this.#clearScene(this.scene);
 		
 		// Y volver a cargar el modelo en cuestión
 		let model = this.loader.models[modelName];
@@ -261,5 +267,26 @@ export class Visor3D {
 		
 		// Verificar si el modelo tiene animaciones y manejar el botón de pausa
 		this.#togglePauseButton(modelName);
+	}
+	
+	// Animar la escena
+	animate = () => {
+		requestAnimationFrame(this.animate);
+		this.#resizeRendererToDisplaySize();
+		let mixer = this.loader.mixers[this.loader.modelNames[this.currentModelIndex]];
+		// Si hay un mixer activo, actualizarlo
+		if (mixer) {
+			const delta = clock.getDelta();  // Usamos delta para actualizar el mixer
+			mixer.update(delta);  // Actualizamos el mixer
+		}
+		if (this.controls) {
+			this.controls.update(); // Actualizar los controles
+		}
+		if (this.camera) {
+			// Actualizar la relación de aspecto de la cámara si cambia el tamaño del renderer
+			this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+			this.camera.updateProjectionMatrix();
+			this.renderer.render(this.scene, this.camera);
+		}
 	}
 }

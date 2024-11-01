@@ -1,5 +1,5 @@
 import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
+import { AnimationMixer, LoopRepeat } from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
 export class Loader {
 	constructor(contentFolder) {
 		this.modelNames = [];
@@ -25,10 +25,10 @@ export class Loader {
 				this.animations[modelName] = gltf.animations;
 														
 				if (gltf.animations && gltf.animations.length > 0) {
-					this.mixers[modelName] = new THREE.AnimationMixer(gltf.scene);
+					this.mixers[modelName] = new AnimationMixer(gltf.scene);
 					gltf.animations.forEach((clip) => {
 						const action = this.mixers[modelName].clipAction(clip);
-						action.loop = THREE.LoopRepeat;
+						action.loop = LoopRepeat;
 						action.play();
 					});
 				}

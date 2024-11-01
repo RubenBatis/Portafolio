@@ -21,6 +21,23 @@
 			import { OrbitControls } from 'OrbitControls';
 			import { GLTFLoader } from 'GLTFLoader';
 
+/**/			import { Visor3D } from './js/Visor3D.js';
+			var parentElement = document.createElement('div');
+			var prueba = new Visor3D('/models', parentElement);
+			console.log(prueba);
+			document.body.appendChild(parentElement);
+			parentElement.style.position = "absolute";
+			parentElement.style.width = "100px";
+			parentElement.style.height = "100px";
+			parentElement.style.left = "100px";
+			parentElement.style.top = "100px";
+			parentElement.style["z-index"] = "10000";/**/
+			
+
+/** /			import { Loader } from './js/Loader.js';
+			var prueba = new Loader("/models");
+			console.log(prueba);/**/
+
 			// Crear la escena y el renderer
 			var scene = new THREE.Scene();
 			var renderer = new THREE.WebGLRenderer({ antialias: true });
