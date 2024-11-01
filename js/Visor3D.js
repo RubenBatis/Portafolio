@@ -30,9 +30,13 @@ export class Visor3D {
 		
 		this.parentElement.appendChild(this.canvas);
 		
-		this.applyModelConfig(this.loader.modelNames[initModel]);
-		
-		this.animate();
+		// Espera a que el loader esté listo
+        this.loader.ready.then(() => {
+            this.applyModelConfig(this.loader.modelNames[initModel]);
+            this.animate();
+        }).catch(error => {
+            console.error('Error al cargar los modelos:', error);
+        });
 	}
 	
 	// Función para configurar el tamaño del canvas y renderer
@@ -148,7 +152,7 @@ export class Visor3D {
 	
 	// Mostrar el botón si el modelo tiene animaciones
 	#togglePauseButton(modelName) {
-		console.log(mixers);
+		console.log(this.loader.mixers);
 		if (this.loader.mixers[modelName]) {
 			this.pauseButton.style.display = 'block';
 		} else {
@@ -218,6 +222,7 @@ export class Visor3D {
 		
 		// Y volver a cargar el modelo en cuestión
 		let model = this.loader.models[modelName];
+		console.log(model);
 		this.scene.add(model);			
 		
 		// Cambiar el color de fondo de la escena 3D

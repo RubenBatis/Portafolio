@@ -8,8 +8,10 @@ export class Loader {
 		this.mixers = {};
 		this.models = {};
 		this.animations = {};
+		this.contentFolder = contentFolder;
 		
-		this.loadModelsFromJSON(contentFolder);
+		// Llama a la función de carga y asigna la promesa a `this.ready`
+		this.ready = this.loadModelsFromJSON();
 	}
 
 	saveModelConfig(modelName) {
@@ -50,7 +52,6 @@ export class Loader {
 		};
 		
 		thumbnailElement.setAttribute("data-thumbnumber", this.thumbnails.length);
-
 		thumbnailElement.addEventListener("click", (event) => {
 			const modelNumber = parseInt(event.currentTarget.getAttribute("data-thumbnumber"), 10);
 			changeModel(modelNumber);
@@ -72,7 +73,7 @@ export class Loader {
 		}
 	}
 
-	async loadModelsFromJSON(modelFolder) {
+	async loadModelsFromJSON() {
 		try {
 			// Espera a que se resuelva la promesa que devuelve los archivos JSON
 			const jsonFiles = await this.#listJSONFiles(); 
@@ -82,12 +83,12 @@ export class Loader {
 				const promises = jsonFiles.map(async (jsonFile) => {
 				//jsonFiles.forEach(async (jsonFile) => {
 					try {
-						const response = await fetch(`${modelFolder}/${jsonFile}`);
+						const response = await fetch(`${this.contentFolder}/${jsonFile}`);
 						const config = await response.json();
 
 						// Usar el archivo del modelo y thumbnail
-						await this.#loadModel(`${modelFolder}/${config.modelFile}`);
-						this.#loadThumbnail(`${modelFolder}/${config.thumbnailFile}`);
+						await this.#loadModel(`${this.contentFolder}/${config.modelFile}`);
+						this.#loadThumbnail(`${this.contentFolder}/${config.thumbnailFile}`);
 						const modelConfigName = config.modelFile.replace(/\.[^/.]+$/, "");
 						this.modelConfigs[modelConfigName] = config;
 						this.modelNames.push(modelConfigName);
