@@ -4,7 +4,6 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.m
 export class Visor3D {
 	constructor(contentFolder, parentElement, initModel = 0) {
 		// Crear la escena y el renderer
-		console.log("1");
 		this.loader = new Loader(contentFolder);
 		this.parentElement = parentElement;
 		this.currentItemIndex = 0;
@@ -20,7 +19,7 @@ export class Visor3D {
 		this.camera = null;
 		this.controls = null;
 
-		this.#setupControlsAndCamera();
+		this.ready = this.#setupControlsAndCamera();
 		
 		let ambientLight = new THREE.AmbientLight(0x404040); // Luz ambiental // también está fatal
 		this.scene.add(ambientLight);
@@ -30,9 +29,12 @@ export class Visor3D {
 		
 		this.parentElement.appendChild(this.canvas);
 		
+		this.clock = new THREE.Clock();
+		
 		// Espera a que el loader esté listo
         this.loader.ready.then(() => {
             this.applyModelConfig(this.loader.modelNames[initModel]);
+			this.animate = this.animate.bind(this);
             this.animate();
         }).catch(error => {
             console.error('Error al cargar los modelos:', error);
@@ -130,7 +132,7 @@ export class Visor3D {
 		this.isPaused = false;
 		
 		// Alternar la animación al hacer clic en el botón
-		this.pauseButton.addEventListener('click', this.#toggleAnimationPause);
+		this.pauseButton.addEventListener('click', () => this.#toggleAnimationPause);
 
 		// Alternar con la tecla Espacio
 		window.addEventListener('keydown', (event) => {
@@ -152,7 +154,6 @@ export class Visor3D {
 	
 	// Mostrar el botón si el modelo tiene animaciones
 	#togglePauseButton(modelName) {
-		console.log(this.loader.mixers);
 		if (this.loader.mixers[modelName]) {
 			this.pauseButton.style.display = 'block';
 		} else {
@@ -222,7 +223,6 @@ export class Visor3D {
 		
 		// Y volver a cargar el modelo en cuestión
 		let model = this.loader.models[modelName];
-		console.log(model);
 		this.scene.add(model);			
 		
 		// Cambiar el color de fondo de la escena 3D
@@ -278,10 +278,11 @@ export class Visor3D {
 	animate = () => {
 		requestAnimationFrame(this.animate);
 		this.#resizeRendererToDisplaySize();
-		let mixer = this.loader.mixers[this.loader.modelNames[this.currentModelIndex]];
+		let mixer = this.loader.mixers[this.loader.modelNames[this.currentItemIndex]];
+		
 		// Si hay un mixer activo, actualizarlo
 		if (mixer) {
-			const delta = clock.getDelta();  // Usamos delta para actualizar el mixer
+			const delta = this.clock.getDelta();  // Usamos delta para actualizar el mixer
 			mixer.update(delta);  // Actualizamos el mixer
 		}
 		if (this.controls) {

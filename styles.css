@@ -139,6 +139,7 @@ canvas {
 	z-index: 1000;
 	filter: invert(100%);
 	-webkit-filter: invert(100%);
+	/*opacity: 0;*/
 }
 
 #toggle-button {

@@ -14,10 +14,6 @@ export class Loader {
 		this.ready = this.loadModelsFromJSON();
 	}
 
-	saveModelConfig(modelName) {
-		this.modelConfigs[modelName].camera.position = [camera.position.x, camera.position.y, camera.position.z];
-	}
-
 	async #loadModel(modelFile) {
 		return new Promise((resolve, reject) => {
 			const gltfLoader = new GLTFLoader();
@@ -49,14 +45,7 @@ export class Loader {
 		thumbnailElement.onerror = function(){
 			this.onerror = null;
 			this.src = "models/not_found.png";
-		};
-		
-		thumbnailElement.setAttribute("data-thumbnumber", this.thumbnails.length);
-		thumbnailElement.addEventListener("click", (event) => {
-			const modelNumber = parseInt(event.currentTarget.getAttribute("data-thumbnumber"), 10);
-			changeModel(modelNumber);
-		});	
-						
+		};						
 		this.thumbnails.push(thumbnailElement);
 	}
 
