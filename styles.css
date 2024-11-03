@@ -1,10 +1,10 @@
 :root {
-	/*--minouc: #ffcc00; /*var(--minouc);*/
-	/*--oscdum: black;*/
-	/*--anggra: 45deg;*/
-	--minouc: #3e1e67;
+	--minouc: #ffcc00; /*var(--minouc);*/
+	--oscdum: black;
+	--anggra: 45deg;
+	/*--minouc: #3e1e67;
 	--oscdum: #f7f7ea;
-	--anggra: 0deg;
+	--anggra: 0deg;*/
 	--defdeg: var(--anggra), var(--minouc) 0%,
 		var(--minouc) 2%, var(--oscdum) 2%, var(--oscdum) 4%, var(--minouc) 4%, var(--minouc) 6%, var(--oscdum) 6%, var(--oscdum) 8%, var(--minouc) 8%, var(--minouc) 10%, var(--oscdum) 10%, 
 		var(--oscdum) 12%, var(--minouc) 12%, var(--minouc) 14%, var(--oscdum) 14%, var(--oscdum) 16%, var(--minouc) 16%, var(--minouc) 18%, var(--oscdum) 18%, var(--oscdum) 20%, var(--minouc) 20%, 
@@ -39,31 +39,28 @@ body {
 }
 
 canvas {
-	flex: 1;
 	box-sizing: border-box;
-	padding: 10px 10px 0 10px;
+	padding: 0;
 	display: block;
-	width: calc(100% - 10px);
+	width: 100%;
 	height: 80vh;
 }
 #thumbnail-container {
-	flex: 1;
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.8) 50%, transparent 100%);
 	display: flex;
 	overflow: hidden;
-	width: calc(100% - 20px);
-	height: calc(20% - 10px);
+	width: 100%;
+	height: 20%;
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	margin: 0 10px;
-	padding: 10px 0;
+	padding: 0;
 }
 .thumbnail {
 	width: 100px;
 	height: 100px;
 	margin: 0 10px;
-	transition: transform 0.3s;
+	transition: transition: transform 0.5s ease-in-out;
 }
 
 .thumbnail:hover {
@@ -149,4 +146,24 @@ canvas {
 #pause-button {
 	left: 10px;
 	display:none;
+}
+
+#contenedor {
+	margin: 10px;
+	position: relative;
+	overflow: hidden;
+	width: 60%;
+	height: 100%;
+	border-radius:10px;
+}
+
+#contenedor2 {
+	margin: 10px;
+	position: absolute;
+	overflow: hidden;
+	width: 40%;
+	height: 40%;
+	left: 10px;
+	bottom: 10px;
+	border-radius:10px;
 }

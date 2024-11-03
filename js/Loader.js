@@ -1,4 +1,4 @@
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFLoader } from "GLTFLoader";
 import { AnimationMixer, LoopRepeat } from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
 export class Loader {
 	constructor(contentFolder) {

@@ -16,79 +16,16 @@
 				}
 			}
 		</script>
+		
+		<div id="contenedor"></div>
 
 		<script type="module">
-
-			
 			import { Visor3D } from './js/Visor3D.js';
 			import { Carousel } from './js/Carousel.js';
 			
-			var visorDOM = document.createElement('div');
-			var visor = new Visor3D('/models', visorDOM);
-			document.body.appendChild(visorDOM);
-			
-			//var carouselDOM = document.createElement('div');
-			var carousel = new Carousel(visor, document.body);
-			//document.body.appendChild(carouselDOM);
-			/**/
-			
-
-/** /			import { Loader } from './js/Loader.js';
-			var prueba = new Loader("/models");
-			console.log(prueba);/**/
-
-//DEBUG:			
-/*renderer.domElement.addEventListener('click', () => {
-	console.log('"position": [\n      ' + camera.position.x + 
-	",\n      " + camera.position.y + ",\n      " + camera.position.z + "\n    ],");
-	console.log('"lookAt": [\n      ' + controls.target.x + 
-	",\n      " + controls.target.y + ",\n      " + controls.target.z + "\n    ],");
-});
-
-function createAxesWithLabels(scene) {
-    // Crear materiales para cada eje
-    const redMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
-    const greenMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-    const blueMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-
-    // Crear geometrías para cada eje
-    const xGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(5, 0, 0)]);
-    const yGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 5, 0)]);
-    const zGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 5)]);
-
-    // Crear líneas para cada eje
-    const xAxis = new THREE.Line(xGeometry, redMaterial);
-    const yAxis = new THREE.Line(yGeometry, greenMaterial);
-    const zAxis = new THREE.Line(zGeometry, blueMaterial);
-
-    // Añadir las líneas a la escena
-    scene.add(xAxis);
-    scene.add(yAxis);
-    scene.add(zAxis);
-
-    // Crear el material para el texto
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-    // Cargar la fuente y crear las etiquetas
-    const loader = new THREE.FontLoader();
-    loader.load('path/to/font.json', function (font) {
-        const createLabel = (text, position) => {
-            const textGeometry = new THREE.TextGeometry(text, {
-                font: font,
-                size: 1,
-                height: 0.1,
-            });
-            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-            textMesh.position.copy(position);
-            scene.add(textMesh);
-        };
-
-        // Crear y posicionar las etiquetas
-        createLabel('X', new THREE.Vector3(5, 0, 0));
-        createLabel('Y', new THREE.Vector3(0, 5, 0));
-        createLabel('Z', new THREE.Vector3(0, 0, 5));
-    });
-}*/
+			contenedor = document.getElementById("contenedor");	
+			var visor = new Visor3D('/models', contenedor);
+			var carousel = new Carousel(visor, contenedor);
 		</script>
 	</body>
 </html>

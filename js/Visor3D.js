@@ -1,6 +1,6 @@
 import { Loader } from './Loader.js';
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js";
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
+import * as THREE from "three";
+import { OrbitControls } from "OrbitControls";
 export class Visor3D {
 	constructor(contentFolder, parentElement, initModel = 0) {
 		// Crear la escena y el renderer
@@ -9,12 +9,16 @@ export class Visor3D {
 		this.currentItemIndex = 0;
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
-		this.renderer.setSize(window.innerWidth * 2, window.innerHeight * 2);
+		this.renderer.setSize(this.parentElement.clientWidth * 2, this.parentElement.clientHeight * 2);
 		this.canvas = this.renderer.domElement;
 		
 		//Ajustar el tamaño del canvas
-		this.canvas.style.width = window.innerWidth + 'px';
-		this.canvas.style.height = (window.innerHeight * 0.8) + 'px'; //esto está fatal
+		this.canvas.style.width = this.parentElement.clientWidth + 'px';
+		this.canvas.style.height = (this.parentElement.clientHeight * 0.8) + 'px'; //esto está fatal
+		
+		window.addEventListener('resize', () => {
+			this.#resizeRendererToDisplaySize();
+		});
 		
 		this.camera = null;
 		this.controls = null;
@@ -43,8 +47,8 @@ export class Visor3D {
 	
 	// Función para configurar el tamaño del canvas y renderer
 	#resizeRendererToDisplaySize() {
-		const width = window.innerWidth;
-		const height = window.innerHeight * 0.8;
+		const width = this.parentElement.clientWidth;
+		const height = this.parentElement.clientHeight * 0.8;
 
 		this.renderer.setSize(width * 2, height * 2, false);
 		this.canvas.style.width = width + 'px';
@@ -132,7 +136,7 @@ export class Visor3D {
 		this.isPaused = false;
 		
 		// Alternar la animación al hacer clic en el botón
-		this.pauseButton.addEventListener('click', () => this.#toggleAnimationPause);
+		this.pauseButton.addEventListener('click', () => this.#toggleAnimationPause());
 
 		// Alternar con la tecla Espacio
 		window.addEventListener('keydown', (event) => {
@@ -142,12 +146,18 @@ export class Visor3D {
 		});
 	}
 	
+	// Crear y añadir el botón de pausa
+	#togglePauseButtonIcon(paused) {
+		paused ? this.pauseButton.innerHTML = '⏸' : this.pauseButton.innerHTML = '⏵';;
+	}
+	
 	// Método para alternar la pausa/reproducción
 	#toggleAnimationPause() {
 		let mixer = this.loader.mixers[this.loader.modelNames[this.currentItemIndex]];
 		if (mixer) {
 			mixer._actions.forEach(action => {
 				action.paused = !action.paused;
+				this.#togglePauseButtonIcon(!action.paused)
 			});
 		}
 	}

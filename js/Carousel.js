@@ -1,8 +1,9 @@
 import { Visor3D } from './Visor3D.js';
 export class Carousel {
-	constructor(visor, parentElement) {
+	constructor(visor, parentElement, maxThumbsToShow = 7) {
 		this.parentElement = parentElement;
 		this.visor = visor;
+		this.maxThumbsToShow = maxThumbsToShow;
 		
 		// Esperar a que Visor3D y el Loader estén listos
         Promise.all([this.visor.ready, this.visor.loader.ready]).then(() => {
@@ -11,10 +12,38 @@ export class Carousel {
             this.#addWheelEvent();
 			this.#addClickEvents();
         });
-		this.thumbnailsCount = 7; // Esperar con promesa y calcular.
+		
+		window.addEventListener('resize', () => {
+			this.#updateThumbnailsDisplay();
+		});
+	}
+	
+	// Calcular número de thumbnails a mostrar:
+	#calculateThumbnailsCount(container, max) {
+		let style = window.getComputedStyle(container)
+		let width = parseFloat(style.width);
+		let height = parseFloat(style.height);
+		let numItems = this.visor.loader.thumbnails.length;
+		
+		let amount = Math.floor(width / height);
+		// Si hay más que el máximo configurado, se mostrará solo el máximo
+		if (amount > max) {
+			amount = max;
+		}
+
+		// Si hay más que el número de elementos en el array, se reduce
+		if (amount > numItems) {
+			amount = numItems;
+		}
+
+		// Si el número es par, se reduce en uno
+		if (amount % 2 === 0) {
+			amount -= -1;
+		}
+		this.thumbnailsCount = amount;
 		this.thHalfCount = Math.floor(this.thumbnailsCount / 2); // Mitad de thumbnails visibles a cada lado del centro
 	}
-
+	
 	// Crear contenedor de miniaturas
 	#createThumbnailContainer() {
 		this.thumbnailContainer = document.createElement('div');
@@ -103,18 +132,17 @@ export class Carousel {
 	// Función para obtener los thumbnails visibles
 	#getVisibleThumbnails() {
 		const visibleThumbnails = [];
-
 		// Rellenar el arreglo de miniaturas visibles de forma circular
 		for (let i = -this.thHalfCount; i <= this.thHalfCount; i++) {
 			const index = (this.visor.currentItemIndex + i + this.visor.loader.thumbnails.length) % this.visor.loader.thumbnails.length;
 			visibleThumbnails.push(this.visor.loader.thumbnails[index]);
 		}
-
 		return visibleThumbnails;
 	}
 
 	// Función para actualizar el display del carrusel de thumbnails
 	#updateThumbnailsDisplay() {
+		this.#calculateThumbnailsCount(this.thumbnailContainer, this.maxThumbsToShow);
 		const visibleThumbnails = this.#getVisibleThumbnails();
 		//const thumbnailContainer = document.getElementById("thumbnail-container");
 		this.thumbnailContainer.innerHTML = "";  // Limpiar el contenedor
