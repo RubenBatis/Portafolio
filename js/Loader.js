@@ -1,13 +1,17 @@
 import { GLTFLoader } from "GLTFLoader";
 import { AnimationMixer, LoopRepeat } from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
+
 export class Loader {
 	constructor(contentFolder) {
-		this.modelNames = [];
+		this.resourceNames = [];
 		this.thumbnails = [];
-		this.modelConfigs = {};
+		this.configs = {};
 		this.mixers = {};
 		this.models = {};
+		this.videos = {};
+		this.images = {};
 		this.animations = {};
+		this.types = {};
 		this.contentFolder = contentFolder;
 		
 		// Llama a la función de carga y asigna la promesa a `this.ready`
@@ -35,6 +39,51 @@ export class Loader {
 				console.error(`Error al cargar el modelo: ${error}`);
 				reject();
 			});
+		});
+	}
+	
+	async #loadVideo(videoFile) {
+		return new Promise((resolve, reject) => {
+			// Crear el elemento de video
+			const videoElement = document.createElement('video');
+			videoElement.src = videoFile;
+			videoElement.preload = 'auto'; // Pre-cargar el video para reducir el tiempo de carga cuando se use
+			videoElement.muted = true;     // Silenciado por defecto para prevenir reproducción automática con sonido
+
+			// Esperar a que los metadatos se carguen para saber que el video está listo
+			videoElement.addEventListener('loadedmetadata', () => {
+				let videoName = videoFile.split('/').pop().split('.').slice(0, -1).join('.');
+				this.videos[videoName] = videoElement;
+				resolve();
+			});
+
+			// Manejador de errores para capturar fallos en la carga
+			videoElement.addEventListener('error', (event) => {
+				console.error(`Error al cargar el video: ${event.message}`);
+				reject();
+			});
+		});
+	}
+	
+	async #loadImage(imageFile) {
+		return new Promise((resolve, reject) => {
+			// Crear el elemento de imagen
+			const imageElement = document.createElement('img');
+			imageElement.src = imageFile;
+			imageElement.alt = 'Loaded Image'; // Añadir un atributo alt descriptivo
+
+			// Esperar a que la imagen se cargue
+			imageElement.onload = () => {
+				let imageName = imageFile.split('/').pop().split('.').slice(0, -1).join('.');
+				this.images[imageName] = imageElement;
+				resolve();
+			};
+
+			// Manejador de errores para capturar fallos en la carga
+			imageElement.onerror = (event) => {
+				console.error(`Error al cargar la imagen: ${event.message}`);
+				reject();
+			};
 		});
 	}
 
@@ -69,35 +118,45 @@ export class Loader {
 
 			// Asegúrate de que jsonFiles tiene contenido
 			if (jsonFiles && jsonFiles.length > 0) {
+				
+			// Mapa que asocia extensiones a funciones de carga y tipos
+            const extensionToTypeMap = {
+                'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+                'glb': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+                'mp4': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
+                'webm': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
+                'jpg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+                'png': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+                // Puedes añadir más extensiones y tipos aquí
+            };
+				
 				const promises = jsonFiles.map(async (jsonFile) => {
-				//jsonFiles.forEach(async (jsonFile) => {
 					try {
 						const response = await fetch(`${this.contentFolder}/${jsonFile}`);
 						const config = await response.json();
 
 						// Usar el archivo del modelo y thumbnail
-						await this.#loadModel(`${this.contentFolder}/${config.modelFile}`);
+						const configName = config.resourceFile.replace(/\.[^/.]+$/, "");
+						this.configs[configName] = config;
+						this.resourceNames.push(configName);
 						this.#loadThumbnail(`${this.contentFolder}/${config.thumbnailFile}`);
-						const modelConfigName = config.modelFile.replace(/\.[^/.]+$/, "");
-						this.modelConfigs[modelConfigName] = config;
-						this.modelNames.push(modelConfigName);
+
+						// Determinar la extensión del archivo y usar el mapa para cargarlo
+						const extension = config.resourceFile.split('.').pop().toLowerCase();
+						const loader = extensionToTypeMap[extension];
+
+						if (loader) {
+							this.types[configName] = loader.type; // Guardar el tipo
+							await loader.loadFunction(`${this.contentFolder}/${config.resourceFile}`);
+						} else {
+							console.warn(`Extensión no reconocida: ${extension}`);
+						}
 					} catch (error) {
 						console.error(`Error al cargar el JSON: ${error}`);
 					}
 				});
 				
 				await Promise.all(promises);
-				
-				/* Esta funcionalidad hay que pasarla al visor (o quitarla)
-				if (this.modelNames.length > 0) {
-					this.applyModelConfig(this.modelNames[0]);
-				}*/
-				
-				/* Esta funcionalidad hay que pasarla al carrusel
-				if (this.modelNames.length < thumbnails_count) {
-					thumbnails_count = this.modelNames.length;
-					thHalfCount = Math.floor(thumbnails_count / 2);
-				}*/
 				
 			} else {
 				console.log('No se encontraron archivos JSON.');

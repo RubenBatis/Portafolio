@@ -37,7 +37,7 @@ export class Visor3D {
 		
 		// Espera a que el loader esté listo
         this.loader.ready.then(() => {
-            this.applyModelConfig(this.loader.modelNames[initModel]);
+            this.applyModelConfig(this.loader.resourceNames[initModel]);
 			this.animate = this.animate.bind(this);
             this.animate();
         }).catch(error => {
@@ -153,7 +153,7 @@ export class Visor3D {
 	
 	// Método para alternar la pausa/reproducción
 	#toggleAnimationPause() {
-		let mixer = this.loader.mixers[this.loader.modelNames[this.currentItemIndex]];
+		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex]];
 		if (mixer) {
 			mixer._actions.forEach(action => {
 				action.paused = !action.paused;
@@ -227,7 +227,7 @@ export class Visor3D {
 
 	// Método que aplica la configuración de cada modelo a la visualización
 	applyModelConfig(modelName) {
-		const config = this.loader.modelConfigs[modelName];
+		const config = this.loader.configs[modelName];
 		// Eliminar todos los elementos de la escena
 		this.#clearScene(this.scene);
 		
@@ -288,7 +288,7 @@ export class Visor3D {
 	animate = () => {
 		requestAnimationFrame(this.animate);
 		this.#resizeRendererToDisplaySize();
-		let mixer = this.loader.mixers[this.loader.modelNames[this.currentItemIndex]];
+		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex]];
 		
 		// Si hay un mixer activo, actualizarlo
 		if (mixer) {

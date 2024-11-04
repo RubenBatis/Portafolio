@@ -1,5 +1,5 @@
 {
-  "modelFile": "tullimonstrum.glb",
+  "resourceFile": "tullimonstrum.glb",
   "thumbnailFile": "Tullimonstrum.png",
   "description": "Tullimonstrum\n\nEl monstruo de Tully (Tullimonstrum gregarium) es un posible pero disputado vertebrado extinto relacionado con las lampreas hallado en Illinois.\n\nhttps://es.wikipedia.org/wiki/Tullimonstrum\n\nModelado poligonal + mirror + subdivisión surface.\nTextura procedural bakeada y retocada sobre el modelo.",
   "backgroundColor": "#276c81",

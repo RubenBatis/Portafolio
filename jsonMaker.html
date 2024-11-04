@@ -118,8 +118,8 @@
         <div class="group">
             <h2>Archivos</h2>
             <div class="form-group">
-                <label for="modelFile">Modelo (gltf):</label>
-                <input type="file" id="modelFile" accept=".gltf,.glb,.stl">
+                <label for="resourceFile">Archivo :</label>
+                <input type="file" id="resourceFile" accept=".gltf,.glb,.stl">
             </div>
             <div class="form-group">
                 <label for="thumbnailFile">Miniatura (jpg):</label>
@@ -323,11 +323,11 @@
                 };
             });
 			
-			const modelFileName = document.getElementById('modelFile').files[0]?.name || "";
+			const resourceFileName = document.getElementById('resourceFile').files[0]?.name || "";
 			const thumbnailFileName = document.getElementById('thumbnailFile').files[0]?.name || "";
 
             const data = {
-                modelFile: modelFileName,
+                resourceFile: resourceFileName,
                 thumbnailFile: thumbnailFileName,
                 description: document.getElementById('description').value,
                 backgroundColor: document.getElementById('backgroundColor').value,
@@ -376,7 +376,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-			filename = (document.getElementById('modelFile').files[0]?.name || "").replace(/\.[^/.]+$/, "");
+			filename = (document.getElementById('resourceFile').files[0]?.name || "").replace(/\.[^/.]+$/, "");
             a.download = filename + '.json'; // Nombre del archivo a descargar
             document.body.appendChild(a);
             a.click();
@@ -393,7 +393,7 @@
 			reader.onload = function(e) {
 				try {
 					const jsonData = JSON.parse(e.target.result);
-					document.getElementById('modelFile').files[0] = jsonData.modelFile
+					document.getElementById('resourceFile').files[0] = jsonData.resourceFile
 					document.getElementById('thumbnailFile').files[0] = jsonData.thumbnailFile
 					
 					// Asignar valores a los campos

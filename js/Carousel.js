@@ -56,9 +56,9 @@ export class Carousel {
 		this.thumbnailContainer.addEventListener('wheel', (event) => {
 			let modelNumber;
 			if (event.deltaY > 0) {
-				modelNumber = (this.visor.currentItemIndex + 1) % this.visor.loader.modelNames.length;
+				modelNumber = (this.visor.currentItemIndex + 1) % this.visor.loader.resourceNames.length;
 			} else {
-				modelNumber = (this.visor.currentItemIndex - 1 + this.visor.loader.modelNames.length) % this.visor.loader.modelNames.length;
+				modelNumber = (this.visor.currentItemIndex - 1 + this.visor.loader.resourceNames.length) % this.visor.loader.resourceNames.length;
 			}
 				this.#changeModel(modelNumber);
 		}, { passive: true });
@@ -89,7 +89,7 @@ export class Carousel {
 			newLeftArrow.className = 'arrow left';
 			newLeftArrow.innerHTML = "\u2329"; // Unicode para la flecha izquierda
 			newLeftArrow.addEventListener('click', () => {
-				let modelNumber = (this.visor.currentItemIndex - 1 + this.visor.loader.modelNames.length) % this.visor.loader.modelNames.length;
+				let modelNumber = (this.visor.currentItemIndex - 1 + this.visor.loader.resourceNames.length) % this.visor.loader.resourceNames.length;
 				this.#changeModel(modelNumber);
 			});
 			this.thumbnailContainer.appendChild(newLeftArrow);
@@ -100,7 +100,7 @@ export class Carousel {
 			newRightArrow.className = 'arrow right';
 			newRightArrow.innerHTML = "\u232A"; // Unicode para la flecha derecha
 			newRightArrow.addEventListener('click', () => {
-				let modelNumber = (this.visor.currentItemIndex + 1) % this.visor.loader.modelNames.length;
+				let modelNumber = (this.visor.currentItemIndex + 1) % this.visor.loader.resourceNames.length;
 				this.#changeModel(modelNumber);
 			});
 			this.thumbnailContainer.appendChild(newRightArrow);
@@ -115,17 +115,17 @@ export class Carousel {
 
 	//Antes de cada cambio de modelo, se guardan algunas configuraciones del anterior.
 	#saveModelConfig(modelName) {
-		this.visor.loader.modelConfigs[modelName].camera.position = [this.visor.camera.position.x, 
+		this.visor.loader.configs[modelName].camera.position = [this.visor.camera.position.x, 
 																	 this.visor.camera.position.y, 
 																	 this.visor.camera.position.z];
 	}
 
 	//Función a llamar desde los eventos que cambien el modelo
 	#changeModel(modelNumber) {
-		this.#saveModelConfig(this.visor.loader.modelNames[this.visor.currentItemIndex]);
+		this.#saveModelConfig(this.visor.loader.resourceNames[this.visor.currentItemIndex]);
 		this.visor.currentItemIndex = modelNumber;
 
-		this.visor.applyModelConfig(this.visor.loader.modelNames[this.visor.currentItemIndex]);
+		this.visor.applyModelConfig(this.visor.loader.resourceNames[this.visor.currentItemIndex]);
 		this.#updateThumbnailsDisplay();
 	}
 
@@ -160,7 +160,7 @@ export class Carousel {
 		});
 
 		//actualizar el color de fondo del div de thumbnails
-		this.updateThumbnailsBackground(this.visor.loader.modelConfigs[this.visor.loader.modelNames[this.visor.currentItemIndex]].backgroundColor);
+		this.updateThumbnailsBackground(this.visor.loader.configs[this.visor.loader.resourceNames[this.visor.currentItemIndex]].backgroundColor);
 
 		// Añadir los botones de navegación si aún no están
 		this.#createNavigationButtons();

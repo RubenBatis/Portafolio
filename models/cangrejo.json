@@ -1,5 +1,5 @@
 {
-  "modelFile": "cangrejo.glb",
+  "resourceFile": "cangrejo.glb",
   "thumbnailFile": "cangrejo.png",
   "description": "Sr. Cangrejo.\n\nDe la famosa serie. Bob Esponja.\nSalvo las pinzas, en las que usé sculpting, el resto del modelo está hecho con modelado poligonal, con modificadores Mirror y Subdivision surface.\nTiempo aproximado: Una hora.",
   "backgroundColor": "#5acfbe",
