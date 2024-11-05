@@ -59,7 +59,7 @@ canvas {
 .thumbnail {
 	height: 75%;
 	margin: 0 10px;
-	transition: transition: transform 0.5s ease-in-out;
+	transition: transform 0.5s ease-in-out;
 }
 
 .thumbnail:hover {

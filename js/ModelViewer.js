@@ -1,17 +1,17 @@
+import { Viewer } from './Viewer.js';
 import { Loader } from './Loader.js';
 import * as THREE from "three";
 import { OrbitControls } from "OrbitControls";
-export class Visor3D {
-	constructor(contentFolder, parentElement, initModel = 0) {
+export class ModelViewer extends Viewer{
+	constructor(contentFolder, parentElement, { initContent = 0, loader = null } = {}) {
 		// Crear la escena y el renderer
-		this.loader = new Loader(contentFolder);
-		this.parentElement = parentElement;
+		super(contentFolder, parentElement, loader);
 		this.currentItemIndex = 0;
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
 		this.renderer.setSize(this.parentElement.clientWidth * 2, this.parentElement.clientHeight * 2);
 		this.canvas = this.renderer.domElement;
-		
+
 		//Ajustar el tamaño del canvas
 		this.canvas.style.width = this.parentElement.clientWidth + 'px';
 		this.canvas.style.height = (this.parentElement.clientHeight * 0.8) + 'px'; //esto está fatal
@@ -28,16 +28,13 @@ export class Visor3D {
 		let ambientLight = new THREE.AmbientLight(0x404040); // Luz ambiental // también está fatal
 		this.scene.add(ambientLight);
 		
-		this.#createDescriptionPanel();
-		this.#createAnimControls();
-		
 		this.parentElement.appendChild(this.canvas);
 		
 		this.clock = new THREE.Clock();
 		
 		// Espera a que el loader esté listo
         this.loader.ready.then(() => {
-            this.applyModelConfig(this.loader.resourceNames[initModel]);
+            this.applyConfig(this.loader.resourceNames[initContent]);
 			this.animate = this.animate.bind(this);
             this.animate();
         }).catch(error => {
@@ -45,7 +42,7 @@ export class Visor3D {
         });
 	}
 	
-	// Función para configurar el tamaño del canvas y renderer
+	// Configurar el tamaño del canvas y renderer
 	#resizeRendererToDisplaySize() {
 		const width = this.parentElement.clientWidth;
 		const height = this.parentElement.clientHeight * 0.8;
@@ -55,6 +52,7 @@ export class Visor3D {
 		this.canvas.style.height = height + 'px';
 	}
 	
+	// Configurar la cámara.
 	async #setupCamera() {
 		// Esperamos hasta que el canvas tenga un tamaño mayor que 0
 		while (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
@@ -69,6 +67,7 @@ export class Visor3D {
 		return camera;
 	}
 
+	// Llamar a la anterior y esperar a que termine para configurar los controles.
 	async #setupControlsAndCamera() {
 	try {
 		this.camera = await this.#setupCamera();
@@ -92,78 +91,20 @@ export class Visor3D {
 			console.log("Error al configurar la cámara:", error);
 		}
 	}
-	
-	#updateModelDescription(description, backgroundColor) {
-		const descriptionDiv = document.querySelector("#description-panel");
-		
-		if (descriptionDiv) {
-			descriptionDiv.innerHTML = description.replace(/\n/g, '<br>');
-			descriptionDiv.style.color = backgroundColor;
-			document.getElementById("toggle-button").style.color = backgroundColor;
-			document.getElementById("pause-button").style.color = backgroundColor;
-		}
-	}
-	
-	// Crear y añadir el panel de descripción
-	#createDescriptionPanel() {
-		let descriptionPanel = document.createElement('div');
-		descriptionPanel.id = 'description-panel';
-		descriptionPanel.style.display = 'none';
-		this.parentElement.appendChild(descriptionPanel);
 
-		// Crear y añadir el botón de mostrar/ocultar
-		let toggleButton = document.createElement('button');
-		toggleButton.id = 'toggle-button';
-		toggleButton.innerText = '\u2261';
-		toggleButton.addEventListener('click', () => {
-			if (descriptionPanel.style.display === 'none') {
-				descriptionPanel.style.display = 'block';
-				descriptionPanel.offsetHeight;
-				descriptionPanel.style.filter = 'invert(100%)'
-			} else {
-				descriptionPanel.style.display = 'none';
-			}
-		});
-		this.parentElement.appendChild(toggleButton);
-	}
-	
-	// Crear y añadir el botón de pausa
-	#createAnimControls() {
-		this.pauseButton = document.createElement('button');
-		this.pauseButton.id = 'pause-button';
-		this.pauseButton.innerHTML = '⏸';
-		this.parentElement.appendChild(this.pauseButton);
-		this.isPaused = false;
-		
-		// Alternar la animación al hacer clic en el botón
-		this.pauseButton.addEventListener('click', () => this.#toggleAnimationPause());
-
-		// Alternar con la tecla Espacio
-		window.addEventListener('keydown', (event) => {
-			if (event.code === 'Space') {
-				this.#toggleAnimationPause();
-			}
-		});
-	}
-	
-	// Crear y añadir el botón de pausa
-	#togglePauseButtonIcon(paused) {
-		paused ? this.pauseButton.innerHTML = '⏸' : this.pauseButton.innerHTML = '⏵';;
-	}
-	
 	// Método para alternar la pausa/reproducción
-	#toggleAnimationPause() {
+	toggleAnimationPause() {
 		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex]];
 		if (mixer) {
 			mixer._actions.forEach(action => {
 				action.paused = !action.paused;
-				this.#togglePauseButtonIcon(!action.paused)
+				this.togglePauseButtonIcon(!action.paused)
 			});
 		}
 	}
 	
 	// Mostrar el botón si el modelo tiene animaciones
-	#togglePauseButton(modelName) {
+	togglePauseButton(modelName) {
 		if (this.loader.mixers[modelName]) {
 			this.pauseButton.style.display = 'block';
 		} else {
@@ -226,8 +167,8 @@ export class Visor3D {
 	}
 
 	// Método que aplica la configuración de cada modelo a la visualización
-	applyModelConfig(modelName) {
-		const config = this.loader.configs[modelName];
+	applyConfig(modelName) {
+		const config = super.applyConfig(modelName);
 		// Eliminar todos los elementos de la escena
 		this.#clearScene(this.scene);
 		
@@ -271,17 +212,9 @@ export class Visor3D {
 			const ambientLight = new THREE.AmbientLight(config.ambientLight.color, config.ambientLight.intensity);
 			this.scene.add(ambientLight);
 		}
-
-		/* Esta funcionalidad hay que pasarla al carrusel
-		// Cambiar el color del degradado de fondo en los thumbnails y reordenarlos
-		updateThumbnailsBackground(config.backgroundColor);
-		updateThumbnailDisplay();*/
-
-		// Mostrar la descripción en el HTML
-		this.#updateModelDescription(config.description, config.backgroundColor);
 		
 		// Verificar si el modelo tiene animaciones y manejar el botón de pausa
-		this.#togglePauseButton(modelName);
+		this.togglePauseButton(modelName);
 	}
 	
 	// Animar la escena

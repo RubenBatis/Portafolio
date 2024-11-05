@@ -14,6 +14,16 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
+		@media (aspect-ratio > 16/9) {
+			.container {
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			}
+		}
+		@media (aspect-ratio <= 16/9) {
+			.container {
+				grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+			}
+		}
         .group {
             border: 1px solid #ccc;
             padding: 15px;
@@ -109,6 +119,9 @@
             height: 80px;
 			resize: none;
         }
+		.control-3d, .control-image, .control-video {
+			display:none;
+		}		
     </style>
 </head>
 <body>
@@ -119,7 +132,7 @@
             <h2>Archivos</h2>
             <div class="form-group">
                 <label for="resourceFile">Archivo :</label>
-                <input type="file" id="resourceFile" accept=".gltf,.glb,.stl">
+                <input type="file" id="resourceFile" accept=".gltf,.glb,.mp4,.webm,.jpg,.png" onchange="cambiarFormularioPorTipo()">
             </div>
             <div class="form-group">
                 <label for="thumbnailFile">Miniatura (jpg):</label>
@@ -141,7 +154,7 @@
         </div>
 
         <!-- Grupo de cámara -->
-        <div class="group">
+        <div class="group control-3d">
             <h2>Cámara</h2>
             <div class="form-group">
                 <label>Posición de la Cámara:</label>
@@ -175,7 +188,7 @@
         </div>
 
         <!-- Grupo de escala -->
-        <div class="group">
+        <div class="group control-3d">
             <h2>Escala del Modelo</h2>
             <div class="form-group">
                 <label>Escala:</label>
@@ -188,7 +201,7 @@
         </div>
 
         <!-- Grupo de animación -->
-        <div class="group">
+        <div class="group control-3d">
             <h2>Animación</h2>
             <div class="form-group">
                 <label>Configuración de Animación:</label>
@@ -200,7 +213,7 @@
         </div>
 
         <!-- Grupo de luz ambiental -->
-        <div class="group">
+        <div class="group control-3d">
             <h2>Luz Ambiental</h2>
             <div class="form-group">
                 <label>Intensidad:</label>
@@ -214,7 +227,7 @@
         </div>
 
         <!-- Grupo de luces adicionales -->
-        <div class="group" id="lightsContainer">
+        <div class="group control-3d" id="lightsContainer">
             <h2>Luces<button id="addLightButton" onclick="agregarLuz()">+</button></h2>
 			
             <!-- Template de Luz -->
@@ -243,6 +256,25 @@
                 </div>
             </div>
         </div>
+		
+		<!-- Controles para imágenes -->
+		<div id="imageControls" class="group control-image">
+			<h2>Configuración de la imagen</h2>
+			<div class="form-group">
+				<label><input type="checkbox" id="navigationAllowed"> Navegación permitida</label>
+			</div>
+		</div>
+
+		<!-- Controles para videos -->
+		<div id="videoControls" class="group control-video">
+			<h2>Configuración del video</h2>
+			<div class="form-group">
+				<label><input type="checkbox" id="navigationAllowed"> Navegación permitida</label>
+			</div>
+			<div class="form-group">
+				<label><input type="checkbox" id="playbackControls"> Controles de reproducción</label>
+			</div>
+		</div>
     </div>
 
     <!-- Botón flotante para generar JSON -->
@@ -259,11 +291,60 @@
         let lightCount = 0;
 
 		let lightTemplate;
-		
+
+		const formMap = {
+			'gltf': { type: '3dmodel' },
+			'glb': { type: '3dmodel' },
+			'mp4': { type: 'video' },
+			'webm': { type: 'video' },
+			'jpg': { type: 'image' },
+			'png': { type: 'image' }
+		};
+
 		window.onload = function() {
 			// Guardar el template original en una variable como clon
 			lightTemplate = document.getElementById('lightTemplate').cloneNode(true);
 		};
+				
+		// Función para cambiar los formularios según el tipo de archivo
+		function cambiarFormularioPorTipo() {
+			const fileInput = document.getElementById('resourceFile');
+			const selectedFile = fileInput.files[0];
+			const extension = selectedFile ? selectedFile.name.split('.').pop().toLowerCase() : '';
+
+			const formType = formMap[extension]?.type;
+
+			// Obtener todos los elementos por clase
+			const control3D = document.getElementsByClassName('control-3d');
+			const controlImage = document.getElementsByClassName('control-image');
+			const controlVideo = document.getElementsByClassName('control-video');
+
+			// Función para mostrar u ocultar grupos
+			function toggleDisplay(elements, show) {
+				for (let element of elements) {
+					element.style.display = show ? 'block' : 'none';
+				}
+			}
+
+			// Mostrar/ocultar según el tipo de archivo
+			if (formType === '3dmodel') {
+				toggleDisplay(control3D, true);
+				toggleDisplay(controlImage, false);
+				toggleDisplay(controlVideo, false);
+			} else if (formType === 'image') {
+				toggleDisplay(control3D, false);
+				toggleDisplay(controlImage, true);
+				toggleDisplay(controlVideo, false);
+			} else if (formType === 'video') {
+				toggleDisplay(control3D, false);
+				toggleDisplay(controlImage, false);
+				toggleDisplay(controlVideo, true);
+			} else {
+				toggleDisplay(control3D, false);
+				toggleDisplay(controlImage, false);
+				toggleDisplay(controlVideo, false);
+			}
+		}
 		
         // Función para agregar una nueva luz
         function agregarLuz() {
@@ -324,14 +405,19 @@
             });
 			
 			const resourceFileName = document.getElementById('resourceFile').files[0]?.name || "";
+			const extension = resourceFileName.split('.').pop().toLowerCase();
+			const fileType = formMap[extension]?.type;
 			const thumbnailFileName = document.getElementById('thumbnailFile').files[0]?.name || "";
-
-            const data = {
-                resourceFile: resourceFileName,
+			
+			const data = {
+			    resourceFile: resourceFileName,
                 thumbnailFile: thumbnailFileName,
                 description: document.getElementById('description').value,
                 backgroundColor: document.getElementById('backgroundColor').value,
-				camera: {
+			}
+
+			if (fileType === '3dmodel') {
+				data.camera = {
 					position: [
 						parseFloat(document.getElementById('cameraPosX').value),
 						parseFloat(document.getElementById('cameraPosY').value),
@@ -348,22 +434,27 @@
 						parseFloat(document.getElementById('targetZ').value)
 					],
 					zoom: parseFloat(document.getElementById('cameraZoom').value)
-				},
-                scale: [
+				};
+                data.scale = [
                     parseFloat(document.getElementById('scaleX').value),
                     parseFloat(document.getElementById('scaleY').value),
                     parseFloat(document.getElementById('scaleZ').value)
-                ],
-                animation: {
+                ];
+                data.animation = {
                     enabled: document.getElementById('animationEnabled').checked,
                     loop: document.getElementById('animationLoop').checked
-                },
-                ambientLight: {
+                };
+                data.ambientLight = {
                     intensity: parseFloat(document.getElementById('ambientIntensity').value),
                     color: document.getElementById('ambientColor').value
-                },
-                lights: lightsArray
-            };
+                };
+                data.lights = lightsArray;
+			} else if (fileType === 'image') {
+				data.navigationAllowed = document.getElementById('navigationAllowed').checked;
+			} else if (fileType === 'video') {
+				data.navigationAllowed = document.getElementById('navigationAllowed').checked;
+				data.playbackControls = document.getElementById('playbackControls').checked;
+			}
 
             document.getElementById('output').textContent = JSON.stringify(data, null, 2);
             return JSON.stringify(data, null, 2); // Devolvemos el JSON para usarlo en la descarga
@@ -384,7 +475,7 @@
             URL.revokeObjectURL(url); // Limpiar la URL
         }
 		
-		// Función que carga un json para verlo o editarlo
+		// Función que carga un JSON para verlo o editarlo
 		function cargarJSON(event) {
 			const file = event.target.files[0];
 			if (!file) return;
@@ -393,58 +484,76 @@
 			reader.onload = function(e) {
 				try {
 					const jsonData = JSON.parse(e.target.result);
-					document.getElementById('resourceFile').files[0] = jsonData.resourceFile
-					document.getElementById('thumbnailFile').files[0] = jsonData.thumbnailFile
-					
+
 					// Asignar valores a los campos
 					document.getElementById('description').value = jsonData.description || '';
 					document.getElementById('backgroundColor').value = jsonData.backgroundColor || '#ffffff';
 
 					// Cámara
-					document.getElementById('cameraPosX').value = jsonData.camera.position[0] || 0;
-					document.getElementById('cameraPosY').value = jsonData.camera.position[1] || 0;
-					document.getElementById('cameraPosZ').value = jsonData.camera.position[2] || 0;
-					document.getElementById('cameraRotX').value = jsonData.camera.rotation[0] || 0;
-					document.getElementById('cameraRotY').value = jsonData.camera.rotation[1] || 0;
-					document.getElementById('cameraRotZ').value = jsonData.camera.rotation[2] || 0;
-					document.getElementById('targetX').value = jsonData.camera.lookAt[0] || 0;
-					document.getElementById('targetY').value = jsonData.camera.lookAt[1] || 0;
-					document.getElementById('targetZ').value = jsonData.camera.lookAt[2] || 0;
-					document.getElementById('cameraZoom').value = jsonData.camera.zoom || 1;
+					if (jsonData.camera) {
+						document.getElementById('cameraPosX').value = jsonData.camera.position[0] || 0;
+						document.getElementById('cameraPosY').value = jsonData.camera.position[1] || 0;
+						document.getElementById('cameraPosZ').value = jsonData.camera.position[2] || 0;
+						document.getElementById('cameraRotX').value = jsonData.camera.rotation[0] || 0;
+						document.getElementById('cameraRotY').value = jsonData.camera.rotation[1] || 0;
+						document.getElementById('cameraRotZ').value = jsonData.camera.rotation[2] || 0;
+						document.getElementById('targetX').value = jsonData.camera.lookAt[0] || 0;
+						document.getElementById('targetY').value = jsonData.camera.lookAt[1] || 0;
+						document.getElementById('targetZ').value = jsonData.camera.lookAt[2] || 0;
+						document.getElementById('cameraZoom').value = jsonData.camera.zoom || 1;
+					}
 
 					// Escala
-					document.getElementById('scaleX').value = jsonData.scale[0] || 1;
-					document.getElementById('scaleY').value = jsonData.scale[1] || 1;
-					document.getElementById('scaleZ').value = jsonData.scale[2] || 1;
+					if (jsonData.scale) {
+						document.getElementById('scaleX').value = jsonData.scale[0] || 1;
+						document.getElementById('scaleY').value = jsonData.scale[1] || 1;
+						document.getElementById('scaleZ').value = jsonData.scale[2] || 1;
+					}
 
 					// Animación
-					document.getElementById('animationEnabled').checked = jsonData.animation.enabled || false;
-					document.getElementById('animationLoop').checked = jsonData.animation.loop || false;
+					if (jsonData.animation) {
+						document.getElementById('animationEnabled').checked = jsonData.animation.enabled || false;
+						document.getElementById('animationLoop').checked = jsonData.animation.loop || false;
+					}
 
-					// Luz ambiente
-					document.getElementById('ambientIntensity').value = jsonData.ambientLight.intensity || 0.4;
-					document.getElementById('ambientColor').value = jsonData.ambientLight.color || '#ffffff';
+					// Luz ambiental
+					if (jsonData.ambientLight) {
+						document.getElementById('ambientIntensity').value = jsonData.ambientLight.intensity || 0.4;
+						document.getElementById('ambientColor').value = jsonData.ambientLight.color || '#ffffff';
+					}
 
 					// Limpiar luces existentes y añadir las nuevas
 					const lightsContainer = document.getElementById('lightsContainer');
 					lightsContainer.querySelectorAll('.light-group').forEach(light => light.remove());
 					lightCount = 0;
-					jsonData.lights.forEach((light, index) => {
-						agregarLuz(); // Añade una nueva luz
-						const addedLight = lightsContainer.querySelectorAll('.light-group')[index];
-						// Rellenar los datos de la luz
-						addedLight.querySelector('.lightPosX').value = light.position[0] || 0;
-						addedLight.querySelector('.lightPosY').value = light.position[1] || 0;
-						addedLight.querySelector('.lightPosZ').value = light.position[2] || 0;
-						addedLight.querySelector('.lightIntensity').value = light.intensity || 0.8;
-						addedLight.querySelector('.lightColor').value = light.color || '#ffffff';
-					});
 
-				} catch (err) {
-					alert('Error al cargar el archivo JSON: ' + err.message);
+					if (jsonData.lights) {
+						jsonData.lights.forEach(light => {
+							agregarLuz(); // Añade una nueva luz
+							const addedLight = lightsContainer.querySelectorAll('.light-group')[lightCount - 1];
+							addedLight.querySelector('.lightPosX').value = light.position[0] || 0;
+							addedLight.querySelector('.lightPosY').value = light.position[1] || 0;
+							addedLight.querySelector('.lightPosZ').value = light.position[2] || 0;
+							addedLight.querySelector('.lightIntensity').value = light.intensity || 0.8;
+							addedLight.querySelector('.lightColor').value = light.color || '#ffffff';
+						});
+					}
+
+					// Controles de navegación para imágenes y videos
+					if (jsonData.hasOwnProperty('navigationAllowed')) {
+						document.getElementById('navigationAllowed').checked = jsonData.navigationAllowed;
+					}
+
+					if (jsonData.hasOwnProperty('playbackControls')) {
+						document.getElementById('playbackControls').checked = jsonData.playbackControls;
+					}
+
+					// Mostrar u ocultar formularios según el tipo de archivo
+					cambiarFormularioPorTipo();
+				} catch (error) {
+					alert('Error al cargar el archivo JSON: ' + error.message);
 				}
 			};
-
 			reader.readAsText(file);
 		}
     </script>

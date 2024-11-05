@@ -20,12 +20,12 @@
 		<div id="contenedor"></div>
 
 		<script type="module">
-			import { Visor3D } from './js/Visor3D.js';
+			import { ModelViewer } from './js/ModelViewer.js';
 			import { Carousel } from './js/Carousel.js';
 			
 			contenedor = document.getElementById("contenedor");	
-			var visor = new Visor3D('/models', contenedor);
-			var carousel = new Carousel(visor, contenedor);
+			var viewer = new ModelViewer('/models', contenedor);
+			var carousel = new Carousel(viewer, contenedor);
 		</script>
 	</body>
 </html>
