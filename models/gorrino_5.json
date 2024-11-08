@@ -1,0 +1,7 @@
+{
+  "resourceFile": "gorrino_5.png",
+  "thumbnailFile": "gorrino.png",
+  "description": "Esto es una prueba de concepto  del visor de imágenes, para ver, no si peta, si no cómo peta.",
+  "backgroundColor": "#ca6500",
+  "navigationAllowed": true
+}

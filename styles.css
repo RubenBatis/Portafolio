@@ -38,14 +38,104 @@ body {
 	background:-webkit-linear-gradient(var(--defdeg));
 }
 
-canvas {
-	box-sizing: border-box;
+#contenedor{
+	position: absolute;
+	overflow: hidden;
+	width: 80%;
+	height: 80%;
+	top: 10%;
+	border-radius:10px;
+	border: 0;
+	margin: 0;
 	padding: 0;
-	display: block;
-	width: 100%;
-	height: 80vh;
 }
-#thumbnail-container {
+
+.viewerContainer {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 80%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+	margin: 0;
+	padding: 0;
+}
+
+.viewer video, .viewer img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    position: relative;
+    margin: 0;
+	padding: 0;
+}
+
+.description-panel {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 30%;
+	height: 50%;
+	padding: 40px 40px 0 10px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: none;
+	/*pointer-events: none; /* No recibir eventos de ratón */
+	font-size: 30px;
+	font-family: arial;
+	text-align: right;
+	filter: invert(100%);
+	-webkit-filter: invert(100%);
+	opacity: 0.3;
+	text-shadow: 
+		-1px -1px 0 #000, /* sombra hacia la esquina superior izquierda */
+		1px -1px 0 #000,	/* sombra hacia la esquina superior derecha */
+		-1px 1px 0 #000,	/* sombra hacia la esquina inferior izquierda */
+		1px 1px 0 #000;	 /* sombra hacia la esquina inferior derecha */
+}
+
+.description-panel::first-line {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.toggle-button, .pause-button {
+	position: absolute;
+	top: 2px;
+	border: none;
+	padding: 5px;
+	font-family: Arial, sans-serif;
+	line-height: 1;
+	vertical-align: middle;
+	background-color: transparent;
+	font-size: 40px;
+	cursor: pointer;
+	z-index: 1000;
+	filter: invert(100%);
+	-webkit-filter: invert(100%);
+	/*opacity: 0;*/
+}
+
+.toggle-button {
+	right: 10px;
+}
+
+.pause-button {
+	left: 10px;
+	display:none;
+}
+
+.thumbnail-container {
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.8) 50%, transparent 100%);
 	display: flex;
 	overflow: hidden;
@@ -55,7 +145,10 @@ canvas {
 	align-items: center;
 	position: relative;
 	padding: 0;
+	margin: 0;
+	border: 0;
 }
+
 .thumbnail {
 	height: 75%;
 	margin: 0 10px;
@@ -75,7 +168,7 @@ canvas {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	line-height:20vh;
+	line-height: 20vh;
 	font-size: 20vh;
 	color: rgba(255, 255, 255, 0.2);
 	cursor: pointer;
@@ -92,68 +185,4 @@ canvas {
 
 .arrow.right {
 	right: 10px;
-}
-
-#description-panel {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 30%;
-	height: 80vh;
-	padding: 40px 40px 0 10px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	display: none;
-	/*pointer-events: none; /* No recibir eventos de ratón */
-	font-size: 30px;
-	font-family: arial;
-	text-align: right;
-	filter: invert(100%);
-	-webkit-filter: invert(100%);
-	opacity: 0.3;
-	text-shadow: 
-		-1px -1px 0 #000, /* sombra hacia la esquina superior izquierda */
-		1px -1px 0 #000,	/* sombra hacia la esquina superior derecha */
-		-1px 1px 0 #000,	/* sombra hacia la esquina inferior izquierda */
-		1px 1px 0 #000;	 /* sombra hacia la esquina inferior derecha */
-}
-
-#description-panel::first-line {
-	font-size: 40px;
-	font-weight: bold;
-}
-
-#toggle-button, #pause-button {
-	position: absolute;
-	top: 2px;
-	border: none;
-	padding: 5px;
-	font-family: Arial, sans-serif;
-	line-height: 1;
-	vertical-align: middle;
-	background-color: transparent;
-	font-size: 40px;
-	cursor: pointer;
-	z-index: 1000;
-	filter: invert(100%);
-	-webkit-filter: invert(100%);
-	/*opacity: 0;*/
-}
-
-#toggle-button {
-	right: 10px;
-}
-
-#pause-button {
-	left: 10px;
-	display:none;
-}
-
-#contenedor {
-	margin: 10px;
-	position: relative;
-	overflow: hidden;
-	width: 60%;
-	height: 100%;
-	border-radius:10px;
 }

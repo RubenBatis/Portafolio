@@ -3,22 +3,22 @@ import { Loader } from './Loader.js';
 import * as THREE from "three";
 import { OrbitControls } from "OrbitControls";
 export class ModelViewer extends Viewer{
-	constructor(contentFolder, parentElement, { initContent = 0, loader = null } = {}) {
+	constructor(contentFolder, parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
 		// Crear la escena y el renderer
 		super(contentFolder, parentElement, loader);
-		this.currentItemIndex = 0;
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
 		this.renderer.setSize(this.parentElement.clientWidth * 2, this.parentElement.clientHeight * 2);
 		this.canvas = this.renderer.domElement;
+		this.canvas.className = "viewer";
+
+		this.domElement = this.canvas;
+
+		this.currentItemIndex = currentItemIndex;
 
 		//Ajustar el tamaño del canvas
-		this.canvas.style.width = this.parentElement.clientWidth + 'px';
-		this.canvas.style.height = (this.parentElement.clientHeight * 0.8) + 'px'; //esto está fatal
-		
-		window.addEventListener('resize', () => {
-			this.#resizeRendererToDisplaySize();
-		});
+		this.canvas.style.width = (this.parentElement.clientWidth * this.widthRatio) + 'px';
+		this.canvas.style.height = (this.parentElement.clientHeight * this.heightRatio) + 'px';
 		
 		this.camera = null;
 		this.controls = null;
@@ -33,23 +33,25 @@ export class ModelViewer extends Viewer{
 		this.clock = new THREE.Clock();
 		
 		// Espera a que el loader esté listo
-        this.loader.ready.then(() => {
-            this.applyConfig(this.loader.resourceNames[initContent]);
+        this.ready.then(() => {
 			this.animate = this.animate.bind(this);
-            this.animate();
+			if (applyConfigOnInit) {
+				this.applyConfig(this.loader.resourceNames[initContent]);
+			}
+			this.animate();
         }).catch(error => {
             console.error('Error al cargar los modelos:', error);
         });
 	}
 	
 	// Configurar el tamaño del canvas y renderer
-	#resizeRendererToDisplaySize() {
+	#resize() {
 		const width = this.parentElement.clientWidth;
-		const height = this.parentElement.clientHeight * 0.8;
+		const height = this.parentElement.clientHeight;
 
 		this.renderer.setSize(width * 2, height * 2, false);
-		this.canvas.style.width = width + 'px';
-		this.canvas.style.height = height + 'px';
+		this.canvas.style.width = (this.parentElement.clientWidth * this.widthRatio) + 'px';
+		this.canvas.style.height = (this.parentElement.clientHeight * this.heightRatio) + 'px';
 	}
 	
 	// Configurar la cámara.
@@ -94,7 +96,7 @@ export class ModelViewer extends Viewer{
 
 	// Método para alternar la pausa/reproducción
 	toggleAnimationPause() {
-		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex]];
+		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]];
 		if (mixer) {
 			mixer._actions.forEach(action => {
 				action.paused = !action.paused;
@@ -106,9 +108,9 @@ export class ModelViewer extends Viewer{
 	// Mostrar el botón si el modelo tiene animaciones
 	togglePauseButton(modelName) {
 		if (this.loader.mixers[modelName]) {
-			this.pauseButton.style.display = 'block';
+			this.playPauseButton.style.display = 'block';
 		} else {
-			this.pauseButton.style.display = 'none';
+			this.playPauseButton.style.display = 'none';
 		}
 	}
 
@@ -166,6 +168,13 @@ export class ModelViewer extends Viewer{
 		}
 	}
 
+	//Antes de cada cambio de contenido, se guardan algunas configuraciones del anterior.
+	saveConfig(modelName) {
+		this.loader.configs[modelName].camera.position = [this.camera.position.x,
+														 this.camera.position.y,
+														 this.camera.position.z];
+	}
+
 	// Método que aplica la configuración de cada modelo a la visualización
 	applyConfig(modelName) {
 		const config = super.applyConfig(modelName);
@@ -175,11 +184,11 @@ export class ModelViewer extends Viewer{
 		// Y volver a cargar el modelo en cuestión
 		let model = this.loader.models[modelName];
 		this.scene.add(model);			
-		
+
 		// Cambiar el color de fondo de la escena 3D
 		this.scene.background = new THREE.Color(config.backgroundColor);
 		//renderer.setClearColor(0x000000, 0); //Esto pone el fondo transparente
-		
+
 		// Configuración de la cámara
 		if (config.camera) {
 			const cameraPosition = config.camera.position;
@@ -215,13 +224,17 @@ export class ModelViewer extends Viewer{
 		
 		// Verificar si el modelo tiene animaciones y manejar el botón de pausa
 		this.togglePauseButton(modelName);
+		
+		if (this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]]) {
+			this.togglePauseButtonIcon(!this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]]._actions[0].paused || false); // esto hay que cambiarlo con las animaciones múltiples
+		}
 	}
-	
+
 	// Animar la escena
 	animate = () => {
 		requestAnimationFrame(this.animate);
-		this.#resizeRendererToDisplaySize();
-		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex]];
+		this.#resize();
+		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]];
 		
 		// Si hay un mixer activo, actualizarlo
 		if (mixer) {

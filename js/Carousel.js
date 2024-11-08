@@ -1,4 +1,4 @@
-import { ModelViewer } from './ModelViewer.js';
+import { Viewer } from './Viewer.js';
 export class Carousel {
 	constructor(viewer, parentElement, maxThumbsToShow = 0) {
 		this.parentElement = parentElement;
@@ -11,10 +11,13 @@ export class Carousel {
             this.#updateThumbnailsDisplay();
             this.#addWheelEvent();
 			this.#addClickEvents();
-        });
-		
-		window.addEventListener('resize', () => {
-			this.#updateThumbnailsDisplay();
+			
+			window.addEventListener('resize', () => {
+				this.#updateThumbnailsDisplay();
+			});
+
+        }).catch(error => {
+			console.error("Error en la inicialización del carrusel:", error);
 		});
 	}
 	
@@ -47,20 +50,20 @@ export class Carousel {
 	// Crear contenedor de miniaturas
 	#createThumbnailContainer() {
 		this.thumbnailContainer = document.createElement('div');
-		this.thumbnailContainer.id = 'thumbnail-container';
+		this.thumbnailContainer.className = 'thumbnail-container';
 		this.parentElement.appendChild(this.thumbnailContainer);
 	}
 	
 	// Añadir evento de la rueda al ThumbnailContainer
 	#addWheelEvent() {
 		this.thumbnailContainer.addEventListener('wheel', (event) => {
-			let modelNumber;
+			let ContentNumber;
 			if (event.deltaY > 0) {
-				modelNumber = (this.viewer.currentItemIndex + 1) % this.viewer.loader.resourceNames.length;
+				ContentNumber = (this.viewer.currentItemIndex.value + 1) % this.viewer.loader.resourceNames.length;
 			} else {
-				modelNumber = (this.viewer.currentItemIndex - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
+				ContentNumber = (this.viewer.currentItemIndex.value - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
 			}
-				this.#changeModel(modelNumber);
+				this.#changeContent(ContentNumber);
 		}, { passive: true });
 	}
 
@@ -68,8 +71,8 @@ export class Carousel {
 	#addClickEvent(thumbnailElement, thumbnailIndex) {
 		thumbnailElement.setAttribute("data-thumbnumber", thumbnailIndex);
 		thumbnailElement.addEventListener("click", (event) => {
-			const modelNumber = parseInt(event.currentTarget.getAttribute("data-thumbnumber"), 10);
-			this.#changeModel(modelNumber);
+			const ContentNumber = parseInt(event.currentTarget.getAttribute("data-thumbnumber"), 10);
+			this.#changeContent(ContentNumber);
 		});
 	}
 	
@@ -89,8 +92,8 @@ export class Carousel {
 			newLeftArrow.className = 'arrow left';
 			newLeftArrow.innerHTML = "\u2329"; // Unicode para la flecha izquierda
 			newLeftArrow.addEventListener('click', () => {
-				let modelNumber = (this.viewer.currentItemIndex - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
-				this.#changeModel(modelNumber);
+				let ContentNumber = (this.viewer.currentItemIndex.value - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
+				this.#changeContent(ContentNumber);
 			});
 			this.thumbnailContainer.appendChild(newLeftArrow);
 		}
@@ -100,8 +103,8 @@ export class Carousel {
 			newRightArrow.className = 'arrow right';
 			newRightArrow.innerHTML = "\u232A"; // Unicode para la flecha derecha
 			newRightArrow.addEventListener('click', () => {
-				let modelNumber = (this.viewer.currentItemIndex + 1) % this.viewer.loader.resourceNames.length;
-				this.#changeModel(modelNumber);
+				let ContentNumber = (this.viewer.currentItemIndex.value + 1) % this.viewer.loader.resourceNames.length;
+				this.#changeContent(ContentNumber);
 			});
 			this.thumbnailContainer.appendChild(newRightArrow);
 		}
@@ -114,28 +117,22 @@ export class Carousel {
 		}
 	}
 
-	//Antes de cada cambio de modelo, se guardan algunas configuraciones del anterior.
-	#saveModelConfig(modelName) {
-		this.viewer.loader.configs[modelName].camera.position = [this.viewer.camera.position.x, 
-																	 this.viewer.camera.position.y, 
-																	 this.viewer.camera.position.z];
-	}
+	//Función a llamar desde los eventos que cambien el contenido
+	#changeContent(ContentNumber) {
+		this.viewer.saveConfig(this.viewer.loader.resourceNames[this.viewer.currentItemIndex.value]);
+		this.viewer.currentItemIndex.value = ContentNumber;
 
-	//Función a llamar desde los eventos que cambien el modelo
-	#changeModel(modelNumber) {
-		this.#saveModelConfig(this.viewer.loader.resourceNames[this.viewer.currentItemIndex]);
-		this.viewer.currentItemIndex = modelNumber;
-
-		this.viewer.applyConfig(this.viewer.loader.resourceNames[this.viewer.currentItemIndex]);
+		this.viewer.applyConfig(this.viewer.loader.resourceNames[this.viewer.currentItemIndex.value]);
 		this.#updateThumbnailsDisplay();
 	}
 
 	// Función para obtener los thumbnails visibles
 	#getVisibleThumbnails() {
 		const visibleThumbnails = [];
+				
 		// Rellenar el arreglo de miniaturas visibles de forma circular
 		for (let i = -this.thHalfCount; i <= this.thHalfCount; i++) {
-			const index = (this.viewer.currentItemIndex + i + this.viewer.loader.thumbnails.length) % this.viewer.loader.thumbnails.length;
+			const index = (this.viewer.currentItemIndex.value + i + this.viewer.loader.thumbnails.length) % this.viewer.loader.thumbnails.length;
 			visibleThumbnails.push(this.viewer.loader.thumbnails[index]);
 		}
 		return visibleThumbnails;
@@ -147,7 +144,6 @@ export class Carousel {
 		const visibleThumbnails = this.#getVisibleThumbnails();
 		//const thumbnailContainer = document.getElementById("thumbnail-container");
 		this.thumbnailContainer.innerHTML = "";  // Limpiar el contenedor
-
 		// Añadir las miniaturas visibles y aplicar clases activas
 		visibleThumbnails.forEach((thumbnail, index) => {
 			thumbnail.classList.remove('current-thumbnail');
@@ -161,7 +157,7 @@ export class Carousel {
 		});
 
 		//actualizar el color de fondo del div de thumbnails
-		this.updateThumbnailsBackground(this.viewer.loader.configs[this.viewer.loader.resourceNames[this.viewer.currentItemIndex]].backgroundColor);
+		this.updateThumbnailsBackground(this.viewer.loader.configs[this.viewer.loader.resourceNames[this.viewer.currentItemIndex.value]].backgroundColor);
 
 		// Añadir los botones de navegación si aún no están
 		this.#createNavigationButtons();

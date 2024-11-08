@@ -12,7 +12,6 @@ class CustomHandler(SimpleHTTPRequestHandler):
                 self.end_headers()
                 models_dir = 'models'
                 files = os.listdir(models_dir)
-                #model_files = [f for f in files if f.endswith(('.glb', '.gltf', '.stl'))]
                 model_files = [f for f in files if f.endswith(('.json'))]
                 # Codificar los nombres de archivo en UTF-8
                 model_files_utf8 = [f.encode('utf-8').decode('utf-8') for f in model_files]

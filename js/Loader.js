@@ -45,20 +45,20 @@ export class Loader {
 	async #loadVideo(videoFile) {
 		return new Promise((resolve, reject) => {
 			// Crear el elemento de video
-			const videoElement = document.createElement('video');
-			videoElement.src = videoFile;
-			videoElement.preload = 'auto'; // Pre-cargar el video para reducir el tiempo de carga cuando se use
-			videoElement.muted = true;     // Silenciado por defecto para prevenir reproducción automática con sonido
+			this.videoElement = document.createElement('video');
+			this.videoElement.src = videoFile;
 
+			this.videoElement.preload = 'auto'; // Pre-cargar el video para reducir el tiempo de carga cuando se use
+			this.videoElement.muted = true;     // Silenciado por defecto para prevenir reproducción automática con sonido
 			// Esperar a que los metadatos se carguen para saber que el video está listo
-			videoElement.addEventListener('loadedmetadata', () => {
+			this.videoElement.addEventListener('loadedmetadata', () => {
 				let videoName = videoFile.split('/').pop().split('.').slice(0, -1).join('.');
-				this.videos[videoName] = videoElement;
+				this.videos[videoName] = this.videoElement;
 				resolve();
 			});
 
 			// Manejador de errores para capturar fallos en la carga
-			videoElement.addEventListener('error', (event) => {
+			this.videoElement.addEventListener('error', (event) => {
 				console.error(`Error al cargar el video: ${event.message}`);
 				reject();
 			});

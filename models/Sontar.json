@@ -1,0 +1,8 @@
+{
+  "resourceFile": "Sontar.mp4",
+  "thumbnailFile": "gorsrino.png",
+  "description": "Y ya que estamos probamos el video",
+  "backgroundColor": "#4e09c1",
+  "navigationAllowed": true,
+  "playbackControls": true
+}

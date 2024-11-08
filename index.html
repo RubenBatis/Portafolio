@@ -2,8 +2,9 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-			<title>3D Model Viewer with Thumbnails</title>
-			<link rel="stylesheet" href="styles.css">
+		<title>3D Model Viewer with Thumbnails</title>
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
+		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
 		<script type="importmap">
@@ -20,11 +21,11 @@
 		<div id="contenedor"></div>
 
 		<script type="module">
-			import { ModelViewer } from './js/ModelViewer.js';
+			import { ContentViewer } from './js/ContentViewer.js';
 			import { Carousel } from './js/Carousel.js';
 			
-			contenedor = document.getElementById("contenedor");	
-			var viewer = new ModelViewer('/models', contenedor);
+			let contenedor = document.getElementById("contenedor");
+			var viewer = new ContentViewer('/models', contenedor);
 			var carousel = new Carousel(viewer, contenedor);
 		</script>
 	</body>
