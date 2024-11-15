@@ -43,7 +43,7 @@ export class ImageViewer extends Viewer {
 		window.addEventListener('mousemove', (e) => this.#panImage(e)); // Pan manual
 		window.addEventListener('mouseup', () => this.#stopPan());
 		
-		this.imageElement.addEventListener('loadeddata', () => {
+		this.imageElement.addEventListener('load', () => {
 			this.centerAndScaleImage();  // Llama a centrar el vídeo después de cargar
 		});
     }

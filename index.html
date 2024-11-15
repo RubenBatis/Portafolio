@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
+		<script src="js/scripts.js"></script>
 		<script type="importmap">
 			{
 				"imports": {
@@ -17,14 +18,38 @@
 				}
 			}
 		</script>
+		<!-- Capa de Categorías en Vertical (Capa 1) -->
+		<div class="tabs">
+			<a class="tab" href="#cat1">CATEGORÍA 1</a>
+			<a class="tab" href="#cat2">CATEGORÍA 2</a>
+		</div>
 		
-		<div id="contenedor"></div>
+		<div class="contents">
+			<div class="content" id="cat1">
+				<div class="not-so-complex-content">
+					<h1>¡Hola! Soy [Tu Nombre]</h1>
+					<img src="ruta/a/tu/foto.jpg" alt="Foto de [Tu Nombre]">
+					<p> Diseñador 2D y 3D especializado en animaciones, texturizado, sculpting y modelado poligonal.
+					Trabajo con herramientas libres como Blender, Inkscape y GIMP.
+					He colaborado en proyectos sin ánimo de lucro, como la asociación juvenil Arcadia Nezumi, creando cartelería y publicidad de eventos durante 10 años.
+					También he creado logotipos e ilustraciones editoriales para blogs y libros infantiles.
+					Mi pasión es crear y me encantaría formar parte de un estudio de animación o cualquier proyecto creativo. </p> <p class="instructions"> Explora mis trabajos navegando por las secciones del portafolio. ¡Espero que disfrutes! </p>
+				</div>
+			</div>
 
+			<div class="content" id="cat2">
+				<div class="not-so-complex-content">
+					<h1>¡Gracias por visitar mi portafolio!</h1> <img src="ruta/a/tu/foto.jpg" alt="Foto de [Tu Nombre]"> <p> Si te ha gustado mi trabajo y quieres ponerte en contacto conmigo, aquí tienes mis datos: </p> <div class="contact-info"> <p>Email: <a href="mailto:tuemail@example.com">tuemail@example.com</a></p> <p>Teléfono: +34 123 456 789</p> </div> <div class="social-media"> <a href="https://www.linkedin.com/in/tuperfil" target="_blank">LinkedIn</a> <a href="https://twitter.com/tuusuario" target="_blank">Twitter</a> <a href="https://www.instagram.com/tuusuario" target="_blank">Instagram</a>
+				</div>
+			</div>
+		</div>
+		
 		<script type="module">
 			import { ContentViewer } from './js/ContentViewer.js';
 			import { Carousel } from './js/Carousel.js';
 			
-			let contenedor = document.getElementById("contenedor");
+			let contenedor = createCategory().childNodes[0];
+			
 			var viewer = new ContentViewer('/models', contenedor);
 			var carousel = new Carousel(viewer, contenedor);
 		</script>

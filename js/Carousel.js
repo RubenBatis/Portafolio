@@ -57,6 +57,7 @@ export class Carousel {
 	// Añadir evento de la rueda al ThumbnailContainer
 	#addWheelEvent() {
 		this.thumbnailContainer.addEventListener('wheel', (event) => {
+			event.preventDefault();
 			let ContentNumber;
 			if (event.deltaY > 0) {
 				ContentNumber = (this.viewer.currentItemIndex.value + 1) % this.viewer.loader.resourceNames.length;
@@ -64,7 +65,7 @@ export class Carousel {
 				ContentNumber = (this.viewer.currentItemIndex.value - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
 			}
 				this.#changeContent(ContentNumber);
-		}, { passive: true });
+		});//, { passive: true });
 	}
 
 	// Añadir eventos de click a los thumbnails
