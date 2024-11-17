@@ -116,62 +116,92 @@ function createAndAddDiv() {
 }
 
 function createCategory() {
-  // Contar el número de elementos con la clase "inner-complex-content"
-  const innerComplexContents = document.querySelectorAll('.inner-complex-content');
-  const count = innerComplexContents.length + 2; // Comenzar desde 2
+	// Contar el número de elementos con la clase "inner-complex-content"
+	const innerComplexContents = document.querySelectorAll('.inner-complex-content');
+	const count = innerComplexContents.length + 2; // Comenzar desde 2
 
-  // Crear el div principal con clase "content" y id dinámico
-  const outerDiv = document.createElement('div');
-  outerDiv.className = 'content';
-  outerDiv.id = `cat${count}`;
+	// Crear el div principal con clase "content" y id dinámico
+	const outerDiv = document.createElement('div');
+	outerDiv.className = 'content';
+	outerDiv.id = `cat${count}`;
 
-  // Crear el div interno con clase "inner-complex-content" y atributo data-complex-completed
-  const innerDiv = document.createElement('div');
-  innerDiv.className = 'inner-complex-content';
-  innerDiv.setAttribute('data-complex-completed', 'false');
+	// Crear el div interno con clase "inner-complex-content" y atributo data-complex-completed
+	const innerDiv = document.createElement('div');
+	innerDiv.className = 'inner-complex-content';
+	innerDiv.setAttribute('data-complex-completed', 'false');
 
-  // Añadir el div interno al div principal
-  outerDiv.appendChild(innerDiv);
+	// Añadir el div interno al div principal
+	outerDiv.appendChild(innerDiv);
 
-  // Modificar el href del último tab
-  const tabs = document.querySelectorAll('.tab');
-  const lastTab = tabs[tabs.length -1];
-  nextPosition = parseInt(lastTab.href.split('#')[1].replace(/\D/g, ''), 10) + 1;
-  lastTab.href = "#cat" + nextPosition;
+	// Modificar el href del último tab
+	const tabs = document.querySelectorAll('.tab');
+	const lastTab = tabs[tabs.length -1];
+	nextPosition = parseInt(lastTab.href.split('#')[1].replace(/\D/g, ''), 10) + 1;
+	lastTab.href = "#cat" + nextPosition;
  
-  // Modificar el id del último content
-  const contents = document.querySelectorAll('.content');
-  const lastContent = contents[contents.length -1];
-  lastContent.id = "cat" + nextPosition;
+	// Modificar el id del último content
+	const contents = document.querySelectorAll('.content');
+	const lastContent = contents[contents.length -1];
+	lastContent.id = "cat" + nextPosition;
  
-  // Crear el elemento <a> con clase "tab" y href dinámico
-  const tabLink = document.createElement('a');
-  tabLink.className = 'tab';
-  tabLink.href = `#cat${count}`;
-  tabLink.textContent = `CATEGORÍA ${count}`;
+	// Crear el elemento <a> con clase "tab" y href dinámico
+	const tabLink = document.createElement('a');
+	tabLink.className = 'tab';
+	tabLink.href = `#cat${count}`;
+	tabLink.textContent = `CATEGORÍA ${count}`;
 
-  // Añadir el elemento <a> en la penúltima posición del div con clase "tabs"
-  const tabsDiv = document.querySelector('.tabs');
-  if (tabsDiv) {
-    const tabsChildren = tabsDiv.children;
-    if (tabsChildren.length > 1) {
-      tabsDiv.insertBefore(tabLink, tabsChildren[tabsChildren.length - 1]);
-    } else {
-      tabsDiv.appendChild(tabLink);
-    }
-  } else {
-    console.error('No se encontró un div con la clase "tabs".');
-  }
+	// Añadir el elemento <a> en la penúltima posición del div con clase "tabs"
+	const tabsDiv = document.querySelector('.tabs');
+	if (tabsDiv) {
+		const tabsChildren = tabsDiv.children;
+		if (tabsChildren.length > 1) {
+			tabsDiv.insertBefore(tabLink, tabsChildren[tabsChildren.length - 1]);
+		} else {
+			tabsDiv.appendChild(tabLink);
+		}
+	} else {
+		console.error('No se encontró un div con la clase "tabs".');
+	}
 
-  // Añadir el div principal antes del último div con clase "content"
-  if (lastContent) {
-    lastContent.insertAdjacentElement('beforebegin', outerDiv);
-  } else {
-    console.error('No se encontró un div con la clase "content"');
-  }
+	// Añadir el div principal antes del último div con clase "content"
+	if (lastContent) {
+		lastContent.insertAdjacentElement('beforebegin', outerDiv);
+	} else {
+		console.error('No se encontró un div con la clase "content"');
+	}
 
-  // Devolver el div principal
-  return outerDiv;
+	// Devolver el div principal
+	return outerDiv;
 }
 
 
+// Selector de idioma
+function changeLanguage() {
+	const select = document.getElementById('languageSelect');
+	const selectedLanguage = select.value;
+
+	// Ocultar todos los textos
+	document.querySelectorAll('.text-es, .text-en').forEach(element => {
+		element.style.display = 'none';
+	});
+
+	// Mostrar los textos del idioma seleccionado
+	document.querySelectorAll(`.text-${selectedLanguage}`).forEach(element => {
+		element.style.display = 'inline';
+	});
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const select = document.getElementById('languageSelect');
+  const userLang = navigator.language || navigator.userLanguage;
+  const lang = userLang.split('-')[0]; // Obtener el código de idioma (es, en, etc.)
+
+  // Establecer la opción por defecto según el idioma del navegador
+  if (lang === 'es' || lang === 'en') {
+    select.value = lang;
+  } else {
+    select.value = 'es'; // Idioma por defecto si el idioma del navegador no es español ni inglés
+  }
+
+  changeLanguage();
+});

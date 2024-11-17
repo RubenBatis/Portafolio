@@ -276,3 +276,43 @@ body {
 	position: relative;
 	margin: 0px 10vh;
 }
+
+/* Menú de idioma*/
+
+.language-menu {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+}
+
+.language-menu select {
+  appearance: none; /* Eliminar el estilo predeterminado del navegador */
+  -webkit-appearance: none; /* Safari y Chrome */
+  -moz-appearance: none; /* Firefox */
+  background-color: #f0f0f0;
+  border: 0px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #808080;
+  border-radius: 8px;
+}
+
+.language-menu option {
+	appearance: none; /* Eliminar el estilo predeterminado del navegador */
+	-webkit-appearance: none; /* Safari y Chrome */
+	-moz-appearance: none; /* Firefox */
+	padding: 0px;
+	margin: 0px;
+	width: 0px;
+}
+.language-menu option[value="es"] {background-image: url(SP.png);}
+.language-menu option[value="en"] {background-image: url(UK.png);}
+
+.language-menu select::-ms-expand {
+  display: none; /* Eliminar la flecha en IE */
+}
+
+p {
+	display: inline;
+}

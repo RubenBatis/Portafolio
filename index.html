@@ -19,6 +19,14 @@
 			}
 		</script>
 		<!-- Capa de Categorías en Vertical (Capa 1) -->
+		
+		<div class="language-menu">
+			<select id="languageSelect" onchange="changeLanguage()">
+				<option value="es" data-flag="🇪🇸">ES</option>
+				<option value="en" data-flag="🇬🇧">EN</option>
+			</select>
+		</div>
+	
 		<div class="tabs">
 			<a class="tab" href="#cat1">CATEGORÍA 1</a>
 			<a class="tab" href="#cat2">CATEGORÍA 2</a>
@@ -27,20 +35,28 @@
 		<div class="contents">
 			<div class="content" id="cat1">
 				<div class="not-so-complex-content">
-					<h1>¡Hola! Soy Rubén Bautista Reyes</h1>
+					<h1><p class="text-es">¡Hola! Soy</p><p class="text-en">¡Hi! I'm</p> Rubén Bautista Reyes</h1>
 					<img src="ruta/a/tu/foto.jpg" alt="Foto de Rubén">
-					<p> Diseñador 2D y 3D especializado en animaciones, texturizado, sculpting y modelado poligonal.
+					<p class="text-es">Diseñador 2D y 3D especializado en animaciones, texturizado, sculpting y modelado poligonal.
 					Trabajo con herramientas libres como Blender, Inkscape y GIMP.	He colaborado en proyectos sin ánimo de lucro, 
 					como la asociación juvenil Arcadia Nezumi, creando cartelería y publicidad de eventos durante 10 años.
 					También he creado logotipos e ilustraciones editoriales para blogs y libros infantiles.
 					Mi pasión es crear y me encantaría formar parte de un estudio de animación o cualquier proyecto creativo.</p>
-					<p class="instructions"> Explora mis trabajos navegando por las secciones del portafolio. ¡Espero que disfrutes! </p>
+					<p class="text-en">2D and 3D designer specialised in animation, texturing, sculpting and polygonal modelling.
+					I work with free tools such as Blender, Inkscape and GIMP.	I have collaborated in non-profit projects, 
+					such as the youth association Arcadia Nezumi, creating posters and advertising for events for 10 years.
+					I have also created logos and editorial illustrations for blogs and children's books.
+					My passion is creating and I would love to be part of an animation studio or any creative project.</p>
+					<p class="instructions text-es">Explora mis trabajos navegando por las secciones del portafolio. ¡Espero que disfrutes!</p>
+					<p class="instructions text-en">Explore my work by browsing through the portfolio sections - I hope you enjoy!</p>
 				</div>
 			</div>
 
 			<div class="content" id="cat2">
 				<div class="not-so-complex-content">
-					<h1>¡Gracias por visitar mi portafolio!</h1> <img src="ruta/a/tu/foto.jpg" alt="Foto de Rubén"> <p> Si te ha gustado mi trabajo y quieres ponerte en contacto conmigo, aquí tienes mis datos: </p> <div class="contact-info"> <p>Email: <a href="mailto:tuemail@example.com">RubenBatis@gmail.com</a></p> <p>Teléfono: +34 659 04 04 39</p> </div> <div class="social-media"> <a href="https://www.linkedin.com/in/tuperfil" target="_blank">LinkedIn</a> <a href="https://twitter.com/tuusuario" target="_blank">Twitter</a> <a href="https://www.instagram.com/tuusuario" target="_blank">Instagram</a>
+					<h1><p class="text-es">¡Gracias por visitar mi portafolio!</p><p class="text-en">¡Thank you for visiting my portfolio!</p></h1> <img src="ruta/a/tu/foto.jpg" alt="Foto de Rubén">
+					<p class="text-es">Si te ha gustado mi trabajo y quieres ponerte en contacto conmigo, aquí tienes mis datos: </p><p class="text-en">If you liked my work and want to contact me, here are my contact details:</p> 
+					<div class="contact-info"> <p>Email: <a href="mailto:tuemail@example.com">RubenBatis@gmail.com</a></p> <p><p class="text-es">Teléfono:</p><p class="text-en">Phone Number:</p> (+34) 659 04 04 39</p> </div> <div class="social-media"> <a href="https://www.linkedin.com/in/tuperfil" target="_blank">LinkedIn</a> <a href="https://twitter.com/tuusuario" target="_blank">Twitter</a> <a href="https://www.instagram.com/tuusuario" target="_blank">Instagram</a>
 				</div>
 			</div>
 		</div>
