@@ -135,14 +135,10 @@ function createCategory() {
 
   // Modificar el href del último tab
   const tabs = document.querySelectorAll('.tab');
-  console.log(tabs);
   const lastTab = tabs[tabs.length -1];
-  console.log(lastTab);
-  console.log(tabs.length);
-  console.log(lastTab.href);
   nextPosition = parseInt(lastTab.href.split('#')[1].replace(/\D/g, ''), 10) + 1;
-  console.log(nextPosition);
   lastTab.href = "#cat" + nextPosition;
+ 
   // Modificar el id del último content
   const contents = document.querySelectorAll('.content');
   const lastContent = contents[contents.length -1];

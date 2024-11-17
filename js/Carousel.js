@@ -1,9 +1,12 @@
 import { Viewer } from './Viewer.js';
 export class Carousel {
-	constructor(viewer, parentElement, maxThumbsToShow = 0) {
+	constructor(parentElement, {maxThumbsToShow = 0, viewer = null, loader = null, currentItemIndex = null} = {}) {
 		this.parentElement = parentElement;
 		this.viewer = viewer;
 		this.maxThumbsToShow = maxThumbsToShow;
+		
+		this.loader = this.viewer.loader; /// ¿porqué esto fuera del ready y lo otro dentro? Excelente pregunta.
+		this.currentItemIndex = viewer.currentItemIndex; /// ¿porqué esto fuera del ready y lo otro dentro? Excelente pregunta.
 		
 		// Esperar a que viewer3D y el Loader estén listos
         Promise.all([this.viewer.ready, this.viewer.loader.ready]).then(() => {
@@ -11,6 +14,14 @@ export class Carousel {
             this.#updateThumbnailsDisplay();
             this.#addWheelEvent();
 			this.#addClickEvents();
+			
+			if (loader) {
+				this.loader = loader; /// ¿porqué esto dentro del ready y lo otro fuera? Excelente pregunta.
+			}
+			
+			if (currentItemIndex) {
+				this.currentItemIndex = currentItemIndex; /// ¿porqué esto dentro del ready y lo otro fuera? Excelente pregunta.
+			}	
 			
 			window.addEventListener('resize', () => {
 				this.#updateThumbnailsDisplay();
@@ -26,7 +37,7 @@ export class Carousel {
 		let style = window.getComputedStyle(container)
 		let width = parseFloat(style.width);
 		let height = parseFloat(style.height);
-		let numItems = this.viewer.loader.thumbnails.length;
+		let numItems = this.loader.thumbnails.length;
 		
 		let amount = Math.floor(width / height);
 		// Si hay más que el máximo configurado, se mostrará solo el máximo
@@ -60,9 +71,9 @@ export class Carousel {
 			event.preventDefault();
 			let ContentNumber;
 			if (event.deltaY > 0) {
-				ContentNumber = (this.viewer.currentItemIndex.value + 1) % this.viewer.loader.resourceNames.length;
+				ContentNumber = (this.currentItemIndex.value + 1) % this.loader.resourceNames.length;
 			} else {
-				ContentNumber = (this.viewer.currentItemIndex.value - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
+				ContentNumber = (this.currentItemIndex.value - 1 + this.loader.resourceNames.length) % this.loader.resourceNames.length;
 			}
 				this.#changeContent(ContentNumber);
 		});//, { passive: true });
@@ -78,7 +89,7 @@ export class Carousel {
 	}
 	
 	#addClickEvents() {
-		this.viewer.loader.thumbnails.forEach((thumbnailElement, thumbnailIndex) => {
+		this.loader.thumbnails.forEach((thumbnailElement, thumbnailIndex) => {
 			this.#addClickEvent(thumbnailElement, thumbnailIndex);
 		});
 	}
@@ -93,7 +104,7 @@ export class Carousel {
 			newLeftArrow.className = 'arrow left';
 			newLeftArrow.innerHTML = "\u2329"; // Unicode para la flecha izquierda
 			newLeftArrow.addEventListener('click', () => {
-				let ContentNumber = (this.viewer.currentItemIndex.value - 1 + this.viewer.loader.resourceNames.length) % this.viewer.loader.resourceNames.length;
+				let ContentNumber = (this.currentItemIndex.value - 1 + this.loader.resourceNames.length) % this.loader.resourceNames.length;
 				this.#changeContent(ContentNumber);
 			});
 			this.thumbnailContainer.appendChild(newLeftArrow);
@@ -104,7 +115,7 @@ export class Carousel {
 			newRightArrow.className = 'arrow right';
 			newRightArrow.innerHTML = "\u232A"; // Unicode para la flecha derecha
 			newRightArrow.addEventListener('click', () => {
-				let ContentNumber = (this.viewer.currentItemIndex.value + 1) % this.viewer.loader.resourceNames.length;
+				let ContentNumber = (this.currentItemIndex.value + 1) % this.loader.resourceNames.length;
 				this.#changeContent(ContentNumber);
 			});
 			this.thumbnailContainer.appendChild(newRightArrow);
@@ -120,10 +131,10 @@ export class Carousel {
 
 	//Función a llamar desde los eventos que cambien el contenido
 	#changeContent(ContentNumber) {
-		this.viewer.saveConfig(this.viewer.loader.resourceNames[this.viewer.currentItemIndex.value]);
-		this.viewer.currentItemIndex.value = ContentNumber;
+		this.viewer.saveConfig(this.loader.resourceNames[this.currentItemIndex.value]);
+		this.currentItemIndex.value = ContentNumber;
 
-		this.viewer.applyConfig(this.viewer.loader.resourceNames[this.viewer.currentItemIndex.value]);
+		this.viewer.applyConfig(this.loader.resourceNames[this.currentItemIndex.value]);
 		this.#updateThumbnailsDisplay();
 	}
 
@@ -133,8 +144,8 @@ export class Carousel {
 				
 		// Rellenar el arreglo de miniaturas visibles de forma circular
 		for (let i = -this.thHalfCount; i <= this.thHalfCount; i++) {
-			const index = (this.viewer.currentItemIndex.value + i + this.viewer.loader.thumbnails.length) % this.viewer.loader.thumbnails.length;
-			visibleThumbnails.push(this.viewer.loader.thumbnails[index]);
+			const index = (this.currentItemIndex.value + i + this.loader.thumbnails.length) % this.loader.thumbnails.length;
+			visibleThumbnails.push(this.loader.thumbnails[index]);
 		}
 		return visibleThumbnails;
 	}
@@ -143,7 +154,6 @@ export class Carousel {
 	#updateThumbnailsDisplay() {
 		this.#calculateThumbnailsCount(this.thumbnailContainer, this.maxThumbsToShow);
 		const visibleThumbnails = this.#getVisibleThumbnails();
-		//const thumbnailContainer = document.getElementById("thumbnail-container");
 		this.thumbnailContainer.innerHTML = "";  // Limpiar el contenedor
 		// Añadir las miniaturas visibles y aplicar clases activas
 		visibleThumbnails.forEach((thumbnail, index) => {
@@ -158,7 +168,7 @@ export class Carousel {
 		});
 
 		//actualizar el color de fondo del div de thumbnails
-		this.updateThumbnailsBackground(this.viewer.loader.configs[this.viewer.loader.resourceNames[this.viewer.currentItemIndex.value]].backgroundColor);
+		this.updateThumbnailsBackground(this.loader.configs[this.loader.resourceNames[this.currentItemIndex.value]].backgroundColor);
 
 		// Añadir los botones de navegación si aún no están
 		this.#createNavigationButtons();

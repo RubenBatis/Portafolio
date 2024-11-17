@@ -13,9 +13,10 @@ export class Loader {
 		this.animations = {};
 		this.types = {};
 		this.contentFolder = contentFolder;
+		this.children = []; // Agregar el atributo `children`
 		
 		// Llama a la función de carga y asigna la promesa a `this.ready`
-		this.ready = this.loadModelsFromJSON();
+		this.ready = this.loadContentsFromJSON();
 	}
 
 	async #loadModel(modelFile) {
@@ -111,53 +112,68 @@ export class Loader {
 		}
 	}
 
-	async loadModelsFromJSON() {
+	async loadContentsFromJSON() {
 		try {
-			// Espera a que se resuelva la promesa que devuelve los archivos JSON
-			const jsonFiles = await this.#listJSONFiles(); 
-
-			// Asegúrate de que jsonFiles tiene contenido
+			const jsonFiles = await this.#listJSONFiles();
 			if (jsonFiles && jsonFiles.length > 0) {
-				
-			// Mapa que asocia extensiones a funciones de carga y tipos
-            const extensionToTypeMap = {
-                'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
-                'glb': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
-                'mp4': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
-                'webm': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
-                'jpg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
-                'png': { type: 'image', loadFunction: this.#loadImage.bind(this) },
-                // Puedes añadir más extensiones y tipos aquí
-            };
-				
-				const promises = jsonFiles.map(async (jsonFile) => {
+				const resources = [];
+
+				const extensionToTypeMap = {
+					'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+					'glb': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+					'mp4': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
+					'webm': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
+					'jpg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+					'png': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+					'svg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+				};
+
+				for (const jsonFile of jsonFiles) {
 					try {
 						const response = await fetch(`${this.contentFolder}/${jsonFile}`);
 						const config = await response.json();
 
-						// Usar el archivo del modelo y thumbnail
-						const configName = config.resourceFile.replace(/\.[^/.]+$/, "");
-						this.configs[configName] = config;
-						this.resourceNames.push(configName);
+						const order = config.order ?? Number.MAX_SAFE_INTEGER;
+						const isDirectory = !config.resourceFile.includes('.');
+
+						resources.push({
+							configName: config.resourceFile.replace(/\.[^/.]+$/, ""),
+							config,
+							order,
+							isDirectory,
+						});
+
 						this.#loadThumbnail(`${this.contentFolder}/${config.thumbnailFile}`);
+					} catch (error) {
+						console.error(`Error al procesar el JSON ${jsonFile}:`, error);
+					}
+				}
 
-						// Determinar la extensión del archivo y usar el mapa para cargarlo
-						const extension = config.resourceFile.split('.').pop().toLowerCase();
+				resources.sort((a, b) => {
+					if (a.order === b.order) return 0;
+					return a.order - b.order;
+				});
+
+				for (const resource of resources) {
+					if (resource.isDirectory) {
+						const subLoader = new Loader(`${this.contentFolder}/${resource.configName}`);
+						await subLoader.ready;
+						this.children.push(subLoader); // Añadir a los hijos
+						this.configs[resource.configName] = subLoader; // También opcionalmente en configs
+					} else {
+						const extension = resource.config.resourceFile.split('.').pop().toLowerCase();
 						const loader = extensionToTypeMap[extension];
-
 						if (loader) {
-							this.types[configName] = loader.type; // Guardar el tipo
-							await loader.loadFunction(`${this.contentFolder}/${config.resourceFile}`);
+							this.types[resource.configName] = loader.type;
+							await loader.loadFunction(`${this.contentFolder}/${resource.config.resourceFile}`);
 						} else {
 							console.warn(`Extensión no reconocida: ${extension}`);
 						}
-					} catch (error) {
-						console.error(`Error al cargar el JSON: ${error}`);
 					}
-				});
-				
-				await Promise.all(promises);
-				
+
+					this.resourceNames.push(resource.configName);
+					this.configs[resource.configName] = resource.config;
+				}
 			} else {
 				console.log('No se encontraron archivos JSON.');
 			}

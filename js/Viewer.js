@@ -62,6 +62,11 @@ export class Viewer {
 		this.createUniqueElement('div', '.description-panel');
 		this.descriptionPanel.style.display = 'none';
 		this.parentElement.appendChild(this.descriptionPanel);
+		
+		this.descriptionPanel.addEventListener('wheel', (e) => {
+			e.preventDefault();
+			this.descriptionPanel.scrollBy(0, e.deltaY);
+		});
 
 		// Crear y añadir el botón de mostrar/ocultar
 		this.toggleButton = this.createUniqueElement('button', '.toggle-button');

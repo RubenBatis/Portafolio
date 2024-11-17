@@ -1,0 +1,7 @@
+{
+  "resourceFile": "cybermaster.svg",
+  "thumbnailFile": "cybermaster.png",
+  "description": "Y esto es para comprobar el funcionamiento de los svg",
+  "backgroundColor": "#1a0066",
+  "navigationAllowed": true
+}

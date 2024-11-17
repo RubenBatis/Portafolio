@@ -34,10 +34,10 @@ body {
 	padding: 0;
 	overflow-y: auto;
   
-  	background: linear-gradient(var(--defdeg));
+  	/*background: linear-gradient(var(--defdeg));
 	background: -moz-linear-gradient(var(--defdeg));
 	background:-webkit-linear-gradient(var(--defdeg));
-	background: #333;
+	background: #333;*/
 }
 
 #contenedor{
@@ -97,6 +97,7 @@ body {
 	font-family: arial;
 	text-align: right;
 	filter: invert(100%);
+	user-select: none;
 	-webkit-filter: invert(100%);
 	opacity: 0.3;
 	text-shadow: 
@@ -195,7 +196,7 @@ body {
 .tabs {
 	display: flex;
 	flex-direction: column;
-	width: 20%;
+	width: 10%;
 	height: 100vh;
 	position: fixed;
 	overflow-y: auto;
@@ -234,8 +235,8 @@ body {
 }
 
 .contents {
-	margin-left: 20%;
-	width: 80%;
+	margin-left: 10%;
+	width: 90%;
 	height: 100vh;
 	scroll-snap-type: y mandatory;
 	scroll-padding: 0;
