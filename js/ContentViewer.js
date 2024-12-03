@@ -9,6 +9,8 @@ export class ContentViewer {
 		this.parentElement = parentElement;
 		this.currentItemIndex = {"value": initContent};
 		
+		this.currentLoader = this.loader;
+		
 		this.viewers = {
 			'image': new ImageViewer(this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false}),
 			'video': new VideoViewer(this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false}),
@@ -28,6 +30,18 @@ export class ContentViewer {
         });
 	}
 	
+	setLoader(loader) {
+		this.currentLoader = loader;
+		//this.showContent(loader.getFirstElement());
+		this.applyConfig(this.loader.resourceNames[this.currentItemIndex.value]);
+	}
+	
+	resetLoader() {
+		this.currentLoader = this.loader;
+		//this.showContent(loader.getFirstElement());
+		this.applyConfig(this.loader.resourceNames[this.currentItemIndex.value]);
+	}
+	
 	saveConfig(contentName) {
 		let type = this.currentLoader.types[contentName];
 		if(type === "folder") {
@@ -42,6 +56,7 @@ export class ContentViewer {
 	
 	applyConfig(contentName) {
 		let type = this.currentLoader.types[contentName];
+
 		if(type === "folder") {
 			
 		}

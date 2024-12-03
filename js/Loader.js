@@ -101,12 +101,13 @@ export class Loader {
 
 	async #listJSONFiles() {
 		try {
-			const response = await fetch('/models');
+			const response = await fetch(`${this.contentFolder}`);
+			//const response = await fetch(`${this.contentFolder}/${jsonFile}`);
 			if (!response.ok) {
-				throw new Error('Network response was not ok');
+				throw new Error(`No se pudo cargar`);
 			}
-			const jsonFiles = await response.json();
-			return jsonFiles;
+			const config = await response.json();
+			return config;
 		} catch (error) {
 			console.error('Error fetching models:', error);
 		}
@@ -116,19 +117,23 @@ export class Loader {
 		try {
 			const jsonFiles = await this.#listJSONFiles();
 			if (jsonFiles && jsonFiles.length > 0) {
+				const validJsonFiles = jsonFiles.filter(file => file.endsWith('.json'));
 				const resources = [];
 
 				const extensionToTypeMap = {
 					'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
 					'glb': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+					'stl': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
 					'mp4': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
 					'webm': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
+					'mkv': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
 					'jpg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+					'jpeg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
 					'png': { type: 'image', loadFunction: this.#loadImage.bind(this) },
 					'svg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
 				};
 
-				for (const jsonFile of jsonFiles) {
+				for (const jsonFile of validJsonFiles) {
 					try {
 						const response = await fetch(`${this.contentFolder}/${jsonFile}`);
 						const config = await response.json();
@@ -159,8 +164,9 @@ export class Loader {
 						const subLoader = new Loader(`${this.contentFolder}/${resource.configName}`);
 						await subLoader.ready;
 						this.children.push(subLoader); // Añadir a los hijos
-						this.configs[resource.configName] = subLoader; // También opcionalmente en configs
+						this.types[resource.configName] = "folder";
 					} else {
+						this.children.push(null);
 						const extension = resource.config.resourceFile.split('.').pop().toLowerCase();
 						const loader = extensionToTypeMap[extension];
 						if (loader) {
@@ -170,7 +176,6 @@ export class Loader {
 							console.warn(`Extensión no reconocida: ${extension}`);
 						}
 					}
-
 					this.resourceNames.push(resource.configName);
 					this.configs[resource.configName] = resource.config;
 				}

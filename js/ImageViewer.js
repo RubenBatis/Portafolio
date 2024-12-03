@@ -6,11 +6,11 @@ export class ImageViewer extends Viewer {
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente
 		this.imageElement.style.pointerEvents = "none";
+
 		
 		this.imageFrame =  document.createElement('div');
 		this.imageFrame.className = "viewer";
 		this.imageFrame.style.overflow = "hidden";
-		this.imageFrame = this.imageFrame;
 		this.imageFrame.appendChild(this.imageElement);
 		this.resize();
 		
@@ -80,6 +80,7 @@ export class ImageViewer extends Viewer {
 
     applyConfig(imageName) {
         const config = super.applyConfig(imageName);
+
         this.imageElement.src = `${this.loader.images[imageName].src}`;
         this.navigationAllowed = config.navigationAllowed || false;
 

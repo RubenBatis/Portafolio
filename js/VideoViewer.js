@@ -11,7 +11,6 @@ export class VideoViewer extends Viewer {
 		this.videoFrame =  document.createElement('div');
 		this.videoFrame.className = "viewer";
 		this.videoFrame.style.overflow = "hidden";
-		this.videoFrame = this.videoFrame;
 		this.videoFrame.appendChild(this.videoElement);
 		this.resize();
 
@@ -27,8 +26,7 @@ export class VideoViewer extends Viewer {
         this.isPanning = false;
         this.startPanPosition = { x: 0, y: 0 };
         this.mouseButton = null;
-		
-		
+
 		if (applyConfigOnInit) {
 			this.ready.then(() => {
 				this.applyConfig(this.loader.resourceNames[initContent]);
@@ -45,7 +43,7 @@ export class VideoViewer extends Viewer {
 		window.addEventListener('mousemove', (e) => this.#panVideo(e)); // Pan manual
 		window.addEventListener('mouseup', () => this.#stopPan());
 		
-		this.videoElement.addEventListener('loadeddata', () => {
+		this.videoElement.addEventListener('load', () => {
 			this.centerAndScaleVideo();  // Llama a centrar el vídeo después de cargar
 		});
     }
@@ -56,17 +54,17 @@ export class VideoViewer extends Viewer {
 		const containerHeight = parseFloat(this.videoFrame.clientHeight);
 		const videoWidth = parseFloat(this.videoElement.videoWidth);
 		const videoHeight = parseFloat(this.videoElement.videoHeight);
-		
+
 		let initialScaleX = containerWidth / videoWidth;
 		let initialScaleY = containerHeight / videoHeight;
 		let initialScale = initialScaleX > initialScaleY ? initialScaleY : initialScaleX;
-		this.currentScale = initialScale;
 		
+		this.currentScale = initialScale;
 
 		// Calcula el desplazamiento inicial para centrar el vídeo
 		this.posOffset = {"x":(containerWidth - videoWidth) / (2 * initialScale), "y": (containerHeight - videoHeight) / (2 * initialScale)};
 
-		this.applyTransform();  // Aplica el desplazamiento inicial
+		this.applyTransform(); // Aplica el desplazamiento inicial
 	}
 	
 	resize() {
@@ -82,13 +80,13 @@ export class VideoViewer extends Viewer {
 	
     applyConfig(videoName) {
         const config = super.applyConfig(videoName);
+
         this.videoElement.src = `${this.loader.videos[videoName].src}`;
         this.navigationAllowed = config.navigationAllowed || false;
         this.videoElement.loop = config.loop || false;
 		
 		this.videoElement.muted = true;
 		this.videoElement.play();  // revisar y poner según parámetro en el json
-		
 		this.currentScale = config.scale || 1;
 		this.posOffset = config.offset || {"x": 0, "y": 0};
 		this.applyTransform();
@@ -101,15 +99,14 @@ export class VideoViewer extends Viewer {
         }
 
 		this.togglePauseButtonIcon(!this.videoElement.paused)
-		
         return config;
     }
-	
+
+	// Manejar el zoom
 	handleZoom(event) {
 		if (!this.navigationAllowed) return;
 
 		event.preventDefault(); // Evita el comportamiento de desplazamiento de la rueda
-		
 		const zoomIntensity = 0.1; // Ajusta la intensidad del zoom
 
 		// Obtén la escala actual del video o usa 1 como valor por defecto

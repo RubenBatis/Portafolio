@@ -183,7 +183,7 @@ export class ModelViewer extends Viewer{
 		
 		// Y volver a cargar el modelo en cuestión
 		let model = this.loader.models[modelName];
-console.log(modelName);
+
 		this.scene.add(model);			
 
 		// Cambiar el color de fondo de la escena 3D
