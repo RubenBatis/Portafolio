@@ -1,7 +1,7 @@
 import { Viewer } from './Viewer.js';
 export class VideoViewer extends Viewer {
-    constructor(contentFolder, parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
-        super(contentFolder, parentElement, loader);
+    constructor(parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
+        super(parentElement, loader);
         this.videoElement = document.createElement('video');
         this.videoElement.style.transformOrigin = 'center center';
         this.videoElement.controls = false; // Desactivar los controles predeterminados

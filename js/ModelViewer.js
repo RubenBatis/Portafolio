@@ -3,9 +3,9 @@ import { Loader } from './Loader.js';
 import * as THREE from "three";
 import { OrbitControls } from "OrbitControls";
 export class ModelViewer extends Viewer{
-	constructor(contentFolder, parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
+	constructor(parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
 		// Crear la escena y el renderer
-		super(contentFolder, parentElement, loader);
+		super(parentElement, loader);
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
 		this.renderer.setSize(this.parentElement.clientWidth * 2, this.parentElement.clientHeight * 2);

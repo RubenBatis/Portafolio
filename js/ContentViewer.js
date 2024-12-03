@@ -10,9 +10,9 @@ export class ContentViewer {
 		this.currentItemIndex = {"value": initContent};
 		
 		this.viewers = {
-			'image': new ImageViewer(contentFolder, this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false}),
-			'video': new VideoViewer(contentFolder, this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false}),
-			'3dmodel': new ModelViewer(contentFolder, this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false})
+			'image': new ImageViewer(this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false}),
+			'video': new VideoViewer(this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false}),
+			'3dmodel': new ModelViewer(this.parentElement, {loader: this.loader, currentItemIndex: this.currentItemIndex, applyConfigOnInit: false})
 		}
 		
 		// Esperar a que el loader esté listo
@@ -29,27 +29,36 @@ export class ContentViewer {
 	}
 	
 	saveConfig(contentName) {
-		let type = this.loader.types[contentName];
-		this.viewers[type].saveConfig(contentName);
+		let type = this.currentLoader.types[contentName];
+		if(type === "folder") {
+			
+		} else if(!type || !this.viewers[type]) {
+			console.error(`Tipo de contenido ${type} no reconocido o viewer no encontrado.`);
+            return;
+		} else {
+			this.viewers[type].saveConfig(contentName);
+		}
 	}
 	
 	applyConfig(contentName) {
-		let type = this.loader.types[contentName];
-
-		if(!type || !this.viewers[type]) {
+		let type = this.currentLoader.types[contentName];
+		if(type === "folder") {
+			
+		}
+		else if(!type || !this.viewers[type]) {
 			console.error(`Tipo de contenido ${type} no reconocido o viewer no encontrado.`);
             return;
+		} else {
+			this.viewers[type].applyConfig(contentName);
+			Object.keys(this.viewers).forEach((key) => {
+				if (key === type) {
+					this.viewers[key].domElement.style.display = "block";
+					this.viewers[key].domElement.style["pointer-events"] = "auto";
+				} else {
+					this.viewers[key].domElement.style.display = "none";
+					this.viewers[key].domElement.style["pointer-events"] = "none";
+				}
+			});
 		}
-		
-		this.viewers[type].applyConfig(contentName);
-		Object.keys(this.viewers).forEach((key) => {
-			if (key === type) {
-				this.viewers[key].domElement.style.display = "block";
-				this.viewers[key].domElement.style["pointer-events"] = "auto";
-			} else {
-				this.viewers[key].domElement.style.display = "none";
-				this.viewers[key].domElement.style["pointer-events"] = "none";
-			}
-		});
 	}
 }

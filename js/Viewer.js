@@ -1,7 +1,7 @@
 import { Loader } from './Loader.js';
 export class Viewer {
-	constructor(contentFolder, parentElement, loader = null) {
-		this.loader = loader || new Loader(contentFolder);
+	constructor(parentElement, loader = null) {
+		this.loader = loader;
 		this.parentElement = parentElement;
 		
 		this.createDescriptionPanel();

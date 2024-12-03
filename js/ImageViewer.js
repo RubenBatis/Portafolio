@@ -1,7 +1,7 @@
 import { Viewer } from './Viewer.js';
 export class ImageViewer extends Viewer {
-    constructor(contentFolder, parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
-        super(contentFolder, parentElement, loader);
+    constructor(parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
+        super(parentElement, loader);
         this.imageElement = document.createElement('img');
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente
