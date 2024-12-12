@@ -3,7 +3,7 @@ let canScrollToPrev = false;
 
 // Marcar contenido como completado
 function markContentComplete(element, direction) {
-	const contentContainer = element.closest('.inner-complex-content');
+	const contentContainer = element.closest('.viewerContainer');
 	
 	if (direction === 'end') {
 		contentContainer.setAttribute('data-complex-completed', 'true');
@@ -77,18 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function createAndAddDiv() {
-	// Contar el número de elementos con la clase "inner-complex-content"
-	const innerComplexContents = document.querySelectorAll('.inner-complex-content');
-	const count = innerComplexContents.length + 1;
+	// Contar el número de elementos con la clase "viewerContainer"
+	const viewerContainers = document.querySelectorAll('.viewerContainer');
+	const count = viewerContainers.length + 1;
 
 	// Crear el div principal con clase "content" y id dinámico
 	const outerDiv = document.createElement('div');
 	outerDiv.className = 'content';
 	outerDiv.id = `cat${count}`;
 
-	// Crear el div interno con clase "inner-complex-content" y atributo data-complex-completed
+	// Crear el div interno con clase "viewerContainer" y atributo data-complex-completed
 	const innerDiv = document.createElement('div');
-	innerDiv.className = 'inner-complex-content';
+	innerDiv.className = 'viewerContainer';
 	innerDiv.setAttribute('data-complex-completed', 'false');
 
 	// Añadir el div interno al div principal
@@ -116,18 +116,18 @@ function createAndAddDiv() {
 }
 
 function createCategory() {
-	// Contar el número de elementos con la clase "inner-complex-content"
-	const innerComplexContents = document.querySelectorAll('.inner-complex-content');
-	const count = innerComplexContents.length + 2; // Comenzar desde 2
+	// Contar el número de elementos con la clase "viewerContainer"
+	const viewerContainers = document.querySelectorAll('.viewerContainer');
+	const count = viewerContainers.length + 2; // Comenzar desde 2
 
 	// Crear el div principal con clase "content" y id dinámico
 	const outerDiv = document.createElement('div');
 	outerDiv.className = 'content';
 	outerDiv.id = `cat${count}`;
 
-	// Crear el div interno con clase "inner-complex-content" y atributo data-complex-completed
+	// Crear el div interno con clase "viewerContainer" y atributo data-complex-completed
 	const innerDiv = document.createElement('div');
-	innerDiv.className = 'inner-complex-content';
+	innerDiv.className = 'viewerContainer';
 	innerDiv.setAttribute('data-complex-completed', 'false');
 
 	// Añadir el div interno al div principal

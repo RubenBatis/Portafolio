@@ -5,11 +5,12 @@ export class Carousel {
 		viewer = null,
 		loader = null,
 		linkedCarousel = null,
-		position = "bottom"
+		position = "bottom" // Valores: 'left', 'right', 'top', 'bottom'
 	} = {}) {
 		this.parentElement = parentElement;
 		this.viewer = viewer;
 		this.maxThumbsToShow = maxThumbsToShow;
+		this.position = position;
 		
 		this.loader = this.viewer.loader; /// ¿porqué esto fuera del ready y lo otro dentro? Excelente pregunta.
 		this.currentLoader = this.loader;
@@ -48,11 +49,11 @@ export class Carousel {
 	// Calcular número de thumbnails a mostrar:
 	#calculateThumbnailsCount(container, max) {
 		let style = window.getComputedStyle(container)
-		let width = parseFloat(style.width);
-		let height = parseFloat(style.height);
 		let numItems = this.currentLoader.thumbnails.length;
-		
-		let amount = Math.floor(width / height);
+		let dimension = ['top', 'bottom'].includes(this.position) ? parseFloat(style.width) : parseFloat(style.height);
+		let thumbnailSize = ['top', 'bottom'].includes(this.position) ? parseFloat(style.height) : parseFloat(style.width);
+
+		let amount = Math.floor(dimension / thumbnailSize);
 		// Si hay más que el máximo configurado, se mostrará solo el máximo
 		if (max != 0 && amount > max) {
 			amount = max;
@@ -74,7 +75,7 @@ export class Carousel {
 	// Crear contenedor de miniaturas
 	#createThumbnailContainer() {
 		this.thumbnailContainer = document.createElement('div');
-		this.thumbnailContainer.className = 'thumbnail-container';
+		this.thumbnailContainer.className = `thumbnail-container ${this.position}`;
 		this.parentElement.appendChild(this.thumbnailContainer);
 	}
 	
@@ -109,13 +110,14 @@ export class Carousel {
 	
 	// Crear y añadir los botones laterales
 	#createNavigationButtons() {
-		const leftArrow = document.querySelector('.arrow.left');
-		const rightArrow = document.querySelector('.arrow.right');
+		const previousArrow = document.querySelector('.arrow.left, .arrow.top');
+		const nextArrow = document.querySelector('.arrow.right, .arrow.bottom');
+		const horizontal = ['top', 'bottom'].includes(this.position);
 
-		if (!leftArrow) {
+		if (!previousArrow) {
 			const newLeftArrow = document.createElement('div');
-			newLeftArrow.className = 'arrow left';
-			newLeftArrow.innerHTML = "\u2329"; // Unicode para la flecha izquierda
+			newLeftArrow.className = horizontal ? 'arrow left' : 'arrow top';
+			newLeftArrow.innerHTML = horizontal ? "\u2329" : '\uFE3F'; // Unicode para la flecha izquierda
 			newLeftArrow.addEventListener('click', () => {
 				let contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
 				this.#changeContent(contentNumber);
@@ -123,10 +125,10 @@ export class Carousel {
 			this.thumbnailContainer.appendChild(newLeftArrow);
 		}
 
-		if (!rightArrow) {
+		if (!nextArrow) {
 			const newRightArrow = document.createElement('div');
-			newRightArrow.className = 'arrow right';
-			newRightArrow.innerHTML = "\u232A"; // Unicode para la flecha derecha
+			newRightArrow.className = horizontal ? 'arrow right' : 'arrow bottom';
+			newRightArrow.innerHTML = horizontal ? "\u232A" : '\uFE40'; // Unicode para la flecha derecha
 			newRightArrow.addEventListener('click', () => {
 				let contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
 				this.#changeContent(contentNumber);
@@ -135,10 +137,10 @@ export class Carousel {
 		}
 	}
 	
-	//Modificar el color superior del degradado de fondo del thumbnailContainer
+	//Modificar el color superior del degradado de fondo del thumbnailContainer /*mejor que dependa de la clase, pero ya lo haré*/
 	updateThumbnailsBackground(backgroundColor) {
 		if (this.thumbnailContainer) {
-			this.thumbnailContainer.style.background = `linear-gradient(${backgroundColor}, transparent)`;
+			this.thumbnailContainer.style.background = `linear-gradient(to ${this.position}, ${backgroundColor}, transparent)`;
 		}
 	}
 

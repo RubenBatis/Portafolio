@@ -1,11 +1,13 @@
+import { Viewer } from './Viewer.js';
 import { ImageViewer } from './ImageViewer.js';
 import { VideoViewer } from './VideoViewer.js';
 import { ModelViewer } from './ModelViewer.js';
 import { Loader } from './Loader.js';
 //Clase envolvente de las tre clases viewer, no hereda de viewer, solo replica funcionalidades.
-export class ContentViewer {
-	constructor(contentFolder, parentElement, { initContent = 0 } = {}) {
-		this.loader = new Loader(contentFolder);
+export class ContentViewer extends Viewer {
+	constructor(contentFolder, parentElement, { initContent = 0 , loader = new Loader(contentFolder)} = {}) {
+		super(parentElement, loader);
+		this.loader = loader;
 		this.parentElement = parentElement;
 		this.currentItemIndex = {"value": initContent};
 		
