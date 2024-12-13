@@ -80,7 +80,7 @@ export class VideoViewer extends Viewer {
 
         this.videoElement.src = `${this.loader.videos[videoName].src}`;
         this.navigationAllowed = config.navigationAllowed || false;
-        this.videoElement.loop = config.loop || false;
+        this.videoElement.loop = config.loop || true;
 		
 		this.videoElement.muted = true;
 		this.videoElement.play();  // revisar y poner según parámetro en el json

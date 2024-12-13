@@ -4,5 +4,6 @@
   "description": "Y ya que estamos probamos el video",
   "backgroundColor": "#050607",
   "navigationAllowed": true,
-  "playbackControls": true
+  "playbackControls": true,
+  "loop": true
 }
