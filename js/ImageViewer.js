@@ -6,15 +6,14 @@ export class ImageViewer extends Viewer {
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente
 		this.imageElement.style.pointerEvents = "none";
-
 		
 		this.imageFrame =  document.createElement('div');
-		this.imageFrame.className = "viewer";
+		this.imageFrame.className = "viewerContent";
 		this.imageFrame.style.overflow = "hidden";
 		this.imageFrame.appendChild(this.imageElement);
 		this.resize();
 		
-		this.parentElement.appendChild(this.imageFrame);
+		this.viewerElement.appendChild(this.imageFrame);
 		
 		this.domElement = this.imageFrame;
 
@@ -62,15 +61,12 @@ export class ImageViewer extends Viewer {
 		this.currentScale = initialScale;
 
 		// Calcula el desplazamiento inicial para centrar el vídeo
-		this.posOffset = {"x":(containerWidth - imageWidth) / (2 * initialScale), "y": (containerHeight - imageHeight) / (2 * initialScale)};
+		this.posOffset = {
+			"x":(containerWidth - imageWidth) / (2 * initialScale), 
+			"y": (containerHeight - imageHeight) / (2 * initialScale)
+		};
 
 		this.applyTransform(); // Aplica el desplazamiento inicial
-	}
-
-	resize() {
-		this.imageFrame.style.width = (this.parentElement.clientWidth * this.widthRatio) + 'px';
-        this.imageFrame.style.height = (this.parentElement.clientHeight * this.heightRatio) + 'px';
-		this.centerAndScaleImage();
 	}
 
 	saveConfig(imageName) {

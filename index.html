@@ -69,8 +69,8 @@
 
 			let contenedor = createCategory().childNodes[0];
 
-			var mviewer = new ContentViewer('/models', contenedor);
-			var carousel = new Carousel(contenedor, {viewer: mviewer});
+			window.mviewer = new ContentViewer('/models', contenedor);
+			window.carousel = new Carousel(contenedor, {viewer: window.mviewer});
 /*
 			let contenedor = createCategory().childNodes[0];
 			import { MediaPicker } from './js/MediaPicker.js';

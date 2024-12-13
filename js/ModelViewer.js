@@ -8,17 +8,13 @@ export class ModelViewer extends Viewer{
 		super(parentElement, loader);
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
-		this.renderer.setSize(this.parentElement.clientWidth * 2, this.parentElement.clientHeight * 2);
+		this.renderer.setSize(this.viewerElement.clientWidth * 2, this.viewerElement.clientHeight * 2);
 		this.canvas = this.renderer.domElement;
-		this.canvas.className = "viewer";
+		this.canvas.className = "viewerContent";
 
 		this.domElement = this.canvas;
 
 		this.currentItemIndex = currentItemIndex;
-
-		//Ajustar el tamaño del canvas
-		this.canvas.style.width = (this.parentElement.clientWidth * this.widthRatio) + 'px';
-		this.canvas.style.height = (this.parentElement.clientHeight * this.heightRatio) + 'px';
 		
 		this.camera = null;
 		this.controls = null;
@@ -28,7 +24,7 @@ export class ModelViewer extends Viewer{
 		let ambientLight = new THREE.AmbientLight(0x404040); // Luz ambiental // también está fatal
 		this.scene.add(ambientLight);
 		
-		this.parentElement.appendChild(this.canvas);
+		this.viewerElement.appendChild(this.canvas);
 		
 		this.clock = new THREE.Clock();
 		
@@ -46,12 +42,11 @@ export class ModelViewer extends Viewer{
 	
 	// Configurar el tamaño del canvas y renderer
 	#resize() {
-		const width = this.parentElement.clientWidth;
-		const height = this.parentElement.clientHeight;
-
+		const width = this.viewerElement.clientWidth;
+		const height = this.viewerElement.clientHeight;
 		this.renderer.setSize(width * 2, height * 2, false);
-		this.canvas.style.width = (this.parentElement.clientWidth * this.widthRatio) + 'px';
-		this.canvas.style.height = (this.parentElement.clientHeight * this.heightRatio) + 'px';
+		this.canvas.style.width = `${this.viewerElement.clientWidth+1}px`;
+		this.canvas.style.height = `${this.viewerElement.clientHeight+1}px`;
 	}
 	
 	// Configurar la cámara.

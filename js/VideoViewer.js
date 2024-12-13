@@ -9,12 +9,12 @@ export class VideoViewer extends Viewer {
 		this.videoElement.currentTime = 0;
 
 		this.videoFrame =  document.createElement('div');
-		this.videoFrame.className = "viewer";
+		this.videoFrame.className = "viewerContent";
 		this.videoFrame.style.overflow = "hidden";
 		this.videoFrame.appendChild(this.videoElement);
 		this.resize();
 
-        this.parentElement.appendChild(this.videoFrame);
+        this.viewerElement.appendChild(this.videoFrame);
 
 		this.domElement = this.videoFrame;
 		
@@ -43,7 +43,7 @@ export class VideoViewer extends Viewer {
 		window.addEventListener('mousemove', (e) => this.#panVideo(e)); // Pan manual
 		window.addEventListener('mouseup', () => this.#stopPan());
 		
-		this.videoElement.addEventListener('load', () => {
+		this.videoElement.addEventListener('loadeddata', () => {
 			this.centerAndScaleVideo();  // Llama a centrar el vídeo después de cargar
 		});
     }
@@ -62,17 +62,14 @@ export class VideoViewer extends Viewer {
 		this.currentScale = initialScale;
 
 		// Calcula el desplazamiento inicial para centrar el vídeo
-		this.posOffset = {"x":(containerWidth - videoWidth) / (2 * initialScale), "y": (containerHeight - videoHeight) / (2 * initialScale)};
+		this.posOffset = {
+			"x":(containerWidth - videoWidth) / (2 * initialScale), 
+			"y": (containerHeight - videoHeight) / (2 * initialScale)
+		};
 
 		this.applyTransform(); // Aplica el desplazamiento inicial
 	}
-	
-	resize() {
-		this.videoFrame.style.width = (this.parentElement.clientWidth * this.widthRatio) + 'px';
-        this.videoFrame.style.height = (this.parentElement.clientHeight * this.heightRatio) + 'px';
-		this.centerAndScaleVideo();
-	}
-	
+
 	saveConfig(videoName) {
 		this.loader.configs[videoName].scale = this.currentScale || 1;
 		this.loader.configs[videoName].offset = this.posOffset || {"x": 0, "y": 0};

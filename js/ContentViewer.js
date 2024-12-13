@@ -10,7 +10,7 @@ export class ContentViewer extends Viewer {
 		this.loader = loader;
 		this.parentElement = parentElement;
 		this.currentItemIndex = {"value": initContent};
-		
+this.viewerElement.style.display = "none";
 		this.currentLoader = this.loader;
 		
 		this.viewers = {
@@ -69,11 +69,11 @@ export class ContentViewer extends Viewer {
 			this.viewers[type].applyConfig(contentName);
 			Object.keys(this.viewers).forEach((key) => {
 				if (key === type) {
-					this.viewers[key].domElement.style.display = "block";
-					this.viewers[key].domElement.style["pointer-events"] = "auto";
+					this.viewers[key].viewerElement.style.display = "block";
+					this.viewers[key].viewerElement.style["pointer-events"] = "auto";
 				} else {
-					this.viewers[key].domElement.style.display = "none";
-					this.viewers[key].domElement.style["pointer-events"] = "none";
+					this.viewers[key].viewerElement.style.display = "none";
+					this.viewers[key].viewerElement.style["pointer-events"] = "none";
 				}
 			});
 		}

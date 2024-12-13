@@ -4,18 +4,13 @@ export class Viewer {
 		this.loader = loader;
 		this.parentElement = parentElement;
 		
+		this.viewerElement = document.createElement("div");
+		this.viewerElement.className = "viewer";
+		this.parentElement.appendChild(this.viewerElement);
+		
 		this.createDescriptionPanel();
 		this.createAnimControls();
 		
-		let auxElement = this.createUniqueElement("div", ".auxContainer");
-		auxElement.style.display = "block";
-		parentElement.appendChild(auxElement);
-		this.widthRatio = parseFloat(getComputedStyle(auxElement).getPropertyValue('width')) / 
-						  parseFloat(getComputedStyle(parentElement).getPropertyValue('width'));
-		this.heightRatio = parseFloat(getComputedStyle(auxElement).getPropertyValue('height')) / 
-		                   parseFloat(getComputedStyle(parentElement).getPropertyValue('height'));
-		parentElement.removeChild(auxElement);
-console.log("widthRatio: " + this.widthRatio + ", heightRatio: " + this.heightRatio);
 		window.addEventListener('resize', () => {
 			this.resize();
 		});
@@ -72,6 +67,8 @@ console.log("widthRatio: " + this.widthRatio + ", heightRatio: " + this.heightRa
 		this.toggleButton = this.createUniqueElement('button', '.toggle-button');
 		this.toggleButton.innerText = '\u2261';
 		this.toggleButton.addEventListener('click', () => {
+			console.log(this.descriptionPanel.style.display);
+			console.log(this.constructor.name);
 			if (this.descriptionPanel.style.display === 'none') {
 				this.descriptionPanel.style.display = 'block';
 				this.descriptionPanel.offsetHeight;

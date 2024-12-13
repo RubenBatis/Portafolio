@@ -89,7 +89,7 @@ export class Carousel {
 			} else {
 				contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
 			}
-				this.#changeContent(contentNumber);
+				this.changeContent(contentNumber);
 		});//, { passive: true });
 	}
 
@@ -98,7 +98,7 @@ export class Carousel {
 		thumbnailElement.setAttribute("data-thumbnumber", thumbnailIndex);
 		thumbnailElement.addEventListener("click", (event) => {
 			const contentNumber = parseInt(event.currentTarget.getAttribute("data-thumbnumber"), 10);
-			this.#changeContent(contentNumber);
+			this.changeContent(contentNumber);
 		});
 	}
 	
@@ -120,7 +120,7 @@ export class Carousel {
 			newLeftArrow.innerHTML = horizontal ? "\u2329" : '\uFE3F'; // Unicode para la flecha izquierda
 			newLeftArrow.addEventListener('click', () => {
 				let contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
-				this.#changeContent(contentNumber);
+				this.changeContent(contentNumber);
 			});
 			this.thumbnailContainer.appendChild(newLeftArrow);
 		}
@@ -131,7 +131,7 @@ export class Carousel {
 			newRightArrow.innerHTML = horizontal ? "\u232A" : '\uFE40'; // Unicode para la flecha derecha
 			newRightArrow.addEventListener('click', () => {
 				let contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
-				this.#changeContent(contentNumber);
+				this.changeContent(contentNumber);
 			});
 			this.thumbnailContainer.appendChild(newRightArrow);
 		}
@@ -145,7 +145,7 @@ export class Carousel {
 	}
 
 	//Función a llamar desde los eventos que cambien el contenido
-	#changeContent(contentNumber) {
+	changeContent(contentNumber) {
 		if (typeof this.viewer.applyConfig === 'function') {
 			this.viewer.saveConfig(this.currentLoader.resourceNames[this.currentItemIndex.value]);
 			this.currentItemIndex.value = contentNumber;
