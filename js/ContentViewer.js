@@ -71,9 +71,11 @@ this.viewerElement.style.display = "none";
 				if (key === type) {
 					this.viewers[key].viewerElement.style.display = "block";
 					this.viewers[key].viewerElement.style["pointer-events"] = "auto";
+					this.viewers[key].setActive(true);
 				} else {
 					this.viewers[key].viewerElement.style.display = "none";
 					this.viewers[key].viewerElement.style["pointer-events"] = "none";
+					this.viewers[key].setActive(false);
 				}
 			});
 		}

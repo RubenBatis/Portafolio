@@ -17,7 +17,6 @@ export class Viewer {
 		
 		// La promesa `ready` depende de `Loader.ready`
         this.ready = this.loader.ready.then(() => {
-            console.log("Loader listo en Viewer");
             return true;
         }).catch(error => {
             console.error("Error en la carga del Loader en Viewer:", error);
@@ -37,6 +36,16 @@ export class Viewer {
 		}
 		return element;
 	}
+	
+	setActive(isActive) {
+        this.isActive = isActive;
+        // Dejar de escuchar eventos de visores inactivos
+        if (isActive) {
+            this.toggleButton.classList.add("active");
+        } else {
+            this.toggleButton.classList.remove("active");
+        }
+    }
 	
 	resize() {}
 	
@@ -67,14 +76,14 @@ export class Viewer {
 		this.toggleButton = this.createUniqueElement('button', '.toggle-button');
 		this.toggleButton.innerText = '\u2261';
 		this.toggleButton.addEventListener('click', () => {
-			console.log(this.descriptionPanel.style.display);
-			console.log(this.constructor.name);
-			if (this.descriptionPanel.style.display === 'none') {
-				this.descriptionPanel.style.display = 'block';
-				this.descriptionPanel.offsetHeight;
-				this.descriptionPanel.style.filter = 'invert(100%)'
-			} else {
-				this.descriptionPanel.style.display = 'none';
+			if (this.isActive) {
+				if (this.descriptionPanel.style.display === 'none') {
+					this.descriptionPanel.style.display = 'block';
+					this.descriptionPanel.offsetHeight;
+					this.descriptionPanel.style.filter = 'invert(100%)'
+				} else {
+					this.descriptionPanel.style.display = 'none';
+				}
 			}
 		});
 		this.parentElement.appendChild(this.toggleButton);
@@ -97,12 +106,18 @@ export class Viewer {
 		this.isPaused = false;
 		
 		// Alternar la animación al hacer clic en el botón
-		this.playPauseButton.addEventListener('click', () => this.toggleAnimationPause());
+		this.playPauseButton.addEventListener('click', () => {
+			if (this.isActive) {
+				this.toggleAnimationPause();
+			}
+		});
 
 		// Alternar con la tecla Espacio
 		window.addEventListener('keydown', (event) => {
 			if (event.code === 'Space') {
-				this.toggleAnimationPause();
+				if (this.isActive) {
+					this.toggleAnimationPause();
+				}
 			}
 		});
 	}

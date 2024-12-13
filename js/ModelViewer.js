@@ -53,7 +53,6 @@ export class ModelViewer extends Viewer{
 	async #setupCamera() {
 		// Esperamos hasta que el canvas tenga un tamaño mayor que 0
 		while (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
-			console.log("Esperando que el canvas tenga dimensiones...");
 			await new Promise(resolve => setTimeout(resolve, 100)); // Esperar 100ms antes de verificar de nuevo
 		}
 
@@ -168,6 +167,12 @@ export class ModelViewer extends Viewer{
 		this.loader.configs[modelName].camera.position = [this.camera.position.x,
 														 this.camera.position.y,
 														 this.camera.position.z];
+		this.loader.configs[modelName].camera.rotation = [this.camera.rotation._x,
+														 this.camera.rotation._y,
+														 this.camera.rotation._z];
+		this.loader.configs[modelName].camera.lookAt = [this.controls.target.x,
+														 this.controls.target.y,
+														 this.controls.target.z];
 	}
 
 	// Método que aplica la configuración de cada modelo a la visualización
