@@ -5,18 +5,31 @@ export class Carousel {
 		viewer = null,
 		loader = null,
 		linkedCarousel = null,
-		position = "bottom" // Valores: 'left', 'right', 'top', 'bottom'
+		position = "bottom", // Valores: 'left', 'right', 'top', 'bottom', 
+		append = true
 	} = {}) {
 		this.parentElement = parentElement;
 		this.viewer = viewer;
 		this.maxThumbsToShow = maxThumbsToShow;
 		this.position = position;
+		this.append = append;
 		
 		this.loader = this.viewer.loader; /// ¿porqué esto fuera del ready y lo otro dentro? Excelente pregunta.
 		this.currentLoader = this.loader;
 		this.currentItemIndex = viewer ? viewer.currentItemIndex : {value: 0};
 		
 		this.linkedCarousel = linkedCarousel;// instanceof Carousel ? linkedCarousel : null;
+		
+		let observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) { // Detecta si el carrusel es visible en el viewport
+					console.log("El carrusel está visible en el viewport.");
+					this.#updateThumbnailsDisplay(); // Llama a la función para actualizar el carrusel
+					observer.disconnect(); // Detén la observación después de detectar visibilidad
+				}
+			});
+		});
+		observer.observe(this.parentElement);
 		
 		// Esperar a que viewer3D y el Loader estén listos
         Promise.all([this.viewer.ready, this.viewer.loader.ready]).then(() => {
@@ -39,6 +52,11 @@ export class Carousel {
 		});
 	}
 	
+
+
+
+
+	
 	// Asignar un loader nuevo
 	setLoader(loader) {
 		this.currentLoader = loader;
@@ -58,12 +76,10 @@ export class Carousel {
 		if (max != 0 && amount > max) {
 			amount = max;
 		}
-
 		// Si hay más que el número de elementos en el array, se reduce
 		if (amount > numItems) {
 			amount = numItems;
 		}
-
 		// Si el número es par, se reduce en uno
 		if (amount % 2 === 0) {
 			amount -= -1;
@@ -76,13 +92,16 @@ export class Carousel {
 	#createThumbnailContainer() {
 		this.thumbnailContainer = document.createElement('div');
 		this.thumbnailContainer.className = `thumbnail-container ${this.position}`;
-		this.parentElement.appendChild(this.thumbnailContainer);
+		if (this.append) {
+			this.parentElement.appendChild(this.thumbnailContainer);
+		}
 	}
 	
 	// Añadir evento de la rueda al ThumbnailContainer
 	#addWheelEvent() {
 		this.thumbnailContainer.addEventListener('wheel', (event) => {
 			event.preventDefault();
+			event.stopPropagation();
 			let contentNumber;
 			if (event.deltaY > 0) {
 				contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
@@ -90,7 +109,7 @@ export class Carousel {
 				contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
 			}
 				this.changeContent(contentNumber);
-		});//, { passive: true });
+		}, { passive: false });//, { passive: true });
 	}
 
 	// Añadir eventos de click a los thumbnails

@@ -1,7 +1,13 @@
 import { Viewer } from './Viewer.js';
 export class VideoViewer extends Viewer {
-    constructor(parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
-        super(parentElement, loader);
+    constructor(parentElement, {
+		initContent = 0,
+		loader = null,
+		currentItemIndex = {"value":0},
+		applyConfigOnInit = true,
+		orientation = "bottom"
+	} = {}) {
+        super(parentElement, loader, {orientation: orientation});
         this.videoElement = document.createElement('video');
         this.videoElement.style.transformOrigin = 'center center';
         this.videoElement.controls = false; // Desactivar los controles predeterminados
@@ -37,7 +43,7 @@ export class VideoViewer extends Viewer {
 		
 		// Escucha para el zoom y el pan
 		this.currentMousePosition = { x: 0, y: 0 }; // Inicializa la posición actual del ratón
-		this.videoFrame.addEventListener('wheel', (e) => this.handleZoom(e));
+		this.videoFrame.addEventListener('wheel', (e) => this.handleZoom(e), { passive: false });
 		this.videoFrame.addEventListener('mousedown', (e) => this.#startPan(e));
 		window.addEventListener('mousemove', (e) => this.#updateMousePosition(e)); // Actualiza la posición del ratón
 		window.addEventListener('mousemove', (e) => this.#panVideo(e)); // Pan manual
@@ -101,9 +107,9 @@ export class VideoViewer extends Viewer {
 
 	// Manejar el zoom
 	handleZoom(event) {
-		if (!this.navigationAllowed) return;
-
 		event.preventDefault(); // Evita el comportamiento de desplazamiento de la rueda
+		event.stopPropagation();
+		if (!this.navigationAllowed) return;
 		const zoomIntensity = 0.1; // Ajusta la intensidad del zoom
 
 		// Obtén la escala actual del video o usa 1 como valor por defecto

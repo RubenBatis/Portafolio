@@ -3,7 +3,7 @@ let canScrollToPrev = false;
 
 // Marcar contenido como completado
 function markContentComplete(element, direction) {
-	const contentContainer = element.closest('.viewerContainer');
+	const contentContainer = element.closest('.viewer-container');
 	
 	if (direction === 'end') {
 		contentContainer.setAttribute('data-complex-completed', 'true');
@@ -17,107 +17,70 @@ function markContentComplete(element, direction) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	// Obtener referencias a los elementos de tabs y contenidos
+	window.scrollTo(0, 0);
+	// Obtener referencias a los elementos necesarios
 	const tabs = document.querySelectorAll('.tab');
 	const contents = document.querySelectorAll('.content');
 	const contentsContainer = document.querySelector('.contents');
+	const tabsContainer = document.querySelector('.tabs');
 
 	let currentIndex = 0;
 
-	// Detectamos cuando se hace scroll en la ventana principal
+	// Detectar scroll en el contenedor principal de contenidos
 	contentsContainer.addEventListener('scroll', () => {
 		updateActiveTab();
 	});
 
-	// Detectamos el scroll en la columna de tabs para cambiar de sección de contenido
-	document.querySelector('.tabs').addEventListener('wheel', (event) => {
+	// Detectar el scroll en la columna de tabs para cambiar entre contenidos
+	tabsContainer.addEventListener('wheel', (event) => {
 		event.preventDefault();
 
+		// Cambiar el índice según la dirección del scroll
 		if (event.deltaY > 0 && currentIndex < contents.length - 1) {
 			currentIndex++;
-			contents[currentIndex].scrollIntoView({ behavior: "smooth", block: "start" });
-		} 
-		else if (event.deltaY < 0 && currentIndex > 0) {
+		} else if (event.deltaY < 0 && currentIndex > 0) {
 			currentIndex--;
-			contents[currentIndex].scrollIntoView({ behavior: "smooth", block: "start" });
 		}
 
-		updateActiveTab(); // Actualiza el tab activo en función del nuevo contenido visible
-	});
+		// Desplazar el contenido correspondiente a la vista
+		contents[currentIndex].scrollIntoView({ behavior: "smooth", block: "start" });
 
-	// Aseguramos que la primera categoría esté marcada al cargar la página
-	document.addEventListener("DOMContentLoaded", () => {
+		// Actualizar el tab activo
 		updateActiveTab();
-	});
-	
-	// Función para actualizar el tab activo basado en la visibilidad
+	}, { passive: false });
+
+	// Asegurar que el primer tab esté activo al cargar la página
+	updateActiveTab();
+
+	// Función para actualizar el tab activo basado en la visibilidad de los contenidos
 	function updateActiveTab() {
 		let maxVisibility = -1;
 		let activeIndex = -1;
 		const viewportHeight = window.innerHeight;
-		
-		if (contents) {
-			contents.forEach((content, index) => {
-				const rect = content.getBoundingClientRect();
-				const visibleTop = Math.max(0, rect.top);
-				const visibleBottom = Math.min(viewportHeight, rect.bottom);
-				const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-				const visibilityPercentage = visibleHeight / viewportHeight;
 
-				if (visibilityPercentage > maxVisibility) {
-					maxVisibility = visibilityPercentage;
-					activeIndex = index;
-				}
-			});
-		}
+		// Determinar cuál contenido es más visible
+		contents.forEach((content, index) => {
+			const rect = content.getBoundingClientRect();
+			const visibleTop = Math.max(0, rect.top);
+			const visibleBottom = Math.min(viewportHeight, rect.bottom);
+			const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+			const visibilityPercentage = visibleHeight / viewportHeight;
 
-		// Cambiar clase activa solo si encontramos una visibilidad relevante
+			if (visibilityPercentage > maxVisibility) {
+				maxVisibility = visibilityPercentage;
+				activeIndex = index;
+			}
+		});
+
+		// Actualizar las clases activas de los tabs
 		tabs.forEach((tab, i) => tab.classList.toggle('active', i === activeIndex));
 	}
 });
 
-function createAndAddDiv() {
-	// Contar el número de elementos con la clase "viewerContainer"
-	const viewerContainers = document.querySelectorAll('.viewerContainer');
-	const count = viewerContainers.length + 1;
 
-	// Crear el div principal con clase "content" y id dinámico
-	const outerDiv = document.createElement('div');
-	outerDiv.className = 'content';
-	outerDiv.id = `cat${count}`;
-
-	// Crear el div interno con clase "viewerContainer" y atributo data-complex-completed
-	const innerDiv = document.createElement('div');
-	innerDiv.className = 'viewerContainer';
-	innerDiv.setAttribute('data-complex-completed', 'false');
-
-	// Añadir el div interno al div principal
-	outerDiv.appendChild(innerDiv);
-
-	// Añadir el div principal al body
-	document.body.appendChild(outerDiv);
-
-	// Crear el elemento <a> con clase "tab" y href dinámico
-	const tabLink = document.createElement('a');
-	tabLink.className = 'tab';
-	tabLink.href = `#cat${count}`;
-	tabLink.textContent = `CATEGORÍA ${count}`;
-
-	// Añadir el elemento <a> al primer div con clase "tabs"
-	const tabsDiv = document.querySelector('.tabs');
-	if (tabsDiv) {
-		tabsDiv.appendChild(tabLink);
-	} else {
-		console.error('No se encontró un div con la clase "tabs".');
-	}
-
-	// Devolver el div principal
-	return outerDiv;
-}
-
-function createCategory() {
-	// Contar el número de elementos con la clase "viewerContainer"
-	const viewerContainers = document.querySelectorAll('.viewerContainer');
+function createCategory(orientation = "bottom") {
+	// Contar el número de elementos con la clase "viewer-container"
+	const viewerContainers = document.querySelectorAll('.viewer-container');
 	const count = viewerContainers.length + 2; // Comenzar desde 2
 
 	// Crear el div principal con clase "content" y id dinámico
@@ -125,9 +88,9 @@ function createCategory() {
 	outerDiv.className = 'content';
 	outerDiv.id = `cat${count}`;
 
-	// Crear el div interno con clase "viewerContainer" y atributo data-complex-completed
+	// Crear el div interno con clase "viewer-container" y atributo data-complex-completed
 	const innerDiv = document.createElement('div');
-	innerDiv.className = 'viewerContainer';
+	innerDiv.className = 'viewer-container ' + orientation;
 	innerDiv.setAttribute('data-complex-completed', 'false');
 
 	// Añadir el div interno al div principal

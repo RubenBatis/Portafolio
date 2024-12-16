@@ -40,18 +40,7 @@ body {
 	background: #333;*/
 }
 
-.auxContainer {
-	width: 100%;
-	height: 80%;
-	position: relative;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	overflow: hidden;
-}
-/*--------------*/
-
-.viewerContainer {
+.viewer-container {
 	width: 80%;
 	height: 80%;
 	background-color: #ffffff;
@@ -61,19 +50,52 @@ body {
 	border-radius: 1vh;
 	overflow: hidden;
 	display: flex;
+}
+
+.viewer-container.bottom {
+	flex-direction: column-reverse ;
+}
+
+.viewer-container.top {
 	flex-direction: column;
+}
+
+.viewer-container.left {
+	flex-direction: row;
+}
+
+.viewer-container.right {
+	flex-direction: row-reverse;
+}
+
+.viewer-container::after {
+  content: "";
+  clear: both;
+  display: block;
 }
 
 .viewer {
 	position: relative;
-    display: flex;
+	flex: 1;
+    display: block;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 80%;
+	height: 100%;
+	width: 100%;
+	min-width: 80%;
+    min-height: 80%;
 	margin: 0;
 	padding: 0;
 	object-fit: contain;
+}
+
+.viewer.left, .viewer.right {
+	width: 80%;
+	height: 100%;
+}
+.viewer.top, .viewer.bottom {
+	width: 100%;
+	height: 80%;
 }
 
 .viewerContent {
@@ -142,68 +164,53 @@ body {
 }
 
 .thumbnail-container {
-	/*background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.8) 50%, transparent 100%);*/
 	display: flex;
 	overflow: hidden;
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	padding: 0;
+	padding: auto 0;
 	margin: 0;
 	border: 0;
+	min-height: 20%;
+	min-width: 20%;
 }
 
 /*Los thumbnails horizontales ocupan todo el ancho y el 20% del alto. Los verticales el 20% del ancho y el alto que les quede tras poner los horizontales*/
-.thumbnail-container.top ~ .thumbnail-container.left {
-	width: 20%;
-	height: 80%;
-	top: 20%;
-	left: 0px;
-}
-.thumbnail-container.top ~ .thumbnail-container.right {
-	width: 20%;
-	height: 80%;
-	top: 20%;
-	right: 0px;
-}
-.thumbnail-container.bottom ~ .thumbnail-container.left {
-	width: 20%;
-	height: 80%;
-	top: 0px;
-	left: 0px;
-}
-.thumbnail-container.bottom ~ .thumbnail-container.right {
-	width: 20%;
-	height: 80%;
-	top: 0px;
-	right: 0px;
-}
-.thumbnail-container.top ~ .thumbnail-container.top ~ .thumbnail-container.left {
-	width: 20%;
-	height: 60%;
-	top: 20%;
-	left: 0px;
-}
-.thumbnail-container.top ~ .thumbnail-container.top ~ .thumbnail-container.right {
-	width: 20%;
-	height: 60%;
-	top: 20%;
-	right: 0px;
-}
 .thumbnail-container.top {
 	width: 100%;
 	height: 20%;
-	top: 0px;
+	align-self: flex-start;
+	flex-direction: row;
 }
 .thumbnail-container.bottom {
 	width: 100%;
 	height: 20%;
-	bottom: 0px;
+	align-self: flex-end;
+	flex-direction: row;
+}
+.thumbnail-container.left {
+	width: 20%;
+	height: 100%;
+	align-self: flex-start;
+	flex-direction: column;
+}
+.thumbnail-container.right {
+	width: 20%;
+	height: 100%;
+	align-self: flex-end;
+	flex-direction: column;
 }
 
-.thumbnail {
-	height: 75%;
+.thumbnail-container.right .thumbnail, .thumbnail-container.left .thumbnail {
+	width: 75%;
 	margin: 0 10px;
+	/*transition: transform 0.5s ease-in-out;*/
+}
+
+.thumbnail-container.top .thumbnail, .thumbnail-container.bottom .thumbnail {
+	height: 75%;
+	margin: 10 0px;
 	/*transition: transform 0.5s ease-in-out;*/
 }
 

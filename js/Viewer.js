@@ -1,11 +1,11 @@
 import { Loader } from './Loader.js';
 export class Viewer {
-	constructor(parentElement, loader = null) {
+	constructor(parentElement, loader = null, {orientation = "bottom"} = {}) {
 		this.loader = loader;
 		this.parentElement = parentElement;
 		
 		this.viewerElement = document.createElement("div");
-		this.viewerElement.className = "viewer";
+		this.viewerElement.className = "viewer " + orientation;
 		this.parentElement.appendChild(this.viewerElement);
 		
 		this.createDescriptionPanel();
@@ -69,8 +69,9 @@ export class Viewer {
 		
 		this.descriptionPanel.addEventListener('wheel', (e) => {
 			e.preventDefault();
+			e.stopPropagation();
 			this.descriptionPanel.scrollBy(0, e.deltaY);
-		});
+		}, { passive: false });
 
 		// Crear y añadir el botón de mostrar/ocultar
 		this.toggleButton = this.createUniqueElement('button', '.toggle-button');

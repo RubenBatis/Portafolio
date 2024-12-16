@@ -67,10 +67,11 @@
 			import { ContentViewer } from './js/ContentViewer.js';
 			import { Carousel } from './js/Carousel.js';
 
-			let contenedor = createCategory().childNodes[0];
+			const orientation = "bottom";
+			let contenedor = createCategory(orientation).childNodes[0];
 
-			window.mviewer = new ContentViewer('/models', contenedor);
-			window.carousel = new Carousel(contenedor, {viewer: window.mviewer});
+			window.mviewer = new ContentViewer('/models', contenedor, {orientation: orientation});
+			//window.carousel = new Carousel(contenedor, {viewer: window.mviewer, position: "right"});
 /*
 			let contenedor = createCategory().childNodes[0];
 			import { MediaPicker } from './js/MediaPicker.js';

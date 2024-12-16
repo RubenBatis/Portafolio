@@ -3,9 +3,15 @@ import { Loader } from './Loader.js';
 import * as THREE from "three";
 import { OrbitControls } from "OrbitControls";
 export class ModelViewer extends Viewer{
-	constructor(parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
+	constructor(parentElement, {
+		initContent = 0,
+		loader = null,
+		currentItemIndex = {"value":0},
+		applyConfigOnInit = true,
+		orientation = "bottom"
+	} = {}) {
 		// Crear la escena y el renderer
-		super(parentElement, loader);
+		super(parentElement, loader, {orientation: orientation});
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
 		this.renderer.setSize(this.viewerElement.clientWidth * 2, this.viewerElement.clientHeight * 2);

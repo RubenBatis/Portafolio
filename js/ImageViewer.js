@@ -1,7 +1,13 @@
 import { Viewer } from './Viewer.js';
 export class ImageViewer extends Viewer {
-    constructor(parentElement, { initContent = 0, loader = null, currentItemIndex = {"value":0}, applyConfigOnInit = true } = {}) {
-        super(parentElement, loader);
+    constructor(parentElement, {
+		initContent = 0,
+		loader = null,
+		currentItemIndex = {"value":0},
+		applyConfigOnInit = true,
+		orientation = "bottom"
+	} = {}){
+        super(parentElement, loader, {orientation: orientation});
         this.imageElement = document.createElement('img');
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente
@@ -36,7 +42,7 @@ export class ImageViewer extends Viewer {
 		
 		// Escucha para el zoom y el pan
 		this.currentMousePosition = { x: 0, y: 0 }; // Inicializa la posición actual del ratón
-		this.imageFrame.addEventListener('wheel', (e) => this.handleZoom(e));
+		this.imageFrame.addEventListener('wheel', (e) => this.handleZoom(e), { passive: false });
 		this.imageFrame.addEventListener('mousedown', (e) => this.#startPan(e));
 		window.addEventListener('mousemove', (e) => this.#updateMousePosition(e)); // Actualiza la posición del ratón
 		window.addEventListener('mousemove', (e) => this.#panImage(e)); // Pan manual
@@ -94,9 +100,9 @@ export class ImageViewer extends Viewer {
 
 	// Manejar el zoom
 	handleZoom(event) {
-		if (!this.navigationAllowed) return;
-
 		event.preventDefault(); // Evita el comportamiento de desplazamiento de la rueda
+		event.stopPropagation();
+		if (!this.navigationAllowed) return;
 		const zoomIntensity = 0.1; // Ajusta la intensidad del zoom
 
 		// Obtén la escala actual de la imagen o usa 1 como valor por defecto
