@@ -15,9 +15,17 @@
 					"OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js",
 					"GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js",	
 					"STLLoader": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/STLLoader.js"
+					
 				}
 			}
 		</script>
+		<!--
+					"Phaser": "https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js",
+					"LogLevel": "https://cdn.jsdelivr.net/npm/loglevel@1.8.1/dist/loglevel.min.js"
+				}
+			}
+		-->
+		
 		<!-- Capa de Categorías en Vertical (Capa 1) -->
 		
 		<div class="language-menu">
@@ -68,9 +76,9 @@
 			import { Carousel } from './js/Carousel.js';
 
 			const orientation = "bottom";
-			let contenedor = createCategory(orientation).childNodes[0];
+			let contenedor = createCategory().childNodes[0];
 
-			window.mviewer = new ContentViewer('/models', contenedor, {orientation: orientation});
+			window.mviewer = new ContentViewer(contenedor, {contentFolder: '/models', orientation: orientation});
 			//window.carousel = new Carousel(contenedor, {viewer: window.mviewer, position: "right"});
 /*
 			let contenedor = createCategory().childNodes[0];

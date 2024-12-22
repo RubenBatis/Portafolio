@@ -13,8 +13,7 @@ export class ContentViewer extends Viewer {
 		orientation = "bottom",
 		generation = 1,
 		maxGeneration = generation,
-		viewers = null, 
-		appendControls = true
+		viewers = null
 	} = {}) {
 		super(parentElement, loader);
 		this.loader = loader;
@@ -23,28 +22,15 @@ export class ContentViewer extends Viewer {
 		this.orientation = orientation;
 		
 		this.viewerFrame = document.createElement("div");
-		this.viewerFrame.className = "viewerContent " + orientation;
+		this.viewerFrame.className = "viewerContent";
 		this.viewerFrame.style.overflow = "hidden";
 
-		/* antes:
 		if (maxGeneration === generation) {
 			this.viewerElement.className = "filler";
-		}
-		this.viewerElement.appendChild(this.viewerFrame);*/
+		} 
+		this.viewerElement.appendChild(this.viewerFrame);
 
-		if (maxGeneration === generation) {
-			this.viewerElement.className = "filler";
-			this.viewerElement.appendChild(this.viewerFrame);
-		} else {
-			this.innerViewerContainer = document.createElement("div");
-			this.innerViewerContainer.className = "inner-viewer-container";
-			this.innerFiller = document.createElement("div");
-			this.innerFiller.className = "filler";
-			this.viewerElement.appendChild(this.innerViewerContainer);
-			this.innerViewerContainer.appendChild(this.innerFiller);
-			this.innerFiller.appendChild(this.viewerFrame);
-		}
-		
+
 		this.domElement = parentElement;
 
 		this.currentLoader = this.loader;
@@ -54,29 +40,37 @@ export class ContentViewer extends Viewer {
 																											loader: this.loader, 
 																											currentItemIndex: this.currentItemIndex, 
 																											applyConfigOnInit: false, 
-																											orientation: orientation,
-																											appendControls: maxGeneration === generation
+																											orientation: orientation
 																										}),
 			'video': (viewers && viewers["video"]) ? viewers["video"] : new VideoViewer(this.viewerFrame, {
 																											loader: this.loader,
 																											currentItemIndex: this.currentItemIndex,
 																											applyConfigOnInit: false,
-																											orientation:orientation,
-																											appendControls: maxGeneration === generation
+																											orientation:orientation
 																										}),
 			'3dmodel': (viewers && viewers["3dmodel"]) ? viewers["3dmodel"] : new ModelViewer(this.viewerFrame, {
 																												  loader: this.loader,
 																												  currentItemIndex: this.currentItemIndex,
 																												  applyConfigOnInit: false,
-																												  orientation: orientation,
-																												  appendControls: maxGeneration === generation
+																												  orientation: orientation
 																											  })
 		}
+
+if (generation > 0) {
+	console.log("parent:");
+} else {
+	console.log("child:");
+}
+console.log("currentLoader:", this.currentLoader);
+console.log("this.loader.ready - ", this.loader.ready);
+console.log("Object.values(this.viewers).map(viewer => viewer.ready)]) - ", Object.values(this.viewers).map(viewer => viewer.ready));
+console.log(" - ", );
+console.log(" - ", );
 
 		Promise.all([this.loader.ready, ...Object.values(this.viewers).map(viewer => viewer.ready)]).then(() => {
 			this.carousel = new Carousel(this.viewerFrame, {viewer: this, position: orientation});//, append: false});
 			if (generation > 0) {
-				this.viewers['folder'] = new ContentViewer(this.viewerFrame, {loader: this.loader, orientation: "left", maxGeneration: maxGeneration, generation: generation - 1});
+				this.viewers['folder'] = new ContentViewer(this.viewerFrame, {loader: this.loader, orientation: "right", maxGeneration: maxGeneration, generation: generation - 1});
 			}
 			this.carousel.ready.then(() => {
 
@@ -91,19 +85,6 @@ export class ContentViewer extends Viewer {
             console.error("Error al cargar el loader:", error);
         });
 	}
-	
-	setActive(isActive) {
-		this.isActive = isActive;
-        // Dejar de escuchar eventos de visores inactivos
-        if (isActive) {
-            this.toggleButton.classList.add("active");
-        } else {
-            this.toggleButton.classList.remove("active");
-			Object.values(this.viewers).forEach((viewer) => {
-				viewer.setActive(isActive);
-			});
-        }
-    }
 	
 	setLoader(loader) {
 		this.currentLoader = loader;
@@ -134,20 +115,6 @@ export class ContentViewer extends Viewer {
 		}
 	}
 	
-	selectActiveViewer() {
-		let activeViewer = null;
-		Object.values(this.viewers).forEach((viewer) => {
-			if (viewer.isActive) {
-				activeViewer = viewer;
-			}
-		});
-		return activeViewer;
-	}
-	
-	toggleAnimationPause() {
-		this.selectActiveViewer().toggleAnimationPause();
-	}
-		
 	applyConfig(contentName) {
 		let type = this.currentLoader.types[contentName];
 		if(!type || !this.viewers[type]) {

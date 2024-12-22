@@ -4,7 +4,7 @@ export class Carousel {
 		maxThumbsToShow = 0,
 		viewer = null,
 		loader = null,
-		linkedCarousel = null,
+		/*linkedCarousel = null,*/
 		position = "bottom", // Valores: 'left', 'right', 'top', 'bottom', 
 		append = true
 	} = {}) {
@@ -14,12 +14,11 @@ export class Carousel {
 		this.position = position;
 		this.append = append;
 		
-		this.loader = this.viewer.loader; /// ¿porqué esto fuera del ready y lo otro dentro? Excelente pregunta.
+		this.loader = this.viewer.loader;
 		this.currentLoader = this.loader;
 		this.currentItemIndex = viewer ? viewer.currentItemIndex : {value: 0};
-		
-		this.linkedCarousel = linkedCarousel;// instanceof Carousel ? linkedCarousel : null;
-		
+		//this.linkedCarousel = linkedCarousel;// instanceof Carousel ? linkedCarousel : null;
+
 		let observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) { // Detecta si el carrusel es visible en el viewport
@@ -32,35 +31,41 @@ export class Carousel {
 		observer.observe(this.parentElement);
 		
 		// Esperar a que viewer3D y el Loader estén listos
-        Promise.all([this.viewer.ready, this.viewer.loader.ready]).then(() => {
-            this.#createThumbnailContainer();
-            this.#updateThumbnailsDisplay();
-            this.#addWheelEvent();
-			this.#addClickEvents();
-			
-			if (loader) {
-				this.loader = loader; /// ¿porqué esto dentro del ready y lo otro fuera? Excelente pregunta.
-				this.currentLoader = this.loader;
-			}
-			
-			window.addEventListener('resize', () => {
-				this.#updateThumbnailsDisplay();
-			});
+		this.ready = new Promise((resolve, reject) => {
+			// Esperar a que viewer3D y el Loader estén listos
+			Promise.all([this.viewer.ready, this.viewer.loader.ready]).then(() => {
+                try {
+                    this.#createThumbnailContainer();
+                    this.#updateThumbnailsDisplay();
+                    this.#addWheelEvent();
+                    this.#addClickEvents();
 
-        }).catch(error => {
-			console.error("Error en la inicialización del carrusel:", error);
+                    if (loader) {
+                        this.loader = loader;
+                        this.currentLoader = this.loader;
+                    }
+
+                    window.addEventListener('resize', () => {
+                        this.#updateThumbnailsDisplay();
+                    });
+
+                    resolve(); // Indica que el carrusel está completamente inicializado
+                } catch (error) {
+                    console.error("Error durante la inicialización del carrusel:", error);
+                    reject(error); // Indica que hubo un error durante la inicialización
+                }
+            })
+            .catch(error => {
+                console.error("Error al esperar a viewer.ready o loader.ready:", error);
+                reject(error); // Indica que hubo un error en las dependencias
+            });
 		});
 	}
-	
-
-
-
-
 	
 	// Asignar un loader nuevo
 	setLoader(loader) {
 		this.currentLoader = loader;
-        this.currentItemIndex = 0; // Reiniciar índice al cambiar el loader
+        this.currentItemIndex.value = 0; // Reiniciar índice al cambiar el loader
         this.#updateThumbnailsDisplay();
 	}
 	
@@ -174,7 +179,7 @@ export class Carousel {
 		} else {
 			if (this.loader.children[contentNumber]) {
 				this.currentLoader = this.loader.children[contentNumber];
-				this.currentItemIndex = 0; // Reiniciar índice al cambiar el loader
+				this.currentItemIndex.value = 0; // Reiniciar índice al cambiar el loader
 				this.#updateThumbnailsDisplay();
 			}
 		}

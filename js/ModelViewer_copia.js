@@ -6,30 +6,44 @@ export class ModelViewer extends Viewer{
 	constructor(parentElement, {
 		initContent = 0,
 		loader = null,
-		currentItemIndex = { value: 0 },
+		currentItemIndex = {"value":0},
 		applyConfigOnInit = true,
-		orientation = "bottom", 
-		appendControls = true
+		orientation = "bottom"
 	} = {}) {
-		super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
-
-		// Crear escena y renderer
+		// Crear la escena y el renderer
+		super(parentElement, loader, {orientation: orientation});
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
+		this.renderer.setSize(this.viewerElement.clientWidth * 2, this.viewerElement.clientHeight * 2);
 		this.canvas = this.renderer.domElement;
-		this.canvas.className = "viewerContent " + orientation;
-		this.viewerElement.appendChild(this.canvas);
+		this.canvas.className = "viewerContent";
 
 		this.domElement = this.canvas;
+
 		this.currentItemIndex = currentItemIndex;
+		
 		this.camera = null;
 		this.controls = null;
 
-		// Animación y reloj
+		this.ready = this.#setupControlsAndCamera();
+		
+		let ambientLight = new THREE.AmbientLight(0x404040); // Luz ambiental // también está fatal
+		this.scene.add(ambientLight);
+		
+		this.viewerElement.appendChild(this.canvas);
+		
 		this.clock = new THREE.Clock();
-
-		// Promesa de ready
-		this.ready = this.#initialize(initContent, applyConfigOnInit);
+		
+		// Espera a que el loader esté listo
+        this.ready.then(() => {
+			this.animate = this.animate.bind(this);
+			if (applyConfigOnInit) {
+				this.applyConfig(this.loader.resourceNames[initContent]);
+			}
+			this.animate();
+        }).catch(error => {
+            console.error('Error al cargar los modelos:', error);
+        });
 	}
 	
 	// Configurar el tamaño del canvas y renderer
@@ -37,90 +51,48 @@ export class ModelViewer extends Viewer{
 		const width = this.viewerElement.clientWidth;
 		const height = this.viewerElement.clientHeight;
 		this.renderer.setSize(width * 2, height * 2, false);
-		this.canvas.style.width = `${this.viewerElement.clientWidth}px`;
-		this.canvas.style.height = `${this.viewerElement.clientHeight}px`;
-	}
-	
-	async #initialize(initContent, applyConfigOnInit) {
-		try {
-			console.log("Inicializando ModelViewer...");
-			await this.#ensureCanvasIsVisible();
-			await this.#setupControlsAndCamera();
-
-			if (applyConfigOnInit) {
-				console.log("Aplicando configuración inicial...");
-				this.applyConfig(this.loader.resourceNames[initContent]);
-			}
-
-			console.log("ModelViewer inicializado completamente.");
-			this.animate = this.animate.bind(this);
-			this.animate(); // Inicia la animación
-		} catch (error) {
-			console.error("Error durante la inicialización de ModelViewer:", error);
-			throw error; // Rechaza la promesa si algo falla
-		}
-	}
-	
-	async #ensureCanvasIsVisible(timeout = 5000) {
-		const interval = 100; // Intervalo de verificación
-		const maxAttempts = Math.ceil(timeout / interval); // Intentos permitidos
-		let attempts = 0;
-
-		while (attempts < maxAttempts) {
-			const width = this.canvas.clientWidth;
-			const height = this.canvas.clientHeight;
-
-			if (width > 0 && height > 0) {
-				console.log("Canvas visible con dimensiones:", width, height);
-				return;
-			}
-
-			attempts++;
-			await new Promise(resolve => setTimeout(resolve, interval));
-		}
-
-		throw new Error("Canvas no se hizo visible dentro del tiempo permitido.");
+		this.canvas.style.width = `${this.viewerElement.clientWidth+1}px`;
+		this.canvas.style.height = `${this.viewerElement.clientHeight+1}px`;
 	}
 	
 	// Configurar la cámara.
 	async #setupCamera() {
-		const width = this.canvas.clientWidth;
-		const height = this.canvas.clientHeight;
-
-		if (width === 0 || height === 0) {
-			throw new Error("No se puede configurar la cámara: el canvas tiene dimensiones inválidas.");
+		// Esperamos hasta que el canvas tenga un tamaño mayor que 0
+		while (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
+			await new Promise(resolve => setTimeout(resolve, 100)); // Esperar 100ms antes de verificar de nuevo
 		}
 
+		// Ahora que el canvas tiene dimensiones válidas, podemos configurar la cámara
+		const width = this.canvas.clientWidth;
+		const height = this.canvas.clientHeight;
 		const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-		this.scene.add(camera);
-		console.log("Cámara configurada con dimensiones:", width, height);
 		return camera;
 	}
 
 	// Llamar a la anterior y esperar a que termine para configurar los controles.
 	async #setupControlsAndCamera() {
-		try {
-			console.log("Configurando cámara y controles...");
-			this.camera = await this.#setupCamera();
+	try {
+		this.camera = await this.#setupCamera();
+		this.scene.add(this.camera);
 
-			this.controls = new OrbitControls(this.camera, this.canvas);
-			this.controls.enableDamping = true;
-			this.controls.dampingFactor = 0.25;
-			this.controls.enableZoom = true;
-			this.controls.enableRotate = true;
-			this.controls.mouseButtons = {
-				LEFT: THREE.MOUSE.ROTATE,
-				MIDDLE: null,
-				RIGHT: THREE.MOUSE.PAN
-			};
+		// Añadir controles de órbita
+		this.controls = new OrbitControls(this.camera, this.canvas);
+		this.controls.enableDamping = true; // Suaviza el movimiento
+		this.controls.dampingFactor = 0.25;
+		this.controls.enableZoom = true;
+		this.controls.enableRotate = true;
 
-			console.log("Cámara y controles configurados.");
+		this.controls.mouseButtons = {
+			LEFT: THREE.MOUSE.ROTATE,    // Mantén el botón izquierdo para rotar
+			MIDDLE: null,                // Desactiva el botón central (rueda)
+			RIGHT: THREE.MOUSE.PAN       // Mantén el botón derecho para hacer pan
+		};
+
+		// Aquí puedes configurar otras propiedades iniciales o llamar a funciones de la cámara o los controles
 		} catch (error) {
-			console.error("Error al configurar cámara y controles:", error);
-			throw error;
+			console.log("Error al configurar la cámara:", error);
 		}
 	}
-
 
 	// Método para alternar la pausa/reproducción
 	toggleAnimationPause() {
@@ -268,16 +240,8 @@ export class ModelViewer extends Viewer{
 	// Animar la escena
 	animate = () => {
 		requestAnimationFrame(this.animate);
-		
-		// Solo redimensionar si el tamaño ha cambiado
-		const width = this.viewerElement.clientWidth;
-		const height = this.viewerElement.clientHeight;
-		if (this.renderer.getSize(new THREE.Vector2()).x !== width || 
-			this.renderer.getSize(new THREE.Vector2()).y !== height) {
-			this.#resize();
-		}
-		
-		const mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]];
+		this.#resize();
+		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]];
 		
 		// Si hay un mixer activo, actualizarlo
 		if (mixer) {

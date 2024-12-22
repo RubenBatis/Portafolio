@@ -75,10 +75,23 @@ document.addEventListener('DOMContentLoaded', () => {
 		// Actualizar las clases activas de los tabs
 		tabs.forEach((tab, i) => tab.classList.toggle('active', i === activeIndex));
 	}
+	
+	// Sobreescribir el evento de click de los anclas para evitar tenerlas en la URL
+	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+		anchor.addEventListener('click', function (event) {
+			event.preventDefault(); // Evita que el hash aparezca en la URL
+
+			const targetId = this.getAttribute('href').substring(1); // Obtener el ID del ancla
+			const targetElement = document.getElementById(targetId);
+
+			if (targetElement) {
+				targetElement.scrollIntoView({ behavior: 'smooth' }); // Desplazamiento suave
+			}
+		});
+	});
 });
 
-
-function createCategory(orientation = "bottom") {
+function createCategory() {
 	// Contar el número de elementos con la clase "viewer-container"
 	const viewerContainers = document.querySelectorAll('.viewer-container');
 	const count = viewerContainers.length + 2; // Comenzar desde 2
@@ -90,7 +103,7 @@ function createCategory(orientation = "bottom") {
 
 	// Crear el div interno con clase "viewer-container" y atributo data-complex-completed
 	const innerDiv = document.createElement('div');
-	innerDiv.className = 'viewer-container ' + orientation;
+	innerDiv.className = 'viewer-container';
 	innerDiv.setAttribute('data-complex-completed', 'false');
 
 	// Añadir el div interno al div principal

@@ -5,9 +5,10 @@ export class VideoViewer extends Viewer {
 		loader = null,
 		currentItemIndex = {"value":0},
 		applyConfigOnInit = true,
-		orientation = "bottom"
+		orientation = "bottom", 
+		appendControls = true
 	} = {}) {
-        super(parentElement, loader, {orientation: orientation});
+        super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
         this.videoElement = document.createElement('video');
         this.videoElement.style.transformOrigin = 'center center';
         this.videoElement.controls = false; // Desactivar los controles predeterminados
@@ -15,7 +16,7 @@ export class VideoViewer extends Viewer {
 		this.videoElement.currentTime = 0;
 
 		this.videoFrame =  document.createElement('div');
-		this.videoFrame.className = "viewerContent";
+		this.videoFrame.className = "viewerContent " + orientation;
 		this.videoFrame.style.overflow = "hidden";
 		this.videoFrame.appendChild(this.videoElement);
 		this.resize();

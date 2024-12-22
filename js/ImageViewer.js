@@ -5,16 +5,17 @@ export class ImageViewer extends Viewer {
 		loader = null,
 		currentItemIndex = {"value":0},
 		applyConfigOnInit = true,
-		orientation = "bottom"
+		orientation = "bottom", 
+		appendControls = true
 	} = {}){
-        super(parentElement, loader, {orientation: orientation});
+        super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
         this.imageElement = document.createElement('img');
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente
 		this.imageElement.style.pointerEvents = "none";
 		
 		this.imageFrame =  document.createElement('div');
-		this.imageFrame.className = "viewerContent";
+		this.imageFrame.className = "viewerContent " + orientation;
 		this.imageFrame.style.overflow = "hidden";
 		this.imageFrame.appendChild(this.imageElement);
 		this.resize();

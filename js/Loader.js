@@ -119,6 +119,7 @@ export class Loader {
 			if (jsonFiles && jsonFiles.length > 0) {
 				const validJsonFiles = jsonFiles.filter(file => file.endsWith('.json'));
 				const resources = [];
+				const loaderPromises = [];
 
 				const extensionToTypeMap = {
 					'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
@@ -162,7 +163,8 @@ export class Loader {
 				for (const resource of resources) {
 					if (resource.isDirectory) {
 						const subLoader = new Loader(`${this.contentFolder}/${resource.configName}`);
-						await subLoader.ready;
+						//await subLoader.ready;
+						loaderPromises.push(subLoader.ready);
 						this.children.push(subLoader); // Añadir a los hijos
 						this.types[resource.configName] = "folder";
 					} else {
@@ -179,6 +181,7 @@ export class Loader {
 					this.resourceNames.push(resource.configName);
 					this.configs[resource.configName] = resource.config;
 				}
+				await Promise.all(loaderPromises);
 			} else {
 				console.log('No se encontraron archivos JSON.');
 			}

@@ -1,12 +1,14 @@
 import { Loader } from './Loader.js';
 export class Viewer {
-	constructor(parentElement, loader = null, {orientation = "bottom"} = {}) {
+	constructor(parentElement, loader = null, {orientation = "bottom", appendControls = true} = {}) {
 		this.loader = loader;
 		this.parentElement = parentElement;
 		
 		this.viewerElement = document.createElement("div");
 		this.viewerElement.className = "viewer " + orientation;
 		this.parentElement.appendChild(this.viewerElement);
+		
+		this.appendControls = appendControls;
 		
 		this.createDescriptionPanel();
 		this.createAnimControls();
@@ -37,6 +39,12 @@ export class Viewer {
 		return element;
 	}
 	
+	appendIfNeeded(parentElement, childElement) {
+		if (this.appendControls) {
+			parentElement.appendChild(childElement);
+		}
+	}
+	
 	setActive(isActive) {
         this.isActive = isActive;
         // Dejar de escuchar eventos de visores inactivos
@@ -63,9 +71,8 @@ export class Viewer {
 	// Crear y añadir el panel de descripción
 	createDescriptionPanel() {
 		this.descriptionPanel = this.createUniqueElement('div', '.description-panel');
-		this.createUniqueElement('div', '.description-panel');
 		this.descriptionPanel.style.display = 'none';
-		this.parentElement.appendChild(this.descriptionPanel);
+		this.appendIfNeeded(this.parentElement, this.descriptionPanel);
 		
 		this.descriptionPanel.addEventListener('wheel', (e) => {
 			e.preventDefault();
@@ -78,6 +85,7 @@ export class Viewer {
 		this.toggleButton.innerText = '\u2261';
 		this.toggleButton.addEventListener('click', () => {
 			if (this.isActive) {
+				console.log("Aplico el addEventListener desde ", this.domElement.tagName);
 				if (this.descriptionPanel.style.display === 'none') {
 					this.descriptionPanel.style.display = 'block';
 					this.descriptionPanel.offsetHeight;
@@ -87,7 +95,7 @@ export class Viewer {
 				}
 			}
 		});
-		this.parentElement.appendChild(this.toggleButton);
+		this.appendIfNeeded(this.parentElement, this.toggleButton);
 	}
 	
 	// Método que aplica la configuración de cada medio a la visualización
@@ -103,7 +111,7 @@ export class Viewer {
 	createAnimControls() {
 		this.playPauseButton = this.createUniqueElement('button', '.pause-button');
 		this.playPauseButton.innerHTML = '⏸';
-		this.parentElement.appendChild(this.playPauseButton);
+		this.appendIfNeeded(this.parentElement, this.playPauseButton);
 		this.isPaused = false;
 		
 		// Alternar la animación al hacer clic en el botón
@@ -128,6 +136,6 @@ export class Viewer {
 	
 	// Modificar el botón de pausa según el estado
 	togglePauseButtonIcon(paused) {
-		paused ? this.playPauseButton.innerHTML = '⏸' : this.playPauseButton.innerHTML = '⏵';;
+		paused ? this.playPauseButton.innerHTML = '⏸' : this.playPauseButton.innerHTML = '⏵';
 	}
 }
