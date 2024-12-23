@@ -173,7 +173,6 @@ export class Carousel {
 		if (typeof this.viewer.applyConfig === 'function') {
 			this.viewer.saveConfig(this.currentLoader.resourceNames[this.currentItemIndex.value]);
 			this.currentItemIndex.value = contentNumber;
-
 			this.viewer.applyConfig(this.currentLoader.resourceNames[this.currentItemIndex.value]);
 			this.#updateThumbnailsDisplay();
 		} else {

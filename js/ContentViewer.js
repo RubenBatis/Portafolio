@@ -26,12 +26,6 @@ export class ContentViewer extends Viewer {
 		this.viewerFrame.className = "viewerContent " + orientation;
 		this.viewerFrame.style.overflow = "hidden";
 
-		/* antes:
-		if (maxGeneration === generation) {
-			this.viewerElement.className = "filler";
-		}
-		this.viewerElement.appendChild(this.viewerFrame);*/
-
 		if (maxGeneration === generation) {
 			this.viewerElement.className = "filler";
 			this.viewerElement.appendChild(this.viewerFrame);
@@ -46,9 +40,7 @@ export class ContentViewer extends Viewer {
 		}
 		
 		this.domElement = parentElement;
-
-		this.currentLoader = this.loader;
-		
+	
 		this.viewers = {
 			'image': (viewers && viewers["image"]) ? viewers["image"] : new ImageViewer(this.viewerFrame, {
 																											loader: this.loader, 
@@ -75,8 +67,9 @@ export class ContentViewer extends Viewer {
 
 		Promise.all([this.loader.ready, ...Object.values(this.viewers).map(viewer => viewer.ready)]).then(() => {
 			this.carousel = new Carousel(this.viewerFrame, {viewer: this, position: orientation});//, append: false});
+			this.nextOrientation = this.#clockwiseNext();
 			if (generation > 0) {
-				this.viewers['folder'] = new ContentViewer(this.viewerFrame, {loader: this.loader, orientation: "left", maxGeneration: maxGeneration, generation: generation - 1});
+				this.viewers['folder'] = new ContentViewer(this.viewerFrame, {loader: this.loader, orientation: this.nextOrientation, maxGeneration: maxGeneration, generation: generation - 1});
 			}
 			this.carousel.ready.then(() => {
 
@@ -92,6 +85,15 @@ export class ContentViewer extends Viewer {
         });
 	}
 	
+	#clockwiseNext() {
+		const orientations = ["top", "right", "bottom", "left"];
+		let next = orientations.indexOf(this.orientation) + 1;
+		if (next === orientations.length) {
+			next = 0;
+		}
+		return orientations[next];
+	}
+	
 	setActive(isActive) {
 		this.isActive = isActive;
         // Dejar de escuchar eventos de visores inactivos
@@ -100,38 +102,20 @@ export class ContentViewer extends Viewer {
         } else {
             this.toggleButton.classList.remove("active");
 			Object.values(this.viewers).forEach((viewer) => {
+console.log("desactivando ", viewer.domElement.tagName);
 				viewer.setActive(isActive);
 			});
         }
     }
 	
 	setLoader(loader) {
-		this.currentLoader = loader;
+		this.loader = loader;
 		//this.showContent(loader.getFirstElement());
-		this.carousel.setLoader(this.currentLoader);
-		this.applyConfig(this.currentLoader.resourceNames[this.currentItemIndex.value]);
-	}
-	
-	resetLoader() {
-		this.currentLoader = this.loader;
-		//this.showContent(loader.getFirstElement());
-		this.carousel.setLoader(this.currentLoader);
-		this.applyConfig(this.loader.resourceNames[this.currentItemIndex.value]);
-	}
-	
-	saveConfig(contentName) {
-		let type = this.currentLoader.types[contentName];
-		if(!type || !this.viewers[type]) {
-			console.error(`Tipo de contenido ${type} no reconocido o viewer no encontrado.`);
-            return;
-		} else {
-			if(type != "folder") {
-				this.viewers[type].saveConfig(contentName);
-			}
-		}
-		if(type === "folder") {
-			this.currentLoader.configs[contentName] = this.currentItemIndex.value;
-		}
+		this.carousel.setLoader(this.loader);
+		//this.applyConfig(this.loader.resourceNames[this.currentItemIndex.value]);
+		Object.values(this.viewers).forEach((viewer) => {
+			viewer.setLoader(loader);
+		});
 	}
 	
 	selectActiveViewer() {
@@ -147,9 +131,25 @@ export class ContentViewer extends Viewer {
 	toggleAnimationPause() {
 		this.selectActiveViewer().toggleAnimationPause();
 	}
+	
+	saveConfig(contentName) {
+		let type = this.loader.types[contentName];
+		if(!type || !this.viewers[type]) {
+			console.error(`Tipo de contenido ${type} no reconocido o viewer no encontrado.`);
+            return;
+		} else {
+			if(type != "folder") {
+				this.viewers[type].saveConfig(contentName);
+			}
+		}
+		if(type === "folder") {
+			this.loader.configs[contentName]["currentItemIndex"] = this.currentItemIndex.value;
+		}
+	}
 		
 	applyConfig(contentName) {
-		let type = this.currentLoader.types[contentName];
+		let type = this.loader.types[contentName];
+		console.log(contentName);
 		if(!type || !this.viewers[type]) {
 			console.error(`Tipo de contenido ${type} no reconocido o viewer no encontrado.`);
             return;
@@ -171,8 +171,16 @@ export class ContentViewer extends Viewer {
 		}
 		if(type === "folder") {
 			const config = super.applyConfig(contentName);
-			this.viewers[type].setLoader(this.currentLoader.children[this.currentItemIndex.value]);
-			this.currentItemIndex.value = config.currentItemIndex ? config.currentItemIndex : 0;
+			this.viewers[type].setLoader(this.loader.children[this.currentItemIndex.value]);
+
+			let index = 0;
+			if (config.currentItemIndex) {
+				index = config.currentItemIndex;
+			} else if (config.defaultContent) {
+				index = this.loader.children[this.currentItemIndex.value].resourceNames.indexOf(config.defaultContent);
+			}
+			this.viewers[type].currentItemIndex.value = index;
+			this.viewers[type].applyConfig(this.loader.children[this.currentItemIndex.value].resourceNames[index]);
 		}
 	}
 }

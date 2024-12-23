@@ -57,6 +57,10 @@ export class Viewer {
 	
 	resize() {}
 	
+	setLoader(loader) {
+		this.loader = loader;
+	}
+	
 	// Actualizar la descripción y los controles
 	updateDescription(description, backgroundColor) {
 		const descriptionDiv = document.querySelector(".description-panel");
@@ -85,7 +89,6 @@ export class Viewer {
 		this.toggleButton.innerText = '\u2261';
 		this.toggleButton.addEventListener('click', () => {
 			if (this.isActive) {
-				console.log("Aplico el addEventListener desde ", this.domElement.tagName);
 				if (this.descriptionPanel.style.display === 'none') {
 					this.descriptionPanel.style.display = 'block';
 					this.descriptionPanel.offsetHeight;
