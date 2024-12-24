@@ -21,7 +21,7 @@ export class ContentViewer extends Viewer {
 		this.parentElement = parentElement;
 		this.currentItemIndex = {"value": initContent};
 		this.orientation = orientation;
-		
+
 		this.viewerFrame = document.createElement("div");
 		this.viewerFrame.className = "viewerContent " + orientation;
 		this.viewerFrame.style.overflow = "hidden";
@@ -102,7 +102,6 @@ export class ContentViewer extends Viewer {
         } else {
             this.toggleButton.classList.remove("active");
 			Object.values(this.viewers).forEach((viewer) => {
-console.log("desactivando ", viewer.domElement.tagName);
 				viewer.setActive(isActive);
 			});
         }
@@ -143,16 +142,16 @@ console.log("desactivando ", viewer.domElement.tagName);
 			}
 		}
 		if(type === "folder") {
-			this.loader.configs[contentName]["currentItemIndex"] = this.currentItemIndex.value;
+			this.loader.configs[contentName]["currentItemIndex"] = this.viewers[type].currentItemIndex.value;
+			this.viewers[type].saveConfig(this.viewers[type].loader.resourceNames[this.viewers[type].currentItemIndex.value]);
 		}
 	}
 		
 	applyConfig(contentName) {
 		let type = this.loader.types[contentName];
-		console.log(contentName);
 		if(!type || !this.viewers[type]) {
 			console.error(`Tipo de contenido ${type} no reconocido o viewer no encontrado.`);
-            return;
+			return;
 		} else {
 			if(type != "folder") {
 				this.viewers[type].applyConfig(contentName);
@@ -172,15 +171,15 @@ console.log("desactivando ", viewer.domElement.tagName);
 		if(type === "folder") {
 			const config = super.applyConfig(contentName);
 			this.viewers[type].setLoader(this.loader.children[this.currentItemIndex.value]);
-
+			
 			let index = 0;
 			if (config.currentItemIndex) {
 				index = config.currentItemIndex;
 			} else if (config.defaultContent) {
-				index = this.loader.children[this.currentItemIndex.value].resourceNames.indexOf(config.defaultContent);
+				index = this.viewers[type].loader.resourceNames.indexOf(config.defaultContent);
 			}
 			this.viewers[type].currentItemIndex.value = index;
-			this.viewers[type].applyConfig(this.loader.children[this.currentItemIndex.value].resourceNames[index]);
+			this.viewers[type].applyConfig(this.viewers[type].loader.resourceNames[index]);
 		}
 	}
 }

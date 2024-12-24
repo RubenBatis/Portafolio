@@ -134,14 +134,14 @@ export class Carousel {
 	
 	// Crear y añadir los botones laterales
 	#createNavigationButtons() {
-		const previousArrow = document.querySelector('.arrow.left, .arrow.top');
-		const nextArrow = document.querySelector('.arrow.right, .arrow.bottom');
+		const previousArrow = this.thumbnailContainer.querySelector('.arrow.left, .arrow.top');
+		const nextArrow = this.thumbnailContainer.querySelector('.arrow.right, .arrow.bottom');
 		const horizontal = ['top', 'bottom'].includes(this.position);
 
 		if (!previousArrow) {
 			const newLeftArrow = document.createElement('div');
 			newLeftArrow.className = horizontal ? 'arrow left' : 'arrow top';
-			newLeftArrow.innerHTML = horizontal ? "\u2329" : '\uFE3F'; // Unicode para la flecha izquierda
+			newLeftArrow.innerHTML = horizontal ? "\u2329" : '\uFE3F'; // Unicode para la flecha izquierda o superior
 			newLeftArrow.addEventListener('click', () => {
 				let contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
 				this.changeContent(contentNumber);
@@ -152,7 +152,7 @@ export class Carousel {
 		if (!nextArrow) {
 			const newRightArrow = document.createElement('div');
 			newRightArrow.className = horizontal ? 'arrow right' : 'arrow bottom';
-			newRightArrow.innerHTML = horizontal ? "\u232A" : '\uFE40'; // Unicode para la flecha derecha
+			newRightArrow.innerHTML = horizontal ? "\u232A" : '\uFE40'; // Unicode para la flecha derecha o inferior
 			newRightArrow.addEventListener('click', () => {
 				let contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
 				this.changeContent(contentNumber);
