@@ -2,6 +2,8 @@
 	--minouc: #ffcc00; /*var(--minouc);*/
 	--oscdum: black;
 	--anggra: 45deg;
+	--vcarouselsize: 20%;
+	--hcarouselsize: 10%;
 	/*--minouc: #3e1e67;
 	--oscdum: #f7f7ea;
 	--anggra: 0deg;*/
@@ -86,8 +88,8 @@ body {
     align-items: center;
 	height: 100%;
 	width: 100%;
-	min-width: 80%;
-    min-height: 80%;
+	min-width: calc(100% - var(--hcarouselsize));
+    min-height: calc(100% - var(--vcarouselsize));
 	max-height: 100%;
 	max-width: 100%;
 	margin: 0;
@@ -97,12 +99,12 @@ body {
 }
 
 .viewer.left, .viewer.right {
-	width: 80%;
+	width: calc(100% - var(--hcarouselsize));
 	height: 100%;
 }
 .viewer.top, .viewer.bottom {
 	width: 100%;
-	height: 80%;
+	height: calc(100% - var(--vcarouselsize));
 }
 
 .viewerContent {
@@ -207,29 +209,29 @@ body {
 	padding: 0;
 	margin: 0;
 	border: 0;
-	min-height: 20%;
-	min-width: 20%;
+	min-height: var(--vcarouselsize);
+	min-width: var(--hcarouselsize);
 	flex: 0 0 auto;
 }
 
 /*Los thumbnails horizontales ocupan todo el ancho y el 20% del alto. Los verticales el 20% del ancho y el alto que les quede tras poner los horizontales*/
 .thumbnail-container.top {
 	width: 100%;
-	height: 20%;
+	height: var(--vcarouselsize);
 	flex-direction: row;
 }
 .thumbnail-container.bottom {
 	width: 100%;
-	height: 20%;
+	height: var(--vcarouselsize);
 	flex-direction: row;
 }
 .thumbnail-container.left {
-	width: 20%;
+	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
 }
 .thumbnail-container.right {
-	width: 20%;
+	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
 }
