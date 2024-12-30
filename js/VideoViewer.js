@@ -6,7 +6,8 @@ export class VideoViewer extends Viewer {
 		currentItemIndex = {"value":0},
 		applyConfigOnInit = true,
 		orientation = "bottom", 
-		appendControls = true
+		appendControls = true,
+		controls = null
 	} = {}) {
         super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
         this.videoElement = document.createElement('video');
@@ -74,7 +75,7 @@ export class VideoViewer extends Viewer {
 			"y": (containerHeight - videoHeight) / (2 * initialScale)
 		};
 
-		this.applyTransform(); // Aplica el desplazamiento inicial
+		this.applyTransform(); // Aplica el desplazamiento
 	}
 
 	saveConfig(videoName) {
@@ -97,13 +98,20 @@ export class VideoViewer extends Viewer {
 
         // Mostrar u ocultar controles de reproducción personalizados
         if (config.playbackControls) {
-            this.playPauseButton.style.display = 'block';
+            //this.playPauseButton.style.display = 'block';
+			this.mediaControls.playPause.button.style.display = 'block';
         } else {
-            this.playPauseButton.style.display = 'none';
+            //this.playPauseButton.style.display = 'none';
+			this.mediaControls.playPause.button.style.display = 'none';
         }
 
-		this.togglePauseButtonIcon(!this.videoElement.paused)
-        return config;
+		// Lógica específica para habilitar controles en videos
+		this.selectControls({
+			playPause: true,          // Siempre mostrar
+			toggleDescription: true,  // Siempre mostrar
+			reset: true,              // Siempre mostrar
+			changeAnimation: false    // No se necesita para videos
+		});
     }
 
 	// Manejar el zoom
@@ -215,5 +223,9 @@ export class VideoViewer extends Viewer {
 	applyTransform() {
 		const scale = this.currentScale || 1;
 		this.videoElement.style.transform = `scale(${scale}) translate(${this.posOffset.x}px, ${this.posOffset.y}px)`;
+	}
+	
+	reset() {
+		this.videoElement.currentTime = 0;
 	}
 }

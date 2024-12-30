@@ -21,7 +21,7 @@
 }
 
 * {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html{
@@ -76,20 +76,20 @@ body {
 	margin: 0;
 	padding: 0;
 	display: flex;
-    align-items: stretch; /* Asegura alturas consistentes */
-    justify-content: space-between; /* Espaciado correcto entre hijos */
+	align-items: stretch; /* Asegura alturas consistentes */
+	justify-content: space-between; /* Espaciado correcto entre hijos */
 }
 
 .viewer {
 	position: relative;
 	flex: 1;
-    display: block;
-    justify-content: center;
-    align-items: center;
+	display: block;
+	justify-content: center;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	min-width: calc(100% - var(--hcarouselsize));
-    min-height: calc(100% - var(--vcarouselsize));
+	min-height: calc(100% - var(--vcarouselsize));
 	max-height: 100%;
 	max-width: 100%;
 	margin: 0;
@@ -116,8 +116,8 @@ body {
 	border: 0;
 	display: flex;
 	flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+	justify-content: flex-start;
+	align-items: stretch;
 	flex: 1;
 	overflow: hidden;
 }
@@ -149,28 +149,35 @@ body {
 	top: 0;
 	right: 0;
 	width: 30%;
-	height: 50%;
+	height: 80%;
 	padding: 40px 40px 0 10px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	scrollbar-width: none; /* Firefox: Oculta la barra */
+    -ms-overflow-style: none; /* Internet Explorer 10+: Oculta la barra */
 	display: none;
-	/*pointer-events: none; /* No recibir eventos de ratón */
-	font-size: 30px;
+	font-size: 20px;
 	font-family: arial;
-	text-align: right;
+	text-align: justify;
 	filter: invert(100%);
 	user-select: none;
 	-webkit-filter: invert(100%);
-	opacity: 0.3;
-	text-shadow: 
+	opacity: 0.7;
+	pointer-events:none;
+	/*text-shadow: 
 		-1px -1px 0 #000, /* sombra hacia la esquina superior izquierda */
-		1px -1px 0 #000,	/* sombra hacia la esquina superior derecha */
-		-1px 1px 0 #000,	/* sombra hacia la esquina inferior izquierda */
-		1px 1px 0 #000;	 /* sombra hacia la esquina inferior derecha */
+	/*	1px -1px 0 #000,	/* sombra hacia la esquina superior derecha */
+	/*	-1px 1px 0 #000,	/* sombra hacia la esquina inferior izquierda */
+	/*	1px 1px 0 #000;	 /* sombra hacia la esquina inferior derecha */
+}
+
+.description-panel::-webkit-scrollbar {
+    display: none; /* Chrome, Safari y Edge: Oculta la barra */
 }
 
 .description-panel::first-line {
-	font-size: 40px;
+	text-align: right;
+	font-size: 30px;
 	font-weight: bold;
 }
 
@@ -199,6 +206,72 @@ body {
 	left: 10px;
 	display:none;
 }
+
+
+.control-container {
+	display: flex;
+	justify-content: space-between; /* Espacia los subcontenedores */
+	align-items: center; /* Centra verticalmente los botones */
+	width: 100%; /* Asegura que ocupe todo el ancho del contenedor */
+	padding: 0px;
+	box-sizing: border-box;
+	position: absolute;
+}
+
+.control-container-left,
+.control-container-right {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	top: 2px;
+	border: none;
+	filter: invert(100%);
+	-webkit-filter: invert(100%);
+	padding: 5px;
+}
+
+.control-container-left {
+    justify-content: flex-start;
+}
+
+.control-container-right {
+    justify-content: flex-end;
+}
+
+.control-container .control-button,
+.control-container .control-dropdown {
+	font-family: 'Courier New', Courier, monospace;
+	margin: 0;
+	padding: 0;
+	line-height: 1;
+	vertical-align: middle;
+	font-size: 40px;
+	cursor: pointer;
+	background-color: transparent;
+	border: none;
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.control-container .control-button:hover,
+.control-container .control-dropdown:hover {
+	-webkit-filter: drop-shadow(0px 0px 7px rgba(255, 255, 255, 0.5));
+	filter: drop-shadow(0px 0px 7px rgba(255, 255, 255, 0.5));
+}
+
+.control-dropdown option {
+	appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: transparent;
+    padding: 5px;
+    border: none;
+}
+
 
 .thumbnail-container {
 	display: flex;
@@ -296,8 +369,6 @@ body {
 }
 
 /*Estilos para la página principal*/
-
-
 .tabs {
 	display: flex;
 	flex-direction: column;
@@ -332,7 +403,6 @@ body {
 
 .tab.active {
 	background-image: linear-gradient(to right, rgba(64,64,64,1), rgba(0,0,0,1));
-	/*background-color: white;*/
 }
 
 .tab:hover {

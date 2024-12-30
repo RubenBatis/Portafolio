@@ -14,7 +14,8 @@ export class ContentViewer extends Viewer {
 		generation = 1,
 		maxGeneration = generation,
 		viewers = null, 
-		appendControls = true
+		appendControls = true,
+		controls = null
 	} = {}) {
 		super(parentElement, loader);
 		this.loader = loader;
@@ -47,21 +48,24 @@ export class ContentViewer extends Viewer {
 																											currentItemIndex: this.currentItemIndex, 
 																											applyConfigOnInit: false, 
 																											orientation: orientation,
-																											appendControls: maxGeneration === generation
+																											appendControls: maxGeneration === generation,
+																											controls: this.controls
 																										}),
 			'video': (viewers && viewers["video"]) ? viewers["video"] : new VideoViewer(this.viewerFrame, {
 																											loader: this.loader,
 																											currentItemIndex: this.currentItemIndex,
 																											applyConfigOnInit: false,
 																											orientation:orientation,
-																											appendControls: maxGeneration === generation
+																											appendControls: maxGeneration === generation,
+																											controls: this.controls
 																										}),
 			'3dmodel': (viewers && viewers["3dmodel"]) ? viewers["3dmodel"] : new ModelViewer(this.viewerFrame, {
 																												  loader: this.loader,
 																												  currentItemIndex: this.currentItemIndex,
 																												  applyConfigOnInit: false,
 																												  orientation: orientation,
-																												  appendControls: maxGeneration === generation
+																												  appendControls: maxGeneration === generation,
+																												  controls: this.controls
 																											  })
 		}
 
@@ -69,7 +73,13 @@ export class ContentViewer extends Viewer {
 			this.carousel = new Carousel(this.viewerFrame, {viewer: this, position: orientation});//, append: false});
 			this.nextOrientation = this.#clockwiseNext();
 			if (generation > 0) {
-				this.viewers['folder'] = new ContentViewer(this.viewerFrame, {loader: this.loader, orientation: this.nextOrientation, maxGeneration: maxGeneration, generation: generation - 1});
+				this.viewers['folder'] = new ContentViewer(this.viewerFrame, {
+																				loader: this.loader,
+																				orientation: this.nextOrientation,
+																				maxGeneration: maxGeneration,
+																				generation: generation - 1,
+																				controls: this.controls
+																			  });
 			}
 			this.carousel.ready.then(() => {
 
@@ -98,15 +108,15 @@ export class ContentViewer extends Viewer {
 		this.isActive = isActive;
         // Dejar de escuchar eventos de visores inactivos
         if (isActive) {
-            this.toggleButton.classList.add("active");
+            this.mediaControls.toggleDescription.button.classList.add("active");
         } else {
-            this.toggleButton.classList.remove("active");
+            this.mediaControls.toggleDescription.button.classList.remove("active");
 			Object.values(this.viewers).forEach((viewer) => {
 				viewer.setActive(isActive);
 			});
         }
     }
-	
+
 	setLoader(loader) {
 		this.loader = loader;
 		//this.showContent(loader.getFirstElement());

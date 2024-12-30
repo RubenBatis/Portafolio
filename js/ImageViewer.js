@@ -6,7 +6,8 @@ export class ImageViewer extends Viewer {
 		currentItemIndex = {"value":0},
 		applyConfigOnInit = true,
 		orientation = "bottom", 
-		appendControls = true
+		appendControls = true,
+		controls = null
 	} = {}){
         super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
         this.imageElement = document.createElement('img');
@@ -58,19 +59,23 @@ export class ImageViewer extends Viewer {
 	centerAndScaleImage() {
 		const containerWidth = parseFloat(this.imageFrame.clientWidth);
 		const containerHeight = parseFloat(this.imageFrame.clientHeight);
-		const imageWidth = parseFloat(this.imageElement.width);
-		const imageHeight = parseFloat(this.imageElement.height);
+		let width = parseFloat(this.imageElement.width);
+		let height = parseFloat(this.imageElement.height);
+		
+		const isSVG = this.imageElement.tagName.toLowerCase() === "svg";
+		width = isSVG ? this.imageElement.viewBox.baseVal.width : width;
+		height = isSVG ? this.imageElement.viewBox.baseVal.height : height;
 
-		let initialScaleX = containerWidth / imageWidth;
-		let initialScaleY = containerHeight / imageHeight;
-		let initialScale = initialScaleX > initialScaleY ? initialScaleY : initialScaleX;
+		let scaleX = containerWidth / width;
+		let scaleY = containerHeight / height;
+		let scale = scaleX > scaleY ? scaleY : scaleX;
 
-		this.currentScale = initialScale;
+		this.currentScale = scale;
 
 		// Calcula el desplazamiento inicial para centrar el vídeo
 		this.posOffset = {
-			"x":(containerWidth - imageWidth) / (2 * initialScale), 
-			"y": (containerHeight - imageHeight) / (2 * initialScale)
+			"x":(containerWidth - width) / (2 * scale), 
+			"y": (containerHeight - height) / (2 * scale)
 		};
 
 		this.applyTransform(); // Aplica el desplazamiento inicial
@@ -91,12 +96,13 @@ export class ImageViewer extends Viewer {
 		this.posOffset = config.offset || {"x": 0, "y": 0};
 		this.applyTransform();
 
-        // Ocultar botones de reproducción
-        if (this.playPauseButton) {
-            this.playPauseButton.style.display = 'none';
-        }
-
-        return config;
+		// Lógica específica para habilitar controles en imágenes
+		this.selectControls({
+			playPause: false,         // No se necesita para imágenes
+			toggleDescription: true,  // Siempre mostrar
+			reset: false,             // No se necesita para imágenes
+			changeAnimation: false    // No se necesita para imágenes
+		});
     }
 
 	// Manejar el zoom

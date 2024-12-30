@@ -9,7 +9,8 @@ export class ModelViewer extends Viewer{
 		currentItemIndex = { value: 0 },
 		applyConfigOnInit = true,
 		orientation = "bottom", 
-		appendControls = true
+		appendControls = true,
+		controls = null
 	} = {}) {
 		super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
 
@@ -133,12 +134,23 @@ export class ModelViewer extends Viewer{
 		}
 	}
 	
-	// Mostrar el botón si el modelo tiene animaciones
-	togglePauseButton(modelName) {
-		if (this.loader.mixers[modelName]) {
-			this.playPauseButton.style.display = 'block';
+	// Reiniciar la animación actual
+	reset() {
+		const modelName = this.loader.resourceNames[this.currentItemIndex.value];
+		const mixer = this.loader.mixers[modelName];
+
+		if (mixer) {
+			const currentAction = this.currentAction;
+
+			if (currentAction) {
+				const paused = currentAction.paused
+				currentAction.reset();
+				currentAction.paused = paused;
+			} else {
+				console.warn(`No hay una animación activa para reiniciar en el modelo: ${modelName}`);
+			}
 		} else {
-			this.playPauseButton.style.display = 'none';
+			console.warn(`No se encontró un mixer para el modelo: ${modelName}`);
 		}
 	}
 
@@ -207,6 +219,9 @@ export class ModelViewer extends Viewer{
 		this.loader.configs[modelName].camera.lookAt = [this.controls.target.x,
 														 this.controls.target.y,
 														 this.controls.target.z];
+		if (this.currentAction) {
+			this.loader.configs[modelName].activeAnimation = this.currentAction.getClip().name; // Guardar el nombre de la animación actual
+		}
 	}
 
 	// Método que aplica la configuración de cada modelo a la visualización
@@ -216,13 +231,13 @@ export class ModelViewer extends Viewer{
 		this.#clearScene(this.scene);
 		
 		// Y volver a cargar el modelo en cuestión
-		let model = this.loader.models[modelName];
+		const model = this.loader.models[modelName];
 
-		this.scene.add(model);			
-
+		this.scene.add(model);
+		
 		// Cambiar el color de fondo de la escena 3D
 		this.scene.background = new THREE.Color(config.backgroundColor);
-		//renderer.setClearColor(0x000000, 0); //Esto pone el fondo transparente
+		//renderer.setClearColor(0x000000, 0); //Esto pondría el fondo transparente
 
 		// Configuración de la cámara
 		if (config.camera) {
@@ -256,13 +271,35 @@ export class ModelViewer extends Viewer{
 			const ambientLight = new THREE.AmbientLight(config.ambientLight.color, config.ambientLight.intensity);
 			this.scene.add(ambientLight);
 		}
+				
+		const mixer = this.loader.mixers[modelName];
 		
-		// Verificar si el modelo tiene animaciones y manejar el botón de pausa
-		this.togglePauseButton(modelName);
+		if (mixer) {
+			this.togglePauseButtonIcon(!mixer._actions[0].paused || false); // esto hay que cambiarlo con las animaciones múltiples
 		
-		if (this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]]) {
-			this.togglePauseButtonIcon(!this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]]._actions[0].paused || false); // esto hay que cambiarlo con las animaciones múltiples
+			const actions = mixer._actions || [];
+			if (actions.length > 0) {
+				const activeActionName = config.activeAnimation || actions[0]._clip.name;
+				const activeAction = actions.find(action => action._clip.name === activeActionName);
+
+				if (activeAction) {
+					this.currentAction = activeAction;
+					console.log(`Animación activa establecida: ${activeActionName}`);
+				} else {
+					console.warn(`No se encontró la animación activa: ${activeActionName}`);
+					this.currentAction = null;
+				}
+			}
 		}
+		
+		const hasAnimations = mixer && mixer._actions.length > 0;
+		const multipleAnimations = hasAnimations && mixer._actions.length > 1;
+		this.selectControls({
+			playPause: hasAnimations,           // Mostrar si hay animaciones
+			toggleDescription: true,            // Siempre mostrar
+			reset: hasAnimations,               // Mostrar si hay animaciones
+			changeAnimation: multipleAnimations // Mostrar si hay más de una animación
+		});
 	}
 
 	// Animar la escena
