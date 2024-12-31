@@ -39,11 +39,6 @@ body {
 	margin: 0;
 	padding: 0;
 	overflow-y: auto;
-  
-  	/*background: linear-gradient(var(--defdeg));
-	background: -moz-linear-gradient(var(--defdeg));
-	background:-webkit-linear-gradient(var(--defdeg));
-	background: #333;*/
 }
 
 .viewer-container {
@@ -120,6 +115,8 @@ body {
 	align-items: stretch;
 	flex: 1;
 	overflow: hidden;
+	object-fit: contain;
+	object-position: center;
 }
 
 .viewerContent.bottom {
@@ -153,8 +150,8 @@ body {
 	padding: 40px 40px 0 10px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	scrollbar-width: none; /* Firefox: Oculta la barra */
-    -ms-overflow-style: none; /* Internet Explorer 10+: Oculta la barra */
+	scrollbar-width: none;
+    -ms-overflow-style: none;
 	display: none;
 	font-size: 20px;
 	font-family: arial;
@@ -164,11 +161,6 @@ body {
 	-webkit-filter: invert(100%);
 	opacity: 0.7;
 	pointer-events:none;
-	/*text-shadow: 
-		-1px -1px 0 #000, /* sombra hacia la esquina superior izquierda */
-	/*	1px -1px 0 #000,	/* sombra hacia la esquina superior derecha */
-	/*	-1px 1px 0 #000,	/* sombra hacia la esquina inferior izquierda */
-	/*	1px 1px 0 #000;	 /* sombra hacia la esquina inferior derecha */
 }
 
 .description-panel::-webkit-scrollbar {
@@ -207,12 +199,11 @@ body {
 	display:none;
 }
 
-
 .control-container {
 	display: flex;
-	justify-content: space-between; /* Espacia los subcontenedores */
-	align-items: center; /* Centra verticalmente los botones */
-	width: 100%; /* Asegura que ocupe todo el ancho del contenedor */
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
 	padding: 0px;
 	box-sizing: border-box;
 	position: absolute;
@@ -271,7 +262,6 @@ body {
     padding: 5px;
     border: none;
 }
-
 
 .thumbnail-container {
 	display: flex;

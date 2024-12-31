@@ -191,6 +191,8 @@ export class Viewer {
 				updateAppearance: () => console.warn("Sin visor activo para actualizar apariencia del botón de animación."),
 				align: "left"
 			}
+			/*futuros botones: 	⛝ -> para resetear zoom y pan
+								⛶ -> para pantalla completa*/
 		};
 
 		const controlContainer = this.createUniqueElement("div", ".control-container");

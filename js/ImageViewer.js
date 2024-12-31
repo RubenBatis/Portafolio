@@ -41,30 +41,57 @@ export class ImageViewer extends Viewer {
 				console.error("Error al aplicar la configuración en ImageViewer:", error);
 			});
 		}
-		
-		// Escucha para el zoom y el pan
+			// Escucha para el zoom y el pan
 		this.currentMousePosition = { x: 0, y: 0 }; // Inicializa la posición actual del ratón
 		this.imageFrame.addEventListener('wheel', (e) => this.handleZoom(e), { passive: false });
 		this.imageFrame.addEventListener('mousedown', (e) => this.#startPan(e));
 		window.addEventListener('mousemove', (e) => this.#updateMousePosition(e)); // Actualiza la posición del ratón
 		window.addEventListener('mousemove', (e) => this.#panImage(e)); // Pan manual
 		window.addEventListener('mouseup', () => this.#stopPan());
-		
+
 		this.imageElement.addEventListener('load', () => {
 			this.centerAndScaleImage();  // Llama a centrar el vídeo después de cargar
 		});
     }
 
 	// Centra el vídeo dentro del contenedor
-	centerAndScaleImage() {
+	centerAndScaleImage(force = false) {
+		/*
+		if (!force && (this.currentScale !== 1 || this.posOffset.x !== 0 || this.posOffset.y !== 0)) {
+			return;
+		}
 		const containerWidth = parseFloat(this.imageFrame.clientWidth);
 		const containerHeight = parseFloat(this.imageFrame.clientHeight);
 		let width = parseFloat(this.imageElement.width);
 		let height = parseFloat(this.imageElement.height);
 		
-		const isSVG = this.imageElement.tagName.toLowerCase() === "svg";
-		width = isSVG ? this.imageElement.viewBox.baseVal.width : width;
-		height = isSVG ? this.imageElement.viewBox.baseVal.height : height;
+		const isSVG = this.imageElement.src.split('.').pop().toLowerCase() === "svg";
+		if (isSVG) {
+			const viewBox = this.imageElement.viewBox?.baseVal;
+			if (viewBox) {
+				console.log(viewBox);
+				width = isSVG ? this.imageElement.viewBox.baseVal.width : width;
+				height = isSVG ? this.imageElement.viewBox.baseVal.height : height;
+			} else {
+				console.log("no hay viewBox");
+				try {
+					const svgElement = this.imageElement.contentDocument?.documentElement;
+					if (svgElement) {
+						const bbox = svgElement.getBBox();
+						width = bbox.width;
+						height = bbox.height;
+					} else {
+						console.log("No se pudo acceder al contenido del SVG. Usando fallback.");
+						width = this.imageElement.clientWidth || 0;
+						height = this.imageElement.clientHeight || 0;
+					}
+				} catch (error) {
+					console.error("Error al calcular BBox del SVG:", error);
+					width = this.imageElement.clientWidth || 0;
+					height = this.imageElement.clientHeight || 0;
+				}
+			}
+		}
 
 		let scaleX = containerWidth / width;
 		let scaleY = containerHeight / height;
@@ -78,7 +105,7 @@ export class ImageViewer extends Viewer {
 			"y": (containerHeight - height) / (2 * scale)
 		};
 
-		this.applyTransform(); // Aplica el desplazamiento inicial
+		this.applyTransform(); // Aplica el desplazamiento inicial*/
 	}
 
 	saveConfig(imageName) {
@@ -87,7 +114,7 @@ export class ImageViewer extends Viewer {
 	}
 
     applyConfig(imageName) {
-        const config = super.applyConfig(imageName);
+		const config = super.applyConfig(imageName);
 
         this.imageElement.src = `${this.loader.images[imageName].src}`;
         this.navigationAllowed = config.navigationAllowed || false;
@@ -201,8 +228,10 @@ export class ImageViewer extends Viewer {
 	}
 
 	// Aplica el desplazamiento y la escala a la imagen
-	applyTransform() {
+	async applyTransform() {
 		const scale = this.currentScale || 1;
+		const offset = this.posOffset || {x: 0, y: 0};
+
 		this.imageElement.style.transform = `scale(${scale}) translate(${this.posOffset.x}px, ${this.posOffset.y}px)`;
 	}
 }

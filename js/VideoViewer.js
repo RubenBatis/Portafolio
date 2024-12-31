@@ -50,32 +50,36 @@ export class VideoViewer extends Viewer {
 		window.addEventListener('mousemove', (e) => this.#updateMousePosition(e)); // Actualiza la posición del ratón
 		window.addEventListener('mousemove', (e) => this.#panVideo(e)); // Pan manual
 		window.addEventListener('mouseup', () => this.#stopPan());
-		
+
 		this.videoElement.addEventListener('loadeddata', () => {
 			this.centerAndScaleVideo();  // Llama a centrar el vídeo después de cargar
 		});
     }
 	
 	// Centra el vídeo dentro del contenedor
-	centerAndScaleVideo() {
+	centerAndScaleVideo(force = false) {
+		/*
+		if (!force && (this.currentScale !== 1 || this.posOffset.x !== 0 || this.posOffset.y !== 0)) {
+			return;
+		}
 		const containerWidth = parseFloat(this.videoFrame.clientWidth);
 		const containerHeight = parseFloat(this.videoFrame.clientHeight);
 		const videoWidth = parseFloat(this.videoElement.videoWidth);
 		const videoHeight = parseFloat(this.videoElement.videoHeight);
 
-		let initialScaleX = containerWidth / videoWidth;
-		let initialScaleY = containerHeight / videoHeight;
-		let initialScale = initialScaleX > initialScaleY ? initialScaleY : initialScaleX;
-		
-		this.currentScale = initialScale;
+		let scaleX = containerWidth / videoWidth;
+		let scaleY = containerHeight / videoHeight;
+		let scale = scaleX > scaleY ? scaleY : scaleX;
+
+		this.currentScale = scale;
 
 		// Calcula el desplazamiento inicial para centrar el vídeo
 		this.posOffset = {
-			"x":(containerWidth - videoWidth) / (2 * initialScale), 
-			"y": (containerHeight - videoHeight) / (2 * initialScale)
+			"x":(containerWidth - videoWidth) / (2 * scale), 
+			"y": (containerHeight - videoHeight) / (2 * scale)
 		};
 
-		this.applyTransform(); // Aplica el desplazamiento
+		this.applyTransform(); // Aplica el desplazamiento*/
 	}
 
 	saveConfig(videoName) {

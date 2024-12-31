@@ -44,16 +44,16 @@ export class ModelViewer extends Viewer{
 	
 	async #initialize(initContent, applyConfigOnInit) {
 		try {
-			console.log("Inicializando ModelViewer...");
+			//console.log("Inicializando ModelViewer...");
 			await this.#ensureCanvasIsVisible();
 			await this.#setupControlsAndCamera();
 
 			if (applyConfigOnInit) {
-				console.log("Aplicando configuración inicial...");
+				//console.log("Aplicando configuración inicial...");
 				this.applyConfig(this.loader.resourceNames[initContent]);
 			}
 
-			console.log("ModelViewer inicializado completamente.");
+			//console.log("ModelViewer inicializado completamente.");
 			this.animate = this.animate.bind(this);
 			this.animate(); // Inicia la animación
 		} catch (error) {
@@ -72,7 +72,7 @@ export class ModelViewer extends Viewer{
 			const height = this.canvas.clientHeight;
 
 			if (width > 0 && height > 0) {
-				console.log("Canvas visible con dimensiones:", width, height);
+				//console.log("Canvas visible con dimensiones:", width, height);
 				return;
 			}
 
@@ -94,14 +94,14 @@ export class ModelViewer extends Viewer{
 
 		const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 		this.scene.add(camera);
-		console.log("Cámara configurada con dimensiones:", width, height);
+		//console.log("Cámara configurada con dimensiones:", width, height);
 		return camera;
 	}
 
 	// Llamar a la anterior y esperar a que termine para configurar los controles.
 	async #setupControlsAndCamera() {
 		try {
-			console.log("Configurando cámara y controles...");
+			//console.log("Configurando cámara y controles...");
 			this.camera = await this.#setupCamera();
 
 			this.controls = new OrbitControls(this.camera, this.canvas);
@@ -115,7 +115,7 @@ export class ModelViewer extends Viewer{
 				RIGHT: THREE.MOUSE.PAN
 			};
 
-			console.log("Cámara y controles configurados.");
+			//console.log("Cámara y controles configurados.");
 		} catch (error) {
 			console.error("Error al configurar cámara y controles:", error);
 			throw error;
@@ -284,7 +284,7 @@ export class ModelViewer extends Viewer{
 
 				if (activeAction) {
 					this.currentAction = activeAction;
-					console.log(`Animación activa establecida: ${activeActionName}`);
+					//console.log(`Animación activa establecida: ${activeActionName}`);
 				} else {
 					console.warn(`No se encontró la animación activa: ${activeActionName}`);
 					this.currentAction = null;
