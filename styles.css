@@ -4,6 +4,8 @@
 	--anggra: 45deg;
 	--vcarouselsize: 20%;
 	--hcarouselsize: 10%;
+	--shared-color: black;
+	--background-black: black;
 	/*--minouc: #3e1e67;
 	--oscdum: #f7f7ea;
 	--anggra: 0deg;*/
@@ -75,6 +77,20 @@ body {
 	justify-content: space-between; /* Espaciado correcto entre hijos */
 }
 
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.wrapper * {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 .viewer {
 	position: relative;
 	flex: 1;
@@ -117,6 +133,7 @@ body {
 	overflow: hidden;
 	object-fit: contain;
 	object-position: center;
+	background-color: var(--shared-color);
 }
 
 .viewerContent.bottom {
@@ -161,6 +178,7 @@ body {
 	-webkit-filter: invert(100%);
 	opacity: 0.7;
 	pointer-events:none;
+	color: var(--shared-color);
 }
 
 .description-panel::-webkit-scrollbar {
@@ -231,7 +249,7 @@ body {
 
 .control-container .control-button,
 .control-container .control-dropdown {
-	font-family: 'Courier New', Courier, monospace;
+	font-family: 'Poppins', Courier, monospace;
 	margin: 0;
 	padding: 0;
 	line-height: 1;
@@ -240,12 +258,20 @@ body {
 	cursor: pointer;
 	background-color: transparent;
 	border: none;
-	width: 40px;
+	min-width: 40px;
 	height: 40px;
-	text-align: center;
 	appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+	overflow: visible;
+	color: var(--shared-color);
+}
+
+.control-container .control-button {
+	text-align: center;
+}
+.control-container .control-dropdown {
+	text-align: left;
 }
 
 .control-container .control-button:hover,
@@ -282,21 +308,25 @@ body {
 	width: 100%;
 	height: var(--vcarouselsize);
 	flex-direction: row;
+	background: linear-gradient(to top, var(--shared-color), var(--background-black));
 }
 .thumbnail-container.bottom {
 	width: 100%;
 	height: var(--vcarouselsize);
 	flex-direction: row;
+	background: linear-gradient(to bottom, var(--shared-color), var(--background-black));
 }
 .thumbnail-container.left {
 	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
+	background: linear-gradient(to left, var(--shared-color), var(--background-black));
 }
 .thumbnail-container.right {
 	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
+	background: linear-gradient(to right, var(--shared-color), var(--background-black));
 }
 
 .thumbnail-container.right .thumbnail, .thumbnail-container.left .thumbnail {
@@ -421,7 +451,7 @@ body {
 	min-height: 100%;
 	align-items: center;
 	justify-content: center;
-	background-color: #000000;
+	background-color: var(--background-black);
 	color: white;
 }
 

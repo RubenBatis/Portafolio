@@ -77,18 +77,22 @@ export class Viewer {
 		}
 	}
 	
-	// Actualizar los action y los updateAppearance de los controles por los métodos propios
+	// Actualizar los action y los update de los controles por los métodos propios
 	setActive(isActive){
 		this.isActive = isActive;
 		if (isActive) {
 			this.mediaControls.playPause.action = () => this.toggleAnimationPause();
-			this.mediaControls.playPause.updateAppearance = (paused) => this.togglePauseButtonIcon(paused);
+			this.mediaControls.playPause.update = (paused) => this.togglePauseButtonIcon(paused);
 			this.mediaControls.toggleDescription.action = () => this.toggleDescriptionPanel();
 			//No hay cambios en el botón para el toggleDescription
 			this.mediaControls.reset.action = () => this.reset();
 			//No hay cambios en el botón para el reset
-			//this.mediaControls.changeAnimation.updateAppearance = this.CREAR_METODO;
+			//this.mediaControls.changeAnimation.update = this.CREAR_METODO;
 			//this.mediaControls.changeAnimation.action = this.CREAR_METODO;
+			this.mediaControls.resetView.action = () => this.resetView();
+			this.mediaControls.resetView.update = (reseted) => this.toggleResetViewButtonIcon(reseted);
+			this.mediaControls.fullScreen.action = () => this.toggleFullScreen();
+			this.mediaControls.fullScreen.update = (screenIsFull) => this.toggleFullScreenButtonIcon(screenIsFull);
 		}
 	}
 	
@@ -115,23 +119,24 @@ export class Viewer {
 	
 	resize() {}
 	
+	// Establecer el loader al indicado
 	setLoader(loader) {
 		this.loader = loader;
 	}
 	
-	// Actualizar la descripción y los controles --> TODO: dividir
-	updateDescription(description, backgroundColor) {
-		const descriptionDiv = document.querySelector(".description-panel");
-		if (descriptionDiv) {
-			descriptionDiv.innerHTML = description.replace(/\n/g, '<br>');
-			descriptionDiv.style.color = backgroundColor;
-			this.mediaControls.toggleDescription.button.style.color = backgroundColor;
-			//this.playPauseButton.style.color = backgroundColor;
+	// Actualizar la descripción y los controles
+	updateDescription(description) {
+		if (this.descriptionPanel) {
+			this.descriptionPanel.innerHTML = description.replace(/\n/g, '<br>');
 		}
-		Object.keys(this.mediaControls).forEach((controlName) => {
-			const control = this.mediaControls[controlName];
-			control.button.style.color = backgroundColor;
-		});
+	}
+	
+	//Actualizar una variable css que contiene un color que podría usarse en múltiples estilos
+	updateColors(color) {
+		const root = document.documentElement;
+		root.style.setProperty('--shared-color', color);
+
+		document.body.offsetHeight; // Forzamos un reflujo para aplicar el color a los estilos que lo utilicen
 	}
 	
 	// Crear y añadir el panel de descripción
@@ -151,8 +156,8 @@ export class Viewer {
 	applyConfig(contentName) {
 		const config = this.loader.configs[contentName];
 		// Mostrar la descripción en el HTML
-		this.updateDescription(config.description, config.backgroundColor);
-		this.domElement.style.backgroundColor = config.backgroundColor;
+		this.updateDescription(config.description);
+		this.updateColors(config.backgroundColor);
 		return config;
 	}
 	
@@ -163,7 +168,7 @@ export class Viewer {
 				action: () => console.warn("Sin visor activo para pausar/reproducir."),
 				key: "Space",
 				icon: ['⏸', '⏵'],
-				updateAppearance: () => console.warn("Sin visor activo para actualizar apariencia del botón de pausa."),
+				update: () => console.warn("Sin visor activo para actualizar apariencia del botón de pausa."),
 				align: "left"
 			},
 			toggleDescription: {
@@ -171,7 +176,7 @@ export class Viewer {
 				action: () => console.warn("Sin visor activo para mostrar descripción."),
 				key: "KeyD",
 				icon: ["ℹ"],
-				updateAppearance: () => console.warn("Sin visor activo para actualizar apariencia del botón de descripción."),
+				update: () => console.warn("Sin visor activo para actualizar apariencia del botón de descripción."),
 				align: "right"
 			},
 			reset: {
@@ -179,7 +184,7 @@ export class Viewer {
 				action: () => console.warn("Sin visor activo para resetear cámara."),
 				key: "KeyR",
 				icon: ["⭮"],
-				// No necesita updateAppearance inicialmente
+				// No necesita update inicialmente
 				align: "left"
 				
 			},
@@ -188,11 +193,25 @@ export class Viewer {
 				action: () => console.warn("Sin visor activo para cambiar animación."),
 				key: "KeyA",
 				icon: ["⏭"],
-				updateAppearance: () => console.warn("Sin visor activo para actualizar apariencia del botón de animación."),
+				// No necesita update inicialmente
+				align: "left"
+			}, 
+			resetView: {
+				button: "button",
+				action: () => console.warn("Sin visor activo para resetear la vista."),
+				key: "KeyV",
+				icon: ["⇱"],
+				update: () => console.warn("Sin visor activo para actualizar apariencia del botón de animación."),
+				align: "left"
+			}, 
+			fullScreen: {
+				button: "button",
+				action: () => console.warn("Sin visor activo para escalar a pantalla completa."),
+				key: "KeyF",
+				icon: ["⛶","🗔"],
+				update: () => console.warn("Sin visor activo para actualizar apariencia del botón de pantalla completa."),
 				align: "left"
 			}
-			/*futuros botones: 	⛝ -> para resetear zoom y pan
-								⛶ -> para pantalla completa*/
 		};
 
 		const controlContainer = this.createUniqueElement("div", ".control-container");
@@ -270,4 +289,18 @@ export class Viewer {
 	}
 	
 	reset () {}
+	resetView () {}
+	toggleResetViewButtonIcon() {}
+	toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error(`Error al intentar entrar en pantalla completa: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen().catch(err => {
+                console.error(`Error al intentar salir de pantalla completa: ${err.message}`);
+            });
+        }
+    }
+	toggleFullScreenButtonIcon(screenIsFull) {}
 }

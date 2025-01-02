@@ -15,11 +15,16 @@ export class VideoViewer extends Viewer {
         this.videoElement.controls = false; // Desactivar los controles predeterminados
 		this.videoElement.style.pointerEvents = "none";
 		this.videoElement.currentTime = 0;
+		
+		this.videoWrapper = document.createElement('div');
+		this.videoWrapper.className = "wrapper " + orientation;
+		this.videoWrapper.style.overflow = "hidden";
+		this.videoWrapper.appendChild(this.videoElement);		
 
 		this.videoFrame =  document.createElement('div');
 		this.videoFrame.className = "viewerContent " + orientation;
 		this.videoFrame.style.overflow = "hidden";
-		this.videoFrame.appendChild(this.videoElement);
+		this.videoFrame.appendChild(this.videoWrapper);
 		this.resize();
 
         this.viewerElement.appendChild(this.videoFrame);
@@ -136,11 +141,12 @@ export class VideoViewer extends Viewer {
 		}
 		
 		// Limitar el nivel de zoom
-		scale = Math.max(0.5, Math.min(scale, 5)); // Rango de 0.5x a 3x
+		scale = Math.max(0.5, Math.min(scale, 5)); // Rango de 0.5x a 5x
 		this.currentScale = scale; // Almacena la escala actual
 
 		// Aplica la escala y conserva el desplazamiento actual
 		this.videoElement.style.transform = `scale(${scale}) translate(${this.posOffset.x}px, ${this.posOffset.y}px)`;
+		this.toggleResetViewButtonIcon();
 	}
 
     // Métodos para play/pausa
@@ -185,6 +191,7 @@ export class VideoViewer extends Viewer {
 
 		// Actualiza la posición inicial
 		this.startPanPosition = { x: event.clientX, y: event.clientY };
+		this.toggleResetViewButtonIcon();
 	}
 
 	// Pan automático: ajusta la posición en función de la distancia actual al punto inicial
@@ -231,5 +238,25 @@ export class VideoViewer extends Viewer {
 	
 	reset() {
 		this.videoElement.currentTime = 0;
+	}
+	
+	resetView () {
+		// Restablecer valores de pan y zoom
+		this.currentScale = 1;
+		this.posOffset = { x: 0, y: 0 };
+
+		// Aplica los cambios
+		this.applyTransform();
+		this.toggleResetViewButtonIcon();
+	}
+	
+	toggleResetViewButtonIcon() {
+		const isPanZoomDefault = this.currentScale === 1 && this.posOffset.x === 0 && this.posOffset.y === 0;
+
+		if (isPanZoomDefault) {
+			this.mediaControls.resetView.button.style.display = 'none';
+		} else {
+			this.mediaControls.resetView.button.style.display = 'block';
+		}
 	}
 }

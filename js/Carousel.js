@@ -214,7 +214,7 @@ export class Carousel {
 		});
 
 		//actualizar el color de fondo del div de thumbnails
-		this.updateThumbnailsBackground(this.currentLoader.configs[this.currentLoader.resourceNames[this.currentItemIndex.value]].backgroundColor);
+		//this.updateThumbnailsBackground(this.currentLoader.configs[this.currentLoader.resourceNames[this.currentItemIndex.value]].backgroundColor);
 
 		// Añadir los botones de navegación si aún no están
 		this.#createNavigationButtons();

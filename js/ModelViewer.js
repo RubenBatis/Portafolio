@@ -114,6 +114,11 @@ export class ModelViewer extends Viewer{
 				MIDDLE: null,
 				RIGHT: THREE.MOUSE.PAN
 			};
+			
+			// Actualizar el botón de resetView cuando la cámara cambia
+			this.controls.addEventListener('change', () => {
+				this.toggleResetViewButtonIcon();
+			});
 
 			//console.log("Cámara y controles configurados.");
 		} catch (error) {
@@ -121,7 +126,6 @@ export class ModelViewer extends Viewer{
 			throw error;
 		}
 	}
-
 
 	// Método para alternar la pausa/reproducción
 	toggleAnimationPause() {
@@ -151,6 +155,41 @@ export class ModelViewer extends Viewer{
 			}
 		} else {
 			console.warn(`No se encontró un mixer para el modelo: ${modelName}`);
+		}
+	}
+	
+	resetView() {
+    const config = this.loader.configs[this.loader.resourceNames[this.currentItemIndex.value]];
+		if (!config || !config.defaultPosition || !config.defaultLookAt) {
+			return;
+		}
+
+		// Restaurar posición, rotación y lookat de la cámara
+		this.camera.position.set(...config.defaultPosition);
+		this.controls.target.set(...config.defaultLookAt);
+		this.controls.update();
+
+		this.toggleResetViewButtonIcon(); // Actualizar visibilidad del botón
+	}
+	
+	toggleResetViewButtonIcon() {
+		const config = this.loader.configs[this.loader.resourceNames[this.currentItemIndex.value]];		
+		const epsilon = 0.0001; // Tolerancia para la comparación
+
+		let isPositionDefault = true;
+		let isTargetDefault = true;
+		
+		if (config.defaultPosition) {
+			isPositionDefault = this.camera.position.distanceTo(new THREE.Vector3(...config.defaultPosition)) < epsilon;
+		} 
+		if (config.defaultLookAt) {
+			isTargetDefault = this.controls.target.distanceTo(new THREE.Vector3(...config.defaultLookAt)) < epsilon;
+		}
+
+		if (isPositionDefault && isTargetDefault) {
+			this.mediaControls.resetView.button.style.display = 'none';
+		} else {
+			this.mediaControls.resetView.button.style.display = 'block';
 		}
 	}
 
@@ -210,29 +249,33 @@ export class ModelViewer extends Viewer{
 
 	//Antes de cada cambio de contenido, se guardan algunas configuraciones del anterior.
 	saveConfig(modelName) {
-		this.loader.configs[modelName].camera.position = [this.camera.position.x,
-														 this.camera.position.y,
-														 this.camera.position.z];
-		this.loader.configs[modelName].camera.rotation = [this.camera.rotation._x,
-														 this.camera.rotation._y,
-														 this.camera.rotation._z];
-		this.loader.configs[modelName].camera.lookAt = [this.controls.target.x,
-														 this.controls.target.y,
-														 this.controls.target.z];
+		const config = this.loader.configs[modelName];
+		// Guardar las configuraciones iniciales la primera vez
+		if (!config.defaultPosition) {
+			config.defaultPosition = config.camera.position;
+		}
+		if (!config.defaultLookAt) {
+			config.defaultLookAt = config.camera.lookAt;
+		}
+
+		config.camera.position =	[this.camera.position.x,
+									this.camera.position.y,
+									this.camera.position.z];
+		config.camera.lookAt =	[this.controls.target.x,
+								this.controls.target.y,
+								this.controls.target.z];
 		if (this.currentAction) {
-			this.loader.configs[modelName].activeAnimation = this.currentAction.getClip().name; // Guardar el nombre de la animación actual
+			config.activeAnimation = this.currentAction.getClip().name; // Guardar el nombre de la animación actual
 		}
 	}
 
 	// Método que aplica la configuración de cada modelo a la visualización
 	applyConfig(modelName) {
 		const config = super.applyConfig(modelName);
-		// Eliminar todos los elementos de la escena
 		this.#clearScene(this.scene);
 		
-		// Y volver a cargar el modelo en cuestión
+		// Cargar y añadir el modelo
 		const model = this.loader.models[modelName];
-
 		this.scene.add(model);
 		
 		// Cambiar el color de fondo de la escena 3D
@@ -242,19 +285,17 @@ export class ModelViewer extends Viewer{
 		// Configuración de la cámara
 		if (config.camera) {
 			const cameraPosition = config.camera.position;
-			const cameraRotation = config.camera.rotation;
 			const cameraLookAt = config.camera.lookAt;
 			const cameraZoom = config.camera.zoom || 1;
 
 			this.camera.position.set(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
-			this.camera.rotation.set(cameraRotation[0], cameraRotation[1], cameraRotation[2]);
 			this.controls.target.set(cameraLookAt[0], cameraLookAt[1], cameraLookAt[2]);
 			this.controls.update();
 			this.camera.zoom = cameraZoom;
 			this.camera.updateProjectionMatrix();  // Esto es necesario después de ajustar el zoom
 		}
 		
-		// Añadir nuevas luces desde la configuración
+		// Añadir luces
 		config.lights.forEach(lightConfig => {
 			const light = new THREE.DirectionalLight(lightConfig.color, lightConfig.intensity);
 			light.position.set(lightConfig.position[0], lightConfig.position[1], lightConfig.position[2]);
@@ -266,29 +307,58 @@ export class ModelViewer extends Viewer{
 			this.scene.lights.push(light);
 		});
 
-		// Configurar luz ambiental si está definida
+		// Configurar luz ambiental
 		if (config.ambientLight) {
 			const ambientLight = new THREE.AmbientLight(config.ambientLight.color, config.ambientLight.intensity);
 			this.scene.add(ambientLight);
 		}
 				
 		const mixer = this.loader.mixers[modelName];
-		
 		if (mixer) {
-			this.togglePauseButtonIcon(!mixer._actions[0].paused || false); // esto hay que cambiarlo con las animaciones múltiples
-		
+			//this.togglePauseButtonIcon(!mixer._actions[0].paused || false); // esto hay que cambiarlo con las animaciones múltiples
 			const actions = mixer._actions || [];
+			actions.forEach(action => action.stop());
+			
 			if (actions.length > 0) {
 				const activeActionName = config.activeAnimation || actions[0]._clip.name;
 				const activeAction = actions.find(action => action._clip.name === activeActionName);
 
 				if (activeAction) {
 					this.currentAction = activeAction;
+					this.currentAction.play();
 					//console.log(`Animación activa establecida: ${activeActionName}`);
+					this.togglePauseButtonIcon(this.currentAction.paused);
 				} else {
 					console.warn(`No se encontró la animación activa: ${activeActionName}`);
 					this.currentAction = null;
 				}
+
+				// Poblar el control de cambio de animación
+				const animationSelect = this.mediaControls.changeAnimation.button;
+				while (animationSelect.firstChild) {
+					animationSelect.removeChild(animationSelect.firstChild);
+				}
+
+				actions.forEach(action => {
+					const option = document.createElement("option");
+					option.value = action._clip.name;
+					option.textContent = action._clip.name;
+					option.selected = action._clip.name === activeActionName;
+					animationSelect.appendChild(option);
+				});
+
+				// Escuchar cambios en el `select`
+				animationSelect.addEventListener("change", (event) => {
+					const selectedAnimation = event.target.value;
+					const selectedAction = actions.find(action => action._clip.name === selectedAnimation);
+
+					if (selectedAction) {
+						mixer.stopAllAction();
+						this.currentAction = selectedAction;
+						this.currentAction.play();
+						this.saveConfig(modelName); // Guardar animación activa
+					}
+				});
 			}
 		}
 		
@@ -300,6 +370,8 @@ export class ModelViewer extends Viewer{
 			reset: hasAnimations,               // Mostrar si hay animaciones
 			changeAnimation: multipleAnimations // Mostrar si hay más de una animación
 		});
+		
+		this.toggleResetViewButtonIcon();
 	}
 
 	// Animar la escena

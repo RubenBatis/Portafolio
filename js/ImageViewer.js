@@ -14,11 +14,17 @@ export class ImageViewer extends Viewer {
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente
 		this.imageElement.style.pointerEvents = "none";
-		
+
+		this.imageWrapper = document.createElement('div');
+		this.imageWrapper.className = "wrapper " + orientation;
+		this.imageWrapper.style.overflow = "hidden";
+		this.imageWrapper.appendChild(this.imageElement);
+	
 		this.imageFrame =  document.createElement('div');
 		this.imageFrame.className = "viewerContent " + orientation;
 		this.imageFrame.style.overflow = "hidden";
-		this.imageFrame.appendChild(this.imageElement);
+		this.imageFrame.appendChild(this.imageWrapper);
+		
 		this.resize();
 		
 		this.viewerElement.appendChild(this.imageFrame);
@@ -155,6 +161,7 @@ export class ImageViewer extends Viewer {
 
 		// Aplica la escala y conserva el desplazamiento actual
 		this.imageElement.style.transform = `scale(${scale}) translate(${this.posOffset.x}px, ${this.posOffset.y}px)`;
+		this.toggleResetViewButtonIcon();
 	}
 
 	// Inicia el pan manual o continuo según el botón
@@ -189,6 +196,7 @@ export class ImageViewer extends Viewer {
 
 		// Actualiza la posición inicial
 		this.startPanPosition = { x: event.clientX, y: event.clientY };
+		this.toggleResetViewButtonIcon();
 	}
 	
 	// Pan automático: ajusta la posición en función de la distancia actual al punto inicial
@@ -233,5 +241,25 @@ export class ImageViewer extends Viewer {
 		const offset = this.posOffset || {x: 0, y: 0};
 
 		this.imageElement.style.transform = `scale(${scale}) translate(${this.posOffset.x}px, ${this.posOffset.y}px)`;
+	}
+	
+	resetView () {
+		// Restablecer valores de pan y zoom
+		this.currentScale = 1;
+		this.posOffset = { x: 0, y: 0 };
+
+		// Aplica los cambios
+		this.applyTransform();
+		this.toggleResetViewButtonIcon();
+	}
+	
+	toggleResetViewButtonIcon() {
+		const isPanZoomDefault = this.currentScale === 1 && this.posOffset.x === 0 && this.posOffset.y === 0;
+
+		if (isPanZoomDefault) {
+			this.mediaControls.resetView.button.style.display = 'none';
+		} else {
+			this.mediaControls.resetView.button.style.display = 'block';
+		}
 	}
 }
