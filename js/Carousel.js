@@ -17,18 +17,6 @@ export class Carousel {
 		this.loader = this.viewer.loader;
 		this.currentLoader = this.loader;
 		this.currentItemIndex = viewer ? viewer.currentItemIndex : {value: 0};
-		//this.linkedCarousel = linkedCarousel;// instanceof Carousel ? linkedCarousel : null;
-
-		/*let observer = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) { // Detecta si el carrusel es visible en el viewport
-					// console.log("El carrusel está visible en el viewport.");
-					this.#updateThumbnailsDisplay(); // Llama a la función para actualizar el carrusel
-					observer.disconnect(); // Detén la observación después de detectar visibilidad
-				}
-			});
-		});
-		observer.observe(this.parentElement);*/
 		
 		// Esperar a que viewer3D y el Loader estén listos
 		this.ready = new Promise((resolve, reject) => {
@@ -212,9 +200,6 @@ export class Carousel {
 			
 			this.thumbnailContainer.appendChild(thumbnail);
 		});
-
-		//actualizar el color de fondo del div de thumbnails
-		//this.updateThumbnailsBackground(this.currentLoader.configs[this.currentLoader.resourceNames[this.currentItemIndex.value]].backgroundColor);
 
 		// Añadir los botones de navegación si aún no están
 		this.#createNavigationButtons();

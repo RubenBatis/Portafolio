@@ -25,9 +25,8 @@
 					"LogLevel": "https://cdn.jsdelivr.net/npm/loglevel@1.8.1/dist/loglevel.min.js"
 				}
 			}
+		</script>
 		-->
-		
-		<!-- Capa de Categorías en Vertical (Capa 1) -->
 		
 		<div class="language-menu">
 			<select id="languageSelect" onchange="changeLanguage()">
@@ -80,12 +79,6 @@
 			let contenedor = createCategory().childNodes[0];
 
 			window.mviewer = new ContentViewer(contenedor, {contentFolder: '/models', orientation: orientation});
-			//window.carousel = new Carousel(contenedor, {viewer: window.mviewer, position: "right"});
-/*
-			let contenedor = createCategory().childNodes[0];
-			import { MediaPicker } from './js/MediaPicker.js';
-			var picker = new MediaPicker('/models', contenedor);
-*/
 		</script>
 	</body>
 </html>

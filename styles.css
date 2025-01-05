@@ -454,7 +454,8 @@ body {
 	min-height: 100%;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--background-black);
+	/*background-color: var(--background-black);*/
+	background: linear-gradient(var(--defdeg));
 	color: white;
 }
 

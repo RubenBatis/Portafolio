@@ -201,14 +201,6 @@ export class Viewer {
 				align: "left"
 				
 			},
-			changeAnimation: {
-				button: "select",
-				action: () => console.warn("Sin visor activo para cambiar animación."),
-				key: "KeyA",
-				icon: ["⏭"],
-				// No necesita update inicialmente
-				align: "left"
-			}, 
 			resetView: {
 				button: "button",
 				action: () => console.warn("Sin visor activo para resetear la vista."),
@@ -223,6 +215,14 @@ export class Viewer {
 				key: "KeyF",
 				icon: ["⛶","🗔"],
 				update: () => console.warn("Sin visor activo para actualizar apariencia del botón de pantalla completa."),
+				align: "left"
+			},
+			changeAnimation: {
+				button: "select",
+				action: () => console.warn("Sin visor activo para cambiar animación."),
+				key: "KeyA",
+				icon: ["⏭"],
+				// No necesita update inicialmente
 				align: "left"
 			}
 		};
