@@ -1,58 +1,71 @@
 {
-  "resourceFile": "borroton.glb",
-  "thumbnailFile": "borroton.png",
-  "description": "<p class='text-es'>Robot lavadora\n\nRobot con animaciones de andar y saltar. Modelado poligonal + modificador mirror. Animación de armadura con partes independientes y constraints</p><p class='text-en'>Washing robot\n\nRobot with walking and jumping animations. Polygonal modelling + mirror modifier. Armature animation with independent parts and constraints.</p>",
-  "backgroundColor": "#5b5b5b",
-  "camera": {
-    "position": [
+	"resourceFile": "borroton.glb",
+	"thumbnailFile": "borroton.png",
+	"description": "<p class='text-es'>Robot lavadora\n\nRobot con animaciones de andar y saltar. Modelado poligonal + modificador mirror. Animación de armadura con partes independientes y constraints</p><p class='text-en'>Washing robot\n\nRobot with walking and jumping animations. Polygonal modelling + mirror modifier. Armature animation with independent parts and constraints.</p>",
+	"backgroundColor": "#a38fa7",
+	"camera": {
+		"position": [
 		17.499335212939496,
 		5.794476876352717,
-		-20.64543350371881      
-    ],
-    "rotation": [
-      0,
-      0,
-      0
-    ],
-    "lookAt": [
-      0,
-      2,
-      0
-    ],
-    "zoom": 4.5
-  },
-  "scale": [
-    1,
-    1,
-    1
-  ],
-  "animation": {
-    "enabled": true,
-    "loop": true
-  },
-  "activeAnimation": "BorrotoArmCaminar",
-  "ambientLight": {
-    "intensity": 0.5,
-    "color": "#ffffff"
-  },
-  "lights": [
-    {
-      "position": [
-        1,
-        2,
-        1
-      ],
-      "intensity": 2,
-      "color": "#ffd4d4"
-    },
-    {
-      "position": [
-        -1,
-        -2,
-        -1
-      ],
-      "intensity": 2,
-      "color": "#d4ffd4"
-    }
-  ]
+		-20.64543350371881			
+		],
+		"rotation": [
+			0,
+			0,
+			0
+		],
+		"lookAt": [
+			0,
+			2,
+			0
+		],
+		"zoom": 4.5
+	},
+	"scale": [
+		1,
+		1,
+		1
+	],
+	"animations": [
+		{
+			"name": "BorrotoArmCaminar",
+			"displayName": "Caminar",
+			"enabled": true,
+			"loop": true,
+			"speed": 1,
+			"repeatDelay": 500
+		},
+		{
+			"name": "Salto",
+			"displayName": "Saltar",
+			"enabled": true,
+			"loop": true,
+			"speed": 0.5
+		}
+	],
+	"activeAnimation": "BorrotoArmCaminar",
+	"ambientLight": {
+		"intensity": 0.5,
+		"color": "#ffffff"
+	},
+	"lights": [
+		{
+			"position": [
+				1,
+				2,
+				1
+			],
+			"intensity": 2,
+			"color": "#ffd4d4"
+		},
+		{
+			"position": [
+				-1,
+				-2,
+				-1
+			],
+			"intensity": 2,
+			"color": "#d4ffd4"
+		}
+	]
 }

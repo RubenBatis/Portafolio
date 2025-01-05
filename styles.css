@@ -22,8 +22,10 @@
 		var(--oscdum) 92%, var(--minouc) 92%, var(--minouc) 94%, var(--oscdum) 94%, var(--oscdum) 96%, var(--minouc) 96%, var(--minouc) 98%, var(--oscdum) 98%, var(--oscdum) 100%;
 }
 
-* {
-	box-sizing: border-box;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html{
@@ -265,6 +267,7 @@ body {
     -moz-appearance: none;
 	overflow: visible;
 	color: var(--shared-color);
+	outline: none;
 }
 
 .control-container .control-button {

@@ -12,6 +12,11 @@ export class Viewer {
 		this.viewerElement.className = "viewer " + orientation;
 		this.parentElement.appendChild(this.viewerElement);
 		
+		
+		
+		this.idunico = Math.random().toString(36).substr(2, 9);
+		
+		
 		this.appendControls = appendControls;
 		
 		this.createDescriptionPanel();
@@ -78,21 +83,29 @@ export class Viewer {
 	}
 	
 	// Actualizar los action y los update de los controles por los métodos propios
-	setActive(isActive){
-		this.isActive = isActive;
+	setActive(isActive) {
+		this.isActive = isActive;	
 		if (isActive) {
-			this.mediaControls.playPause.action = () => this.toggleAnimationPause();
-			this.mediaControls.playPause.update = (paused) => this.togglePauseButtonIcon(paused);
-			this.mediaControls.toggleDescription.action = () => this.toggleDescriptionPanel();
-			//No hay cambios en el botón para el toggleDescription
-			this.mediaControls.reset.action = () => this.reset();
-			//No hay cambios en el botón para el reset
-			//this.mediaControls.changeAnimation.update = this.CREAR_METODO;
-			//this.mediaControls.changeAnimation.action = this.CREAR_METODO;
-			this.mediaControls.resetView.action = () => this.resetView();
-			this.mediaControls.resetView.update = (reseted) => this.toggleResetViewButtonIcon(reseted);
-			this.mediaControls.fullScreen.action = () => this.toggleFullScreen();
-			this.mediaControls.fullScreen.update = (screenIsFull) => this.toggleFullScreenButtonIcon(screenIsFull);
+			// Asociar las acciones con bind
+			this.mediaControls.playPause.action = this.toggleAnimationPause.bind(this);
+			this.mediaControls.playPause.update = this.togglePauseButtonIcon.bind(this);
+
+			this.mediaControls.toggleDescription.action = this.toggleDescriptionPanel.bind(this);
+			// No hay cambios en el botón para el toggleDescription
+
+			this.mediaControls.reset.action = this.reset.bind(this);
+			// No hay cambios en el botón para el reset
+
+			this.mediaControls.changeAnimation.action = this.changeAnimation.bind(this);
+			// No hay cambios en el select para el changeAnimation
+
+			this.mediaControls.resetView.action = this.resetView.bind(this);
+			this.mediaControls.resetView.update = this.toggleResetViewButtonIcon.bind(this);
+
+			this.mediaControls.fullScreen.action = this.toggleFullScreen.bind(this);
+			this.mediaControls.fullScreen.update = this.toggleFullScreenButtonIcon.bind(this);
+		} else {
+			
 		}
 	}
 	
@@ -231,14 +244,21 @@ export class Viewer {
 				control.button = this.createUniqueElement("button", `.control-button.${controlName}`);
 				control.button.innerHTML = control.icon[0]; // Asignar el icono visual
 				// Asociar acción al clic
-				control.button.addEventListener("click", () => control.action());
-				// Asociar acción a la tecla
-				window.addEventListener("keydown", (event) => {
-					if (event.code === control.key) {
-						event.preventDefault();
+				control.button.addEventListener("click", () => {
+					if (this.isActive) {
 						control.action();
 					}
 				});
+				// Asociar acción a la tecla
+				window.addEventListener("keydown", (event) => {
+					if (event.code === control.key) {
+						if (this.isActive) {
+							event.preventDefault();
+							control.action();
+						}
+					}
+				});
+
 			} else if (control.button === "select") {
 				control.button = this.createUniqueElement("select", `.control-dropdown.${controlName}`);
 				
@@ -249,8 +269,12 @@ export class Viewer {
 				placeholderOption.disabled = true;
 				placeholderOption.selected = true;
 				control.button.appendChild(placeholderOption);
-				
-				control.button.addEventListener("change", (event) => control.action(event.target.value));
+				// Asociar acción al cambio de selección
+				control.button.addEventListener("change", (event) => {
+					if (this.isActive) {
+						control.action(event);
+					}
+				});
 			}
 			
 			// Añadir botón al subcontenedor correspondiente
@@ -303,4 +327,5 @@ export class Viewer {
         }
     }
 	toggleFullScreenButtonIcon(screenIsFull) {}
+	changeAnimation(){}
 }

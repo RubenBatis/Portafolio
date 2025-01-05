@@ -131,10 +131,12 @@ export class ModelViewer extends Viewer{
 	toggleAnimationPause() {
 		let mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]];
 		if (mixer) {
-			mixer._actions.forEach(action => {
+			this.currentAction.paused = !this.currentAction.paused;
+			this.togglePauseButtonIcon(!this.currentAction.paused);
+			/*mixer._actions.forEach(action => {
 				action.paused = !action.paused;
 				this.togglePauseButtonIcon(!action.paused)
-			});
+			});*/
 		}
 	}
 	
@@ -191,6 +193,20 @@ export class ModelViewer extends Viewer{
 		} else {
 			this.mediaControls.resetView.button.style.display = 'block';
 		}
+	}
+	
+	changeAnimation(event) {
+		const selectedAnimation = event.target.value;
+		const mixer = this.loader.mixers[this.loader.resourceNames[this.currentItemIndex.value]];
+		const selectedAction = mixer._actions.find(action => action._clip.name === selectedAnimation);
+
+		if (selectedAction) {
+			mixer.stopAllAction();
+			this.currentAction = selectedAction;
+			this.currentAction.play();
+		}
+		
+		this.togglePauseButtonIcon(!this.currentAction.paused);
 	}
 
 	// Métodos para limpiar la escena
@@ -264,8 +280,11 @@ export class ModelViewer extends Viewer{
 		config.camera.lookAt =	[this.controls.target.x,
 								this.controls.target.y,
 								this.controls.target.z];
+
 		if (this.currentAction) {
-			config.activeAnimation = this.currentAction.getClip().name; // Guardar el nombre de la animación actual
+			config.activeAnimation = this.currentAction.getClip().name;
+			config.currentTime = this.currentAction.time;
+			config.isPaused = this.currentAction.paused;
 		}
 	}
 
@@ -315,49 +334,48 @@ export class ModelViewer extends Viewer{
 				
 		const mixer = this.loader.mixers[modelName];
 		if (mixer) {
-			//this.togglePauseButtonIcon(!mixer._actions[0].paused || false); // esto hay que cambiarlo con las animaciones múltiples
 			const actions = mixer._actions || [];
+			const animationsConfig = config.animations || [];
 			actions.forEach(action => action.stop());
 			
 			if (actions.length > 0) {
 				const activeActionName = config.activeAnimation || actions[0]._clip.name;
 				const activeAction = actions.find(action => action._clip.name === activeActionName);
-
-				if (activeAction) {
-					this.currentAction = activeAction;
-					this.currentAction.play();
-					//console.log(`Animación activa establecida: ${activeActionName}`);
-					this.togglePauseButtonIcon(this.currentAction.paused);
-				} else {
-					console.warn(`No se encontró la animación activa: ${activeActionName}`);
-					this.currentAction = null;
-				}
-
-				// Poblar el control de cambio de animación
+				
+				// Limpiar el select
 				const animationSelect = this.mediaControls.changeAnimation.button;
 				while (animationSelect.firstChild) {
 					animationSelect.removeChild(animationSelect.firstChild);
 				}
+				
+				animationsConfig.forEach((animConfig) => {
+					const action = actions.find(a => a._clip.name === animConfig.name);
+					if (action && animConfig.enabled) {
+						// Configurar loop y velocidad
+						action.loop = animConfig.loop ? THREE.LoopRepeat : THREE.LoopOnce;
+						action.clampWhenFinished = !animConfig.loop;
+						action.timeScale = animConfig.speed || 1.0;
+						
+						//añadir la acción al select
+						const option = document.createElement("option");
+						option.value = action._clip.name;
+						option.textContent = animConfig.displayName || action._clip.name; // Usar displayName si existe
+						option.selected = action._clip.name === activeActionName;
+						animationSelect.appendChild(option);
 
-				actions.forEach(action => {
-					const option = document.createElement("option");
-					option.value = action._clip.name;
-					option.textContent = action._clip.name;
-					option.selected = action._clip.name === activeActionName;
-					animationSelect.appendChild(option);
-				});
-
-				// Escuchar cambios en el `select`
-				animationSelect.addEventListener("change", (event) => {
-					const selectedAnimation = event.target.value;
-					const selectedAction = actions.find(action => action._clip.name === selectedAnimation);
-
-					if (selectedAction) {
-						mixer.stopAllAction();
-						this.currentAction = selectedAction;
-						this.currentAction.play();
-						this.saveConfig(modelName); // Guardar animación activa
+						// Si es la animación activa, reproducirla
+						if (animConfig.name === config.activeAnimation) {
+							this.currentAction = action;
+							action.reset();
+							action.time = config.currentTime || 0;
+							action.paused = config.isPaused || false;
+							if (!action.paused) {
+								action.play();
+							}
+							this.togglePauseButtonIcon(!action.paused);
+						}
 					}
+
 				});
 			}
 		}

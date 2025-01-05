@@ -88,8 +88,11 @@ export class VideoViewer extends Viewer {
 	}
 
 	saveConfig(videoName) {
-		this.loader.configs[videoName].scale = this.currentScale || 1;
-		this.loader.configs[videoName].offset = this.posOffset || {"x": 0, "y": 0};
+		const config = this.loader.configs[videoName];
+		config.scale = this.currentScale || 1;
+		config.offset = this.posOffset || {"x": 0, "y": 0};
+		config.isPaused = this.videoElement.paused;
+		config.currentTime = this.videoElement.currentTime;
 	}
 	
     applyConfig(videoName) {
@@ -100,7 +103,13 @@ export class VideoViewer extends Viewer {
         this.videoElement.loop = config.loop || true;
 		
 		this.videoElement.muted = true;
-		this.videoElement.play();  // revisar y poner según parámetro en el json
+		this.videoElement.currentTime = config.currentTime || 0; // Restaurar tiempo
+		if (config.isPaused) {
+			this.videoElement.pause();
+		} else {
+			this.videoElement.play();
+		}
+		this.togglePauseButtonIcon(!config.isPaused);
 		this.currentScale = config.scale || 1;
 		this.posOffset = config.offset || {"x": 0, "y": 0};
 		this.applyTransform();
