@@ -28,11 +28,6 @@ export class Carousel {
                     this.#addWheelEvent();
                     this.#addClickEvents();
 
-                    if (loader) {
-                        this.loader = loader;
-                        this.currentLoader = this.loader;
-                    }
-
                     window.addEventListener('resize', () => {
                         this.#updateThumbnailsDisplay();
                     });
@@ -75,7 +70,7 @@ export class Carousel {
 		}
 		// Si el número es par, se reduce en uno
 		if (amount % 2 === 0) {
-			amount -= -1;
+			amount -= 1;
 		}
 		this.thumbnailsCount = amount;
 		this.thHalfCount = Math.floor(this.thumbnailsCount / 2); // Mitad de thumbnails visibles a cada lado del centro
@@ -164,10 +159,8 @@ export class Carousel {
 			this.viewer.applyConfig(this.currentLoader.resourceNames[this.currentItemIndex.value]);
 			this.#updateThumbnailsDisplay();
 		} else {
-			if (this.loader.children[contentNumber]) {
-				this.currentLoader = this.loader.children[contentNumber];
-				this.currentItemIndex.value = 0; // Reiniciar índice al cambiar el loader
-				this.#updateThumbnailsDisplay();
+			if (this.loader.children[contentNumber]) {		
+				this.setLoader(this.loader.children[contentNumber])
 			}
 		}
 	}
@@ -188,16 +181,17 @@ export class Carousel {
 	#updateThumbnailsDisplay() {
 		this.#calculateThumbnailsCount(this.thumbnailContainer, this.maxThumbsToShow);
 		const visibleThumbnails = this.#getVisibleThumbnails();
+
 		this.thumbnailContainer.innerHTML = "";  // Limpiar el contenedor
 		// Añadir las miniaturas visibles y aplicar clases activas
 		visibleThumbnails.forEach((thumbnail, index) => {
+
 			thumbnail.classList.remove('current-thumbnail');
 			
 			// Configurar el thumbnail centrado como activo
 			if (index === this.thHalfCount) {
 				thumbnail.classList.add('current-thumbnail');
 			}
-			
 			this.thumbnailContainer.appendChild(thumbnail);
 		});
 

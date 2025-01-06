@@ -104,8 +104,6 @@ export class Viewer {
 
 			this.mediaControls.fullScreen.action = this.toggleFullScreen.bind(this);
 			this.mediaControls.fullScreen.update = this.toggleFullScreenButtonIcon.bind(this);
-		} else {
-			
 		}
 	}
 	

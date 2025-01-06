@@ -46,8 +46,10 @@ body {
 }
 
 .viewer-container {
-	width: 80%;
-	height: 80%;
+	/*width: 80%;
+	height: 80%;*/
+	height: 90vh;
+	width: calc(100% - 10vh);
 	padding: 0;
 	position: relative;
 	border-radius: 1vh;

@@ -82,7 +82,6 @@ export class ContentViewer extends Viewer {
 																			  });
 			}
 			this.carousel.ready.then(() => {
-
 				// Verificar que resourceNames está disponible y luego llamar a applyConfig
 				if (this.loader.resourceNames && this.loader.resourceNames.length > 0) {
 					this.applyConfig(this.loader.resourceNames[initContent]);
