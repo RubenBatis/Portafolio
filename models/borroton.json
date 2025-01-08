@@ -32,7 +32,7 @@
 			"displayName": "Caminar",
 			"enabled": true,
 			"loop": true,
-			"speed": 1,
+			"speed": 3,
 			"repeatDelay": 500
 		},
 		{
@@ -40,7 +40,7 @@
 			"displayName": "Saltar",
 			"enabled": true,
 			"loop": true,
-			"speed": 0.5
+			"speed": 1.5
 		}
 	],
 	"activeAnimation": "BorrotoArmCaminar",

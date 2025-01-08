@@ -10,7 +10,8 @@ export class ModelViewer extends Viewer{
 		applyConfigOnInit = true,
 		orientation = "bottom", 
 		appendControls = true,
-		controls = null
+		controls = null,
+		language = "es"
 	} = {}) {
 		super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
 
@@ -23,6 +24,9 @@ export class ModelViewer extends Viewer{
 
 		this.domElement = this.canvas;
 		this.currentItemIndex = currentItemIndex;
+		
+		this.language = language;
+
 		this.camera = null;
 		this.controls = null;
 
@@ -201,9 +205,11 @@ export class ModelViewer extends Viewer{
 		const selectedAction = mixer._actions.find(action => action._clip.name === selectedAnimation);
 
 		if (selectedAction) {
+			const paused = this.currentAction.paused;
 			mixer.stopAllAction();
 			this.currentAction = selectedAction;
 			this.currentAction.play();
+			this.currentAction.paused = paused;
 		}
 		
 		this.togglePauseButtonIcon(!this.currentAction.paused);
@@ -336,7 +342,7 @@ export class ModelViewer extends Viewer{
 		if (mixer) {
 			const actions = mixer._actions || [];
 			const animationsConfig = config.animations || [];
-			actions.forEach(action => action.stop());
+			mixer.stopAllAction();
 			
 			if (actions.length > 0) {
 				const activeActionName = config.activeAnimation || actions[0]._clip.name;
@@ -368,10 +374,8 @@ export class ModelViewer extends Viewer{
 							this.currentAction = action;
 							action.reset();
 							action.time = config.currentTime || 0;
+							action.play();
 							action.paused = config.isPaused || false;
-							if (!action.paused) {
-								action.play();
-							}
 							this.togglePauseButtonIcon(!action.paused);
 						}
 					}
@@ -390,6 +394,7 @@ export class ModelViewer extends Viewer{
 		});
 		
 		this.toggleResetViewButtonIcon();
+		this.parentElement.offsetHeight;
 	}
 
 	// Animar la escena

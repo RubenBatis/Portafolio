@@ -1,7 +1,7 @@
 {
   "resourceFile": "cangrejo.glb",
   "thumbnailFile": "cangrejo.png",
-  "description": "Sr. Cangrejo.\n\nDe la famosa serie. Bob Esponja.\nSalvo las pinzas, en las que usé sculpting, el resto del modelo está hecho con modelado poligonal, con modificadores Mirror y Subdivision surface.\nTiempo aproximado: Una hora.",
+  "description": "<p class='text-es'>Sr. Cangrejo.\n\nDe la famosa serie, Bob Esponja.\nSalvo las pinzas, en las que usé sculpting, el resto del modelo está hecho con modelado poligonal, con modificadores Mirror y Subdivision surface.\nTiempo aproximado: Una hora.</p><p class='text-en'>Mr. Krabs.\n\nFrom the famous series SpongeBob Squarepants.\nExcept for the pincers, where I used sculpting, the rest of the model is made with polygonal modelling, with Mirror and Subdivision surface modifiers.\nApproximate time: One hour.</p>",
   "backgroundColor": "#5acfbe",
   "camera": {
     "position": [

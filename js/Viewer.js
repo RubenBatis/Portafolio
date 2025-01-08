@@ -3,7 +3,8 @@ export class Viewer {
 	constructor(parentElement, loader = null, {
 			orientation = "bottom",
 			appendControls = true, 
-			controls = null
+			controls = null,
+			language = "es"
 		} = {}) {
 		this.loader = loader;
 		this.parentElement = parentElement;
@@ -12,7 +13,7 @@ export class Viewer {
 		this.viewerElement.className = "viewer " + orientation;
 		this.parentElement.appendChild(this.viewerElement);
 		
-		
+		this.language = language;
 		
 		this.idunico = Math.random().toString(36).substr(2, 9);
 		
@@ -127,7 +128,20 @@ export class Viewer {
 			}
 		});
 	}
-	
+
+	updateLanguage(selectedLang = this.language) {
+		this.language = selectedLang;
+		const allTextElements = this.descriptionPanel.querySelectorAll('[class^="text-"]');
+
+		allTextElements.forEach(textElement => {
+			if (textElement.classList.contains(`text-${selectedLang}`)) {
+				textElement.style.display = 'inline';
+			} else {
+				textElement.style.display = 'none';
+			}
+		});
+	}
+
 	resize() {}
 	
 	// Establecer el loader al indicado
@@ -138,7 +152,12 @@ export class Viewer {
 	// Actualizar la descripción y los controles
 	updateDescription(description) {
 		if (this.descriptionPanel) {
-			this.descriptionPanel.innerHTML = description.replace(/\n/g, '<br>');
+			const panel = this.descriptionPanel;
+			
+			// Establece el contenido directamente desde el JSON (añadiendo etiquetas para los saltos de linea)
+			panel.innerHTML = description.replace(/\n/g, '<br>');		
+			panel.offsetHeight;
+			this.updateLanguage();
 		}
 	}
 	
@@ -293,8 +312,12 @@ export class Viewer {
 	togglePauseButtonIcon(paused) {
 		if (paused) {
 			this.mediaControls.playPause.button.innerHTML = this.mediaControls.playPause.icon[0];
+			this.mediaControls.playPause.button.classList.add("pause");
+			this.mediaControls.playPause.button.classList.remove("play");
 		} else {
 			this.mediaControls.playPause.button.innerHTML = this.mediaControls.playPause.icon[1];
+			this.mediaControls.playPause.button.classList.add("play");
+			this.mediaControls.playPause.button.classList.remove("pause");
 		}
 	}
 	

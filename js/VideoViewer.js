@@ -7,7 +7,8 @@ export class VideoViewer extends Viewer {
 		applyConfigOnInit = true,
 		orientation = "bottom", 
 		appendControls = true,
-		controls = null
+		controls = null,
+		language = "es"
 	} = {}) {
         super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
         this.videoElement = document.createElement('video');
@@ -32,6 +33,8 @@ export class VideoViewer extends Viewer {
 		this.domElement = this.videoFrame;
 		
 		this.currentItemIndex = currentItemIndex;
+		
+		this.language = language;
 		
 		//variables para pan y zoom
 		this.currentScale = 1;
@@ -130,6 +133,7 @@ export class VideoViewer extends Viewer {
 			reset: true,              // Siempre mostrar
 			changeAnimation: false    // No se necesita para videos
 		});
+		this.parentElement.offsetHeight;
     }
 
 	// Manejar el zoom

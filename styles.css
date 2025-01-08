@@ -1,25 +1,11 @@
 :root {
-	--minouc: #ffcc00; /*var(--minouc);*/
+	--minouc: #ffcc00;
 	--oscdum: black;
 	--anggra: 45deg;
 	--vcarouselsize: 20%;
 	--hcarouselsize: 10%;
 	--shared-color: black;
 	--background-black: black;
-	/*--minouc: #3e1e67;
-	--oscdum: #f7f7ea;
-	--anggra: 0deg;*/
-	--defdeg: var(--anggra), var(--minouc) 0%,
-		var(--minouc) 2%, var(--oscdum) 2%, var(--oscdum) 4%, var(--minouc) 4%, var(--minouc) 6%, var(--oscdum) 6%, var(--oscdum) 8%, var(--minouc) 8%, var(--minouc) 10%, var(--oscdum) 10%, 
-		var(--oscdum) 12%, var(--minouc) 12%, var(--minouc) 14%, var(--oscdum) 14%, var(--oscdum) 16%, var(--minouc) 16%, var(--minouc) 18%, var(--oscdum) 18%, var(--oscdum) 20%, var(--minouc) 20%, 
-		var(--minouc) 22%, var(--oscdum) 22%, var(--oscdum) 24%, var(--minouc) 24%, var(--minouc) 26%, var(--oscdum) 26%, var(--oscdum) 28%, var(--minouc) 28%, var(--minouc) 30%, var(--oscdum) 30%, 
-		var(--oscdum) 32%, var(--minouc) 32%, var(--minouc) 34%, var(--oscdum) 34%, var(--oscdum) 36%, var(--minouc) 36%, var(--minouc) 38%, var(--oscdum) 38%, var(--oscdum) 40%, var(--minouc) 40%, 
-		var(--minouc) 42%, var(--oscdum) 42%, var(--oscdum) 44%, var(--minouc) 44%, var(--minouc) 46%, var(--oscdum) 46%, var(--oscdum) 48%, var(--minouc) 48%, var(--minouc) 50%, var(--oscdum) 50%, 
-		var(--oscdum) 52%, var(--minouc) 52%, var(--minouc) 54%, var(--oscdum) 54%, var(--oscdum) 56%, var(--minouc) 56%, var(--minouc) 58%, var(--oscdum) 58%, var(--oscdum) 60%, var(--minouc) 60%, 
-		var(--minouc) 62%, var(--oscdum) 62%, var(--oscdum) 64%, var(--minouc) 64%, var(--minouc) 66%, var(--oscdum) 66%, var(--oscdum) 68%, var(--minouc) 68%, var(--minouc) 70%, var(--oscdum) 70%, 
-		var(--oscdum) 72%, var(--minouc) 72%, var(--minouc) 74%, var(--oscdum) 74%, var(--oscdum) 76%, var(--minouc) 76%, var(--minouc) 78%, var(--oscdum) 78%, var(--oscdum) 80%, var(--minouc) 80%, 
-		var(--minouc) 82%, var(--oscdum) 82%, var(--oscdum) 84%, var(--minouc) 84%, var(--minouc) 86%, var(--oscdum) 86%, var(--oscdum) 88%, var(--minouc) 88%, var(--minouc) 90%, var(--oscdum) 90%, 
-		var(--oscdum) 92%, var(--minouc) 92%, var(--minouc) 94%, var(--oscdum) 94%, var(--oscdum) 96%, var(--minouc) 96%, var(--minouc) 98%, var(--oscdum) 98%, var(--oscdum) 100%;
 }
 
 *,
@@ -117,6 +103,7 @@ body {
 	width: calc(100% - var(--hcarouselsize));
 	height: 100%;
 }
+
 .viewer.top, .viewer.bottom {
 	width: 100%;
 	height: calc(100% - var(--vcarouselsize));
@@ -346,6 +333,10 @@ body {
 	/*transition: transform 0.5s ease-in-out;*/
 }
 
+.thumbnail {
+	overflow:hidden;
+}
+
 .thumbnail:hover {
 	-webkit-filter: drop-shadow(0px 0px 7px rgba(255, 255, 255, 0.5));
 	filter: drop-shadow(0px 0px 7px rgba(255, 255, 255, 0.5));
@@ -457,7 +448,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	/*background-color: var(--background-black);*/
-	background: linear-gradient(var(--defdeg));
+	background: url("styles/DummyBackground.svg");
 	color: white;
 }
 

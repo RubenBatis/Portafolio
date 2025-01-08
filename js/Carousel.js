@@ -24,8 +24,8 @@ export class Carousel {
 			Promise.all([this.viewer.ready, this.viewer.loader.ready]).then(() => {
                 try {
                     this.#createThumbnailContainer();
+					this.#addWheelEvent();
                     this.#updateThumbnailsDisplay();
-                    this.#addWheelEvent();
                     this.#addClickEvents();
 
                     window.addEventListener('resize', () => {
@@ -87,23 +87,31 @@ export class Carousel {
 	
 	// Añadir evento de la rueda al ThumbnailContainer
 	#addWheelEvent() {
-		this.thumbnailContainer.addEventListener('wheel', (event) => {
-			event.preventDefault();
-			event.stopPropagation();
-			let contentNumber;
-			if (event.deltaY > 0) {
-				contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
-			} else {
-				contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
-			}
-				this.changeContent(contentNumber);
-		}, { passive: false });//, { passive: true });
+		this.thumbnailContainer.addEventListener('wheel', this.handleWheelEvent.bind(this), { passive: false });
+		this.thumbnailContainer.addEventListener('DOMMouseScroll', this.handleWheelEvent.bind(this), { passive: false });
+		this.thumbnailContainer.addEventListener('MozMousePixelScroll', this.handleWheelEvent.bind(this), { passive: false });
+	}
+	
+	handleWheelEvent(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		
+		let contentNumber;
+		if (event.deltaY > 0) {
+			contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
+		} else {
+			contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
+		}
+		this.changeContent(contentNumber);
+		return false;
 	}
 
 	// Añadir eventos de click a los thumbnails
 	#addClickEvent(thumbnailElement, thumbnailIndex) {
 		thumbnailElement.setAttribute("data-thumbnumber", thumbnailIndex);
 		thumbnailElement.addEventListener("click", (event) => {
+			event.preventDefault();
+			event.stopPropagation();
 			const contentNumber = parseInt(event.currentTarget.getAttribute("data-thumbnumber"), 10);
 			this.changeContent(contentNumber);
 		});
@@ -125,7 +133,10 @@ export class Carousel {
 			const newLeftArrow = document.createElement('div');
 			newLeftArrow.className = horizontal ? 'arrow left' : 'arrow top';
 			newLeftArrow.innerHTML = horizontal ? "\u2329" : '\uFE3F'; // Unicode para la flecha izquierda o superior
-			newLeftArrow.addEventListener('click', () => {
+			newLeftArrow.setAttribute('tabindex', '-1');
+			newLeftArrow.addEventListener('click', (event) => {
+				event.preventDefault();
+				event.stopPropagation();
 				let contentNumber = (this.currentItemIndex.value - 1 + this.currentLoader.resourceNames.length) % this.currentLoader.resourceNames.length;
 				this.changeContent(contentNumber);
 			});
@@ -136,7 +147,10 @@ export class Carousel {
 			const newRightArrow = document.createElement('div');
 			newRightArrow.className = horizontal ? 'arrow right' : 'arrow bottom';
 			newRightArrow.innerHTML = horizontal ? "\u232A" : '\uFE40'; // Unicode para la flecha derecha o inferior
-			newRightArrow.addEventListener('click', () => {
+			newRightArrow.setAttribute('tabindex', '-1');
+			newRightArrow.addEventListener('click', (event) => {
+				event.preventDefault();
+				event.stopPropagation();
 				let contentNumber = (this.currentItemIndex.value + 1) % this.currentLoader.resourceNames.length;
 				this.changeContent(contentNumber);
 			});

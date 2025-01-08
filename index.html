@@ -29,7 +29,7 @@
 		-->
 		
 		<div class="language-menu">
-			<select id="languageSelect" onchange="changeLanguage()">
+			<select id="languageSelect">
 				<option value="es" data-flag="🇪🇸">ES</option>
 				<option value="en" data-flag="🇬🇧">EN</option>
 			</select>
@@ -77,8 +77,17 @@
 
 			const orientation = "bottom";
 			let contenedor = createCategory().childNodes[0];
+			
+			let lang = configLanguageSelect();
 
-			window.mviewer = new ContentViewer(contenedor, {contentFolder: '/models', orientation: orientation});
+			window.mviewer = new ContentViewer(contenedor, {contentFolder: '/models', orientation: orientation, language: lang});
+			
+			document.getElementById("languageSelect").addEventListener('change', () => {
+				changeLanguage([window.mviewer]);
+			});
+			
+			changeLanguage([window.mviewer]);
+			
 		</script>
 	</body>
 </html>

@@ -7,7 +7,8 @@ export class ImageViewer extends Viewer {
 		applyConfigOnInit = true,
 		orientation = "bottom", 
 		appendControls = true,
-		controls = null
+		controls = null,
+		language = "es"
 	} = {}){
         super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
         this.imageElement = document.createElement('img');
@@ -32,6 +33,8 @@ export class ImageViewer extends Viewer {
 		this.domElement = this.imageFrame;
 
 		this.currentItemIndex = currentItemIndex;
+		
+		this.language = language;
 
 		//variables para pan y zoom
 		this.currentScale = 1;
@@ -136,6 +139,7 @@ export class ImageViewer extends Viewer {
 			reset: false,             // No se necesita para imágenes
 			changeAnimation: false    // No se necesita para imágenes
 		});
+		this.parentElement.offsetHeight;
     }
 
 	// Manejar el zoom

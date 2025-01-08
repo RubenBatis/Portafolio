@@ -21,6 +21,7 @@ export class Loader {
 
 	async #loadModel(modelFile) {
 		return new Promise((resolve, reject) => {
+			console.log(modelFile);
 			const gltfLoader = new GLTFLoader();
 			gltfLoader.load(modelFile, (gltf) => {
 				let modelName = modelFile.split('/').pop().split('.').slice(0, -1).join('.');
@@ -32,7 +33,6 @@ export class Loader {
 					gltf.animations.forEach((clip) => {
 						const action = this.mixers[modelName].clipAction(clip);
 						action.loop = LoopRepeat;
-						action.play();
 					});
 				}
 				resolve();
@@ -95,21 +95,25 @@ export class Loader {
 		thumbnailElement.onerror = function(){
 			this.onerror = null;
 			this.src = "models/not_found.png";
-		};						
+		};	
 		this.thumbnails.push(thumbnailElement);
 	}
 
 	async #listJSONFiles() {
-		try {
-			const response = await fetch(`${this.contentFolder}`);
-			//const response = await fetch(`${this.contentFolder}/${jsonFile}`);
-			if (!response.ok) {
-				throw new Error(`No se pudo cargar`);
+		if (this.contentFolder) {
+			try {
+				const response = await fetch(`${this.contentFolder}`);
+				//const response = await fetch(`${this.contentFolder}/${jsonFile}`);
+				if (!response.ok) {
+					throw new Error(`No se pudo cargar`);
+				}
+				const config = await response.json();
+				return config;
+			} catch (error) {
+				console.error('Error fetching models:', error);
 			}
-			const config = await response.json();
-			return config;
-		} catch (error) {
-			console.error('Error fetching models:', error);
+		} else {
+			return {};
 		}
 	}
 
@@ -183,7 +187,7 @@ export class Loader {
 				}
 				await Promise.all(loaderPromises);
 			} else {
-				console.log('No se encontraron archivos JSON.');
+				//console.log('No se encontraron archivos JSON.');
 			}
 		} catch (error) {
 			console.error('Error al cargar modelos:', error);

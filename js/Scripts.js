@@ -1,21 +1,3 @@
-let canScrollToNext = false;
-let canScrollToPrev = false;
-
-// Marcar contenido como completado
-function markContentComplete(element, direction) {
-	const contentContainer = element.closest('.viewer-container');
-	
-	if (direction === 'end') {
-		contentContainer.setAttribute('data-complex-completed', 'true');
-		canScrollToNext = true;
-		console.log("Contenido marcado como completado, scroll hacia abajo permitido.");
-	} else if (direction === 'start') {
-		contentContainer.setAttribute('data-complex-completed', 'true');
-		canScrollToPrev = true;
-		console.log("Inicio del contenido alcanzado, scroll hacia arriba permitido.");
-	}
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 	window.scrollTo(0, 0);
 	// Obtener referencias a los elementos necesarios
@@ -25,11 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const tabsContainer = document.querySelector('.tabs');
 
 	let currentIndex = 0;
-
-	// Detectar scroll en el contenedor principal de contenidos
-	contentsContainer.addEventListener('scroll', () => {
-		updateActiveTab();
-	});
 
 	// Detectar el scroll en la columna de tabs para cambiar entre contenidos
 	tabsContainer.addEventListener('wheel', (event) => {
@@ -44,37 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Desplazar el contenido correspondiente a la vista
 		contents[currentIndex].scrollIntoView({ behavior: "smooth", block: "start" });
-
-		// Actualizar el tab activo
-		updateActiveTab();
+		
 	}, { passive: false });
-
-	// Asegurar que el primer tab esté activo al cargar la página
-	updateActiveTab();
-
-	// Función para actualizar el tab activo basado en la visibilidad de los contenidos
-	function updateActiveTab() {
-		let maxVisibility = -1;
-		let activeIndex = -1;
-		const viewportHeight = window.innerHeight;
-
-		// Determinar cuál contenido es más visible
-		contents.forEach((content, index) => {
-			const rect = content.getBoundingClientRect();
-			const visibleTop = Math.max(0, rect.top);
-			const visibleBottom = Math.min(viewportHeight, rect.bottom);
-			const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-			const visibilityPercentage = visibleHeight / viewportHeight;
-
-			if (visibilityPercentage > maxVisibility) {
-				maxVisibility = visibilityPercentage;
-				activeIndex = index;
-			}
-		});
-
-		// Actualizar las clases activas de los tabs
-		tabs.forEach((tab, i) => tab.classList.toggle('active', i === activeIndex));
-	}
 	
 	// Sobreescribir el evento de click de los anclas para evitar tenerlas en la URL
 	document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -90,6 +38,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 });
+
+function configLanguageSelect() {
+	const select = document.getElementById('languageSelect');
+	const userLang = navigator.language || navigator.userLanguage;
+	const lang = userLang.split('-')[0]; // Obtener el código de idioma (es, en, etc.)
+	// Comprobar si el idioma está en las opciones del select
+	const availableLanguages = Array.from(select.options).map(option => option.value);
+	let finalLang;
+	if (availableLanguages.includes(lang)) {
+		select.value = finalLang = lang;
+	} else {
+		select.value = finalLang = 'es'; // Idioma por defecto si el idioma del navegador no está en las opciones
+	}
+	return finalLang;
+}
+
 
 function createCategory() {
 	// Contar el número de elementos con la clase "viewer-container"
@@ -152,7 +116,7 @@ function createCategory() {
 
 
 // Selector de idioma
-function changeLanguage() {
+function changeLanguage(viewers = []) {
 	const select = document.getElementById('languageSelect');
 	const selectedLanguage = select.value;
 
@@ -165,19 +129,6 @@ function changeLanguage() {
 	document.querySelectorAll(`.text-${selectedLanguage}`).forEach(element => {
 		element.style.display = 'inline';
 	});
+	
+	viewers.forEach(viewer => viewer.updateLanguage(selectedLanguage));
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  const select = document.getElementById('languageSelect');
-  const userLang = navigator.language || navigator.userLanguage;
-  const lang = userLang.split('-')[0]; // Obtener el código de idioma (es, en, etc.)
-
-  // Establecer la opción por defecto según el idioma del navegador
-  if (lang === 'es' || lang === 'en') {
-    select.value = lang;
-  } else {
-    select.value = 'es'; // Idioma por defecto si el idioma del navegador no es español ni inglés
-  }
-
-  changeLanguage();
-});
