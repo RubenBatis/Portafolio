@@ -16,11 +16,12 @@ export class ContentViewer extends Viewer {
 		viewers = null, 
 		appendControls = true,
 		controls = null,
-		language = "es"
+		language = "es",
+		upperParent = null
 	} = {}) {
-		super(parentElement, loader);
+		super(parentElement, loader, {upperParent: upperParent});
 		this.loader = loader;
-		this.parentElement = parentElement;
+		//this.parentElement = parentElement;
 		this.currentItemIndex = {"value": initContent};
 		this.orientation = orientation;
 		
@@ -58,7 +59,8 @@ export class ContentViewer extends Viewer {
 					orientation: orientation,
 					appendControls: maxGeneration === generation,
 					controls: this.controls,
-					language: language
+					language: language,
+					upperParent: this.upperParent
 				}),
 			'video': (viewers && viewers["video"]) ? viewers["video"] : 
 				new VideoViewer(this.viewerFrame, {
@@ -68,7 +70,8 @@ export class ContentViewer extends Viewer {
 					orientation:orientation,
 					appendControls: maxGeneration === generation,
 					controls: this.controls,
-					language: language
+					language: language,
+					upperParent: this.upperParent
 				}),
 			'3dmodel': (viewers && viewers["3dmodel"]) ? viewers["3dmodel"] : 
 				new ModelViewer(this.viewerFrame, {
@@ -78,7 +81,8 @@ export class ContentViewer extends Viewer {
 					orientation: orientation,
 					appendControls: maxGeneration === generation,
 					controls: this.controls,
-					language: language
+					language: language,
+					upperParent: this.upperParent
 				})
 		}
 
@@ -93,7 +97,8 @@ export class ContentViewer extends Viewer {
 						maxGeneration: maxGeneration,
 						generation: generation - 1,
 						controls: this.controls,
-						language: language
+						language: language,
+						upperParent: this.upperParent
 					});
 			}
 			this.carousel.ready.then(() => {
@@ -208,4 +213,10 @@ export class ContentViewer extends Viewer {
 			this.viewers[type].applyConfig(this.viewers[type].loader.resourceNames[index]);
 		}
 	}
+	
+	refreshConfig() {
+		const contentName = this.loader.resourceNames[this.currentItemIndex.value];
+		this.applyConfig(contentName);
+	}
+	
 }

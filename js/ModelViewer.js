@@ -11,9 +11,10 @@ export class ModelViewer extends Viewer{
 		orientation = "bottom", 
 		appendControls = true,
 		controls = null,
-		language = "es"
+		language = "es",
+		upperParent = null
 	} = {}) {
-		super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
+		super(parentElement, loader, {orientation: orientation, appendControls: appendControls, upperParent: upperParent});
 
 		// Crear escena y renderer
 		this.scene = new THREE.Scene();

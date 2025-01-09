@@ -5,13 +5,18 @@
 	--vcarouselsize: 20%;
 	--hcarouselsize: 10%;
 	--shared-color: black;
-	--background-black: black;
+	--background-black: #111;
+	--rainbow-moz: -moz-linear-gradient(0deg, rgba(72,0,0,1) 0%, rgba(65,33,0,1) 9%, rgba(64,64,0,1) 18%, rgba(31,61,0,1) 27%, rgba(0,58,0,1) 36%, rgba(0,61,31,1) 45%, rgba(0,61,61,1) 54%, rgba(0,32,63,1) 63%, rgba(0,0,64,1) 72%, rgba(32,0,63,1) 81%, rgba(64,0,64,1) 90%, rgba(63,0,31,1) 99%);
+	--rainbow-webkit: -webkit-linear-gradient(0deg, rgba(72,0,0,1) 0%, rgba(65,33,0,1) 9%, rgba(64,64,0,1) 18%, rgba(31,61,0,1) 27%, rgba(0,58,0,1) 36%, rgba(0,61,31,1) 45%, rgba(0,61,61,1) 54%, rgba(0,32,63,1) 63%, rgba(0,0,64,1) 72%, rgba(32,0,63,1) 81%, rgba(64,0,64,1) 90%, rgba(63,0,31,1) 99%);
+	--rainbow: linear-gradient(0deg, rgba(72,0,0,1) 0%, rgba(65,33,0,1) 9%, rgba(64,64,0,1) 18%, rgba(31,61,0,1) 27%, rgba(0,58,0,1) 36%, rgba(0,61,31,1) 45%, rgba(0,61,61,1) 54%, rgba(0,32,63,1) 63%, rgba(0,0,64,1) 72%, rgba(32,0,63,1) 81%, rgba(64,0,64,1) 90%, rgba(63,0,31,1) 99%);
+	--rainbow-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000",endColorstr="#ff0080",GradientType=1);
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  font-family: 'Poppins', Courier, monospace;
 }
 
 html{
@@ -273,6 +278,7 @@ body {
 }
 
 .control-dropdown option {
+	font-family: 'Poppins', Courier, monospace;
 	appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -392,17 +398,18 @@ body {
 	height: 100vh;
 	position: fixed;
 	overflow-y: auto;
-	background-color: #000000;
+	background-color: var(--background-black);
 }
 
 .tab {
 	padding: 15px;
 	cursor: pointer;
 	text-align: center;
-	background-color: #000000;
+	background-color: var(--background-black);
 	color: #ffffff;
 	border: none;
 	outline: none;
+	font-size: 1.5vmin;
 	font-weight: bold;
 	text-decoration: none;
 	transition: background-color 0.3s, color 0.3s, border-left 0.3s;
@@ -418,11 +425,11 @@ body {
 }
 
 .tab.active {
-	background-image: linear-gradient(to right, rgba(64,64,64,1), rgba(0,0,0,1));
+	background-image: linear-gradient(to right, rgba(64,64,64,1),  var(--background-black));
 }
 
 .tab:hover {
-	background-image: linear-gradient(to right, rgba(32,32,32,1), rgba(0,0,0,1));
+	background-image: linear-gradient(to right, rgba(32,32,32,1),  var(--background-black));
 }
 
 .contents {
@@ -447,17 +454,18 @@ body {
 	min-height: 100%;
 	align-items: center;
 	justify-content: center;
-	/*background-color: var(--background-black);*/
-	background: url("styles/DummyBackground.svg");
+	/*background: linear-gradient(180deg, #000, #121212);*/
+	background-color: var(--background-black);
+	/*background: url("styles/DummyBackground.svg");*/
 	color: white;
 }
 
 .simple-container {
-	width: 100%;
-	background-color: #000000;
+	width: calc(100% - 10vh);
+	background-color: transparent
 	padding: 20px;
 	position: relative;
-	margin: 0px 10vh;
+	margin: 0px 5vh;
 }
 
 /* Menú de idioma*/
@@ -498,4 +506,245 @@ body {
 
 p {
 	display: inline;
+}
+
+/* Estilos de las páginas inicial y final*/
+/* Contenedor principal que ocupa toda la pantalla */
+.main-container {
+    position: relative;
+    height: 100vh; /* Ocupa exactamente la altura de la pantalla */
+    overflow: hidden;
+}
+
+/* Hero Section */
+.hero-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%; /* Ocupa el 60% superior de la pantalla */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-black);
+    color: #fff;
+    z-index: 1;
+}
+
+.background-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+    z-index: -2;
+}
+
+.main-text {
+    text-align: center;
+}
+
+.main-text h1 {
+    font-size: 3rem; /* Tamaño ajustado */
+    font-weight: bold;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.main-text p {
+    font-size: 1.2rem; /* Texto más pequeño */
+    margin: 0;
+}
+
+/* Tarjetas dinámicas en la parte inferior */
+/* Contenedor principal */
+.card-container {
+    position: relative; /* Define el contexto para las tarjetas */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Distribución de tarjetas */
+    grid-gap: 40px;
+    padding: 20px 60px;
+    z-index: 1; /* Tarjetas visibles sobre el fondo */
+	margin-top:60vh;
+	height: calc(40vh - 60px);
+}
+
+/* Tarjetas */
+.card {
+    position: relative; /* Necesario para posicionar el pseudo-elemento */
+    background: rgb(255, 255, 255, 0.4);/*var(--background-black);*/
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    overflow: hidden; /* Evita que las sombras sobresalgan */
+    z-index: 1; /* Asegura que el contenido de la tarjeta esté encima */
+}
+
+/* Sombras debajo de las tarjetas */
+.card::before {
+    content: "";
+    position: absolute; /* Se posiciona relativo a la tarjeta */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-black); /* Sombra translúcida */
+    transform: rotate(3deg); /* Desplaza la sombra hacia abajo/derecha */
+    z-index: -1; /* Debajo de la tarjeta pero dentro de su contexto */
+}
+
+.card:hover {
+	transform: scale(1.25);
+	z-index: 1000;
+}
+
+.card p {
+    margin: 0;
+    /*font-size: 1.2rem; /* Texto más pequeño */
+	font-size: 1.2vmin;
+	line-height: 0.5;
+}
+
+/* Ajustes responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .hero-section {
+        height: 70%; /* Hero ocupa más espacio */
+    }
+
+    .card-container {
+        height: 30%; /* Tarjetas ocupan menos espacio */
+    }
+
+    .card {
+        max-width: 150px;
+        margin: 5px;
+		padding: 2px;
+    }
+}
+
+.gradient-text {
+    font-size: 3rem; /* Tamaño del texto */
+    font-weight: bold;
+    text-transform: uppercase;
+    background: var(--rainbow); /* Degradado de colores */
+	background: var(--rainbow-webkit );
+	background: var(--rainbow-moz);
+    -webkit-background-clip: text; /* Aplica el degradado al texto */
+    -webkit-text-fill-color: transparent; /* Hace que solo se vea el texto con el degradado */
+}
+
+/*Instrucctiones*/
+.instructions {
+    position: absolute;
+    bottom: 10px; /* Justo encima del borde inferior */
+    left: 50%;
+    transform: translateX(-50%); /* Centra horizontalmente */
+    background: rgba(0, 0, 0, 0.8); /* Fondo translúcido */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 3; /* Asegura que esté encima de otros elementos */
+    animation: fadeInUp 1s ease-out; /* Animación de entrada */
+}
+
+.instructions p {
+    margin: 0;
+}
+
+/* Animación para que aparezcan suavemente */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/*CONTACTO*/
+
+.contact-section {
+    position: relative;
+    height: 100vh; /* Ocupa toda la pantalla */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    color: #fff;
+    text-align: center;
+    overflow: hidden;
+}
+
+.background-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.1; /* Más visible que en la primera sección */
+    z-index: 10;
+}
+
+.contact-text {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+}
+
+.contact-text h1 {
+    font-size: 3rem; /* Tamaño grande para destacar */
+    font-weight: bold;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.contact-text p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.contact-info {
+    margin-top: 20px;
+}
+
+.contact-info p {
+    font-size: 1rem;
+    margin: 5px 0;
+}
+
+.contact-info a {
+    color: #f39c12; /* Color de acento */
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+.social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px; /* Espaciado entre iconos */
+    justify-content: center;
+}
+
+.social-links img {
+    width: 40px;
+    height: 40px;
+    filter: invert(100%); /* Hace que los iconos sean blancos */
+    transition: transform 0.2s;
+}
+
+.social-links img:hover {
+    transform: scale(1.1); /* Efecto de zoom al pasar el ratón */
 }

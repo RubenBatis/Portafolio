@@ -8,9 +8,10 @@ export class ImageViewer extends Viewer {
 		orientation = "bottom", 
 		appendControls = true,
 		controls = null,
-		language = "es"
+		language = "es",
+		upperParent = null
 	} = {}){
-        super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
+        super(parentElement, loader, {orientation: orientation, appendControls: appendControls, upperParent: upperParent});
         this.imageElement = document.createElement('img');
         this.imageElement.style.transformOrigin = 'center center';
         this.imageElement.draggable = false; // Evitar arrastrar la imagen accidentalmente

@@ -21,7 +21,6 @@ export class Loader {
 
 	async #loadModel(modelFile) {
 		return new Promise((resolve, reject) => {
-			console.log(modelFile);
 			const gltfLoader = new GLTFLoader();
 			gltfLoader.load(modelFile, (gltf) => {
 				let modelName = modelFile.split('/').pop().split('.').slice(0, -1).join('.');

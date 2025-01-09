@@ -8,9 +8,10 @@ export class VideoViewer extends Viewer {
 		orientation = "bottom", 
 		appendControls = true,
 		controls = null,
-		language = "es"
+		language = "es",
+		upperParent = null
 	} = {}) {
-        super(parentElement, loader, {orientation: orientation, appendControls: appendControls});
+        super(parentElement, loader, {orientation: orientation, appendControls: appendControls, upperParent: upperParent});
         this.videoElement = document.createElement('video');
         this.videoElement.style.transformOrigin = 'center center';
         this.videoElement.controls = false; // Desactivar los controles predeterminados

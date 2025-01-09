@@ -8,7 +8,6 @@
 		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
-		<script src="js/scripts.js"></script>
 		<script type="importmap">
 			{
 				"imports": {
@@ -20,6 +19,7 @@
 				}
 			}
 		</script>
+		<script type="module" src="js/Scripts.js"></script>
 		<!--
 					"Phaser": "https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js",
 					"LogLevel": "https://cdn.jsdelivr.net/npm/loglevel@1.8.1/dist/loglevel.min.js"
@@ -36,58 +36,137 @@
 		</div>
 	
 		<div class="tabs">
-			<a class="tab" href="#cat1">CATEGORÍA 1</a>
-			<a class="tab" href="#cat2">CATEGORÍA 2</a>
+			<a class="tab" href="#cat1"><p class="text-es">Sobre mi</p><p class="text-en">About me</p></a>
+			<a class="tab" href="#cat2"><p class="text-es">Contacto</p><p class="text-en">Contact</p></a>
 		</div>
 
 		<div class="contents">
 			<div class="content" id="cat1">
 				<div class="simple-container">
-					<h1><p class="text-es">¡Hola! Soy</p><p class="text-en">¡Hi! I'm</p> Rubén Bautista Reyes</h1>
-					<img src="ruta/a/tu/foto.jpg" alt="Foto de Rubén">
-					<p class="text-es">Diseñador 2D y 3D especializado en animaciones, texturizado, sculpting y modelado poligonal.
-					Trabajo con herramientas libres como Blender, Inkscape y GIMP.	He colaborado en proyectos sin ánimo de lucro, 
-					como la asociación juvenil Arcadia Nezumi, creando cartelería y publicidad de eventos durante 10 años.
-					También he creado logotipos e ilustraciones editoriales para blogs y libros infantiles. 
-					Colaboré con la URJC en el proyecto Mozart Virtual en el que se recrearon edificios de Viena.
-					Mi pasión es crear y me encantaría formar parte de un estudio de animación o cualquier proyecto creativo.</p>
-					<p class="text-en">2D and 3D designer specialised in animation, texturing, sculpting and polygonal modelling.
-					I work with free tools such as Blender, Inkscape and GIMP.	I have collaborated in non-profit projects, 
-					such as the youth association Arcadia Nezumi, creating posters and advertising for events for 10 years.
-					I collaborated with the URJC in the Virtual Mozart project in which Vienna buildings were recreated.
-					I have also created logos and editorial illustrations for blogs and children's books.
-					My passion is creating and I would love to be part of an animation studio or any creative project.</p>
-					<p class="instructions text-es">Explora mis trabajos navegando por las secciones del portafolio. ¡Espero que disfrutes!</p>
-					<p class="instructions text-en">Explore my work by browsing through the portfolio sections - I hope you enjoy!</p>
+					<div class = "main-container">
+						<div class="hero-section">
+							<img src="styles/foto.png" alt="Foto de Rubén" class="background-photo">
+							<div class="main-text">
+								<h1>Rubén Bautista Reyes</h1>
+								<p class="text-es">Artista 2D y 3D</p>
+								<p class="text-en">2D and 3D artist</p>
+							</div>
+						</div>
+						<div class="card-container">
+							<div class="card">
+								<div>
+									<p class="text-es">
+										Diseñador 2D y 3D con conocimientos sobre en animaciones, texturizado, sculpting y modelado poligonal, retoque fotográfico, dibujo vectorial... Me apasiona el mundo creativo y he desarrollado de forma completamente autodidacta las habilidades técnicas que me permiten llevar a cabo estos proyectos.
+									</p> <p class="text-en">
+										2D and 3D designer with knowledge in animation, texturing, sculpting and polygonal modelling, photo retouching, vector drawing... I am passionate about the creative world and I have developed in a completely self-taught way the technical skills that allow me to carry out these projects.
+									</p>
+								</div>
+							</div>
+							<div class="card">
+								<div>
+									<p class="text-es">
+										Trabajo con herramientas de software libre como Blender, Inkscape y GIMP. Su naturaleza libre me ha permitido acceder a software potente y accesible, sin barreras para el aprendizaje. Estas herramientas son esenciales en mi flujo de trabajo, permitiéndome crear proyectos profesionales con recursos abiertos.
+									</p> <p class="text-en">
+										I work with open-source software tools like Blender, Inkscape, and GIMP.. Their open-source nature has allowed me to access powerful and accessible software, without barriers to learning. These tools are essential in my workflow, enabling me to create professional projects with open resources.
+									</p>
+								</div>
+							</div>
+							<div class="card">
+								<div>
+									<p class="text-es">
+										He contribuido con múltiples proyectos sin ánimo de lucro, como la Asociación Juvenil Arcadia Nezumi. Además de ser secretario, diseñé carteles y publicidad para eventos durante más de 10 años.
+									</p> <p class="text-en">
+										I have contributed to multiple non-profit projects, such as the Arcadia Nezumi Youth Association. In addition to being the secretary, I designed posters and advertisements for events for over 10 years.
+									</p>
+								</div>
+							</div>
+							<div class="card">
+								<div>
+									<p class="text-es">
+										También he creado logotipos e ilustraciones editoriales para blogs y libros infantiles. Siempre procuro adaptarme a las necesidades del proyecto sin dejar de aportar un toque personal.
+									</p> <p class="text-en">
+										I have also created logos and editorial illustrations for blogs and children's books. I always try to adapt to the needs of the project while adding a personal touch.
+									</p>
+								</div>
+							</div>
+							<div class="card">
+								<div>
+									<p class="text-es">
+										Colaboré con la Universidad Rey Juan Carlos en el proyecto Mozart Virtual, recreando edificios históricos de Viena en 3D.
+									</p> <p class="text-en">
+										I collaborated with the Universidad Rey Juan Carlos in the Virtual Mozart project, recreating historic buildings in Vienna in 3D.
+									</p>
+								</div>
+							</div>
+							<div class="card">
+								<div>
+									<p class="text-es">
+										Mi pasión es crear. Estoy siempre en busca de nuevos desafíos y me encantaría encontrar una oportunidad en un estudio de animación o cualquier otro proyecto creativo. ¡Gracias por visitar mi portafolio! Espero que lo hayas disfrutado tanto como yo disfruté creándolo.
+									</p> <p class="text-en">
+										My passion is to create. I'm always looking for new challenges and would love to find an opportunity in an animation studio or any other creative project. Thanks for visiting my portfolio! I hope you enjoyed it as much as I enjoyed creating it.
+									</p>
+								</div>
+							</div>
+						</div>
+						<!-- Micro-instrucciones -->
+						<div class="instructions">
+							<p class="text-es">Usa <strong>scroll</strong> o haz clic en las pestañas para navegar por el portafolio.</p>
+							<p class="text-en">Use <strong>scroll</strong> or click on the tabs to navigate through the portfolio.</p>
+						</div>
+					</div>
 				</div>
 			</div>
 
 			<div class="content" id="cat2">
 				<div class="simple-container">
-					<h1><p class="text-es">¡Gracias por visitar mi portafolio!</p><p class="text-en">¡Thank you for visiting my portfolio!</p></h1> <img src="ruta/a/tu/foto.jpg" alt="Foto de Rubén">
-					<p class="text-es">Si te ha gustado mi trabajo y quieres ponerte en contacto conmigo, aquí tienes mis datos: </p><p class="text-en">If you liked my work and want to contact me, here are my contact details:</p> 
-					<div class="contact-info"> <p>Email: <a href="mailto:tuemail@example.com">RubenBatis@gmail.com</a></p> <p><p class="text-es">Teléfono:</p><p class="text-en">Phone Number:</p> (+34) 659 04 04 39</p> </div> <div class="social-media"> <a href="https://www.linkedin.com/in/tuperfil" target="_blank">LinkedIn</a> <a href="https://twitter.com/tuusuario" target="_blank">Twitter</a> <a href="https://www.instagram.com/tuusuario" target="_blank">Instagram</a>
+					<div class="contact-section">
+						<img src="styles/Otra_foto.png" alt="Otra foto de Rubén" class="background-photo">
+						<div class="contact-text">
+							<h1>
+								<p class="text-es">Contacto</p>
+								<p class="text-en">Contact</p>
+							</h1>
+							<p>
+								<p class="text-es">¿Te interesa mi trabajo? Puedes contactarme por:</p>
+								<p class="text-en">Are you interested in my work? You can contact me via:</p>
+							</p>
+							<div class="contact-info">
+								<p>
+									<p class="text-es">Email: <a href="mailto:RubenBatis@gmail.com">RubenBatis@gmail.com</a></p>
+									<p class="text-en">Email: <a href="mailto:RubenBatis@gmail.com">RubenBatis@gmail.com</a></p>
+								</p>
+								<p>
+									<p class="text-es">Teléfono: <a href="tel:+34659040439">(+34) 659 04 04 39</a></p>
+									<p class="text-en">Phone: <a href="tel:+34659040439">(+34) 659 04 04 39</a></p>
+								</p>
+								<div class="social-links">
+									<a href="https://www.linkedin.com/in/tuperfil" target="_blank" title="LinkedIn">
+										<img src="ruta/a/icono-linkedin.svg" alt="LinkedIn">
+									</a>
+									<a href="https://github.com/tuusuario" target="_blank" title="GitHub">
+										<img src="ruta/a/icono-github.svg" alt="GitHub">
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
 
 		<script type="module">
-			import { ContentViewer } from './js/ContentViewer.js';
-			import { Carousel } from './js/Carousel.js';
-
-			const orientation = "bottom";
-			let contenedor = createCategory().childNodes[0];
-			
-			let lang = configLanguageSelect();
-
-			window.mviewer = new ContentViewer(contenedor, {contentFolder: '/models', orientation: orientation, language: lang});
-			
-			document.getElementById("languageSelect").addEventListener('change', () => {
-				changeLanguage([window.mviewer]);
-			});
-			
-			changeLanguage([window.mviewer]);
-			
+		import { createCategory, changeLanguage } from './js/Scripts.js';
+		const orientation = "bottom";
+		const category1 = createCategory('/models', orientation, '<p class="text-es">Trabajos 3D</p><p class="text-en">3D works</p>');
+		const category2 = createCategory('/models', orientation, '<p class="text-es">Trabajos 2D</p><p class="text-en">2D works</p>');
+		
+		document.getElementById("languageSelect").addEventListener('change', () => {
+			changeLanguage(window.mviewers);
+		});
+		
+		changeLanguage([category1.viewerInstance, category2.viewerInstance])
+		
 		</script>
 	</body>
 </html>

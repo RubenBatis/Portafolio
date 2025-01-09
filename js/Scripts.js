@@ -1,3 +1,5 @@
+import { ContentViewer } from './ContentViewer.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 	window.scrollTo(0, 0);
 	// Obtener referencias a los elementos necesarios
@@ -21,6 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Desplazar el contenido correspondiente a la vista
 		contents[currentIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+		if (contents[currentIndex].viewerInstance) {
+			contents[currentIndex].viewerInstance.refreshConfig();
+		}
+		
+		let owntab = document.querySelector('a[href="#cat' + (currentIndex + 1)+'"]');
+		tabs.forEach(tab => {tab.classList.remove("active");});
+		owntab.classList.add("active");
 		
 	}, { passive: false });
 	
@@ -30,10 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			event.preventDefault(); // Evita que el hash aparezca en la URL
 
 			const targetId = this.getAttribute('href').substring(1); // Obtener el ID del ancla
-			const targetElement = document.getElementById(targetId);
 
+			let owntab = document.querySelector('a[href="#' + targetId + '"]');
+			tabs.forEach(tab => {tab.classList.remove("active");});
+			owntab.classList.add("active");
+
+			const targetElement = document.getElementById(targetId);
 			if (targetElement) {
 				targetElement.scrollIntoView({ behavior: 'smooth' }); // Desplazamiento suave
+				if (targetElement.viewerInstance) targetElement.viewerInstance.refreshConfig();
 			}
 		});
 	});
@@ -54,8 +68,7 @@ function configLanguageSelect() {
 	return finalLang;
 }
 
-
-function createCategory() {
+export function createCategory(contentFolder, orientation, text = null) {
 	// Contar el número de elementos con la clase "viewer-container"
 	const viewerContainers = document.querySelectorAll('.viewer-container');
 	const count = viewerContainers.length + 2; // Comenzar desde 2
@@ -65,10 +78,13 @@ function createCategory() {
 	outerDiv.className = 'content';
 	outerDiv.id = `cat${count}`;
 
-	// Crear el div interno con clase "viewer-container" y atributo data-complex-completed
+	// Crear el div interno con clase "viewer-container"
 	const innerDiv = document.createElement('div');
 	innerDiv.className = 'viewer-container';
-	innerDiv.setAttribute('data-complex-completed', 'false');
+	
+	// Añadir el visor correspondiente al div interno
+	let lang = configLanguageSelect();
+	outerDiv["viewerInstance"] = new ContentViewer(innerDiv, {contentFolder: contentFolder, orientation: orientation, language: lang});
 
 	// Añadir el div interno al div principal
 	outerDiv.appendChild(innerDiv);
@@ -76,7 +92,7 @@ function createCategory() {
 	// Modificar el href del último tab
 	const tabs = document.querySelectorAll('.tab');
 	const lastTab = tabs[tabs.length -1];
-	nextPosition = parseInt(lastTab.href.split('#')[1].replace(/\D/g, ''), 10) + 1;
+	const nextPosition = parseInt(lastTab.href.split('#')[1].replace(/\D/g, ''), 10) + 1;
 	lastTab.href = "#cat" + nextPosition;
  
 	// Modificar el id del último content
@@ -88,7 +104,13 @@ function createCategory() {
 	const tabLink = document.createElement('a');
 	tabLink.className = 'tab';
 	tabLink.href = `#cat${count}`;
-	tabLink.textContent = `CATEGORÍA ${count}`;
+	if (text) {
+		//tabLink.textContent = name;
+		tabLink.innerHTML = text;
+	} else {
+		//tabLink.textContent = `CATEGORÍA ${count}`;
+		tabLink.innerHTML = `CATEGORÍA ${count}`;
+	}
 
 	// Añadir el elemento <a> en la penúltima posición del div con clase "tabs"
 	const tabsDiv = document.querySelector('.tabs');
@@ -111,12 +133,12 @@ function createCategory() {
 	}
 
 	// Devolver el div principal
+	changeLanguage();
 	return outerDiv;
 }
 
-
 // Selector de idioma
-function changeLanguage(viewers = []) {
+export function changeLanguage(viewers = []) {
 	const select = document.getElementById('languageSelect');
 	const selectedLanguage = select.value;
 
@@ -132,3 +154,4 @@ function changeLanguage(viewers = []) {
 	
 	viewers.forEach(viewer => viewer.updateLanguage(selectedLanguage));
 }
+

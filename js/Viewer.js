@@ -4,10 +4,17 @@ export class Viewer {
 			orientation = "bottom",
 			appendControls = true, 
 			controls = null,
-			language = "es"
+			language = "es",
+			upperParent = null
 		} = {}) {
 		this.loader = loader;
 		this.parentElement = parentElement;
+		
+		if (upperParent) {
+				this.upperParent = upperParent;
+		} else {
+			this.upperParent = this.parentElement;
+		}		
 		
 		this.viewerElement = document.createElement("div");
 		this.viewerElement.className = "viewer " + orientation;
@@ -64,7 +71,7 @@ export class Viewer {
 	}
 	
 	createUniqueElement(tag, selector) {
-		let element = document.querySelector(selector);
+		let element = this.upperParent.querySelector(selector);
 		if (!element) {
 			element = document.createElement(tag);
 			if (selector.startsWith('#')) {
