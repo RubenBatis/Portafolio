@@ -1,3 +1,23 @@
+/*	The delirium archive is a digital art portfolio application, currently designed
+	for individual use but with potential to support multiple users in the future. 
+    Copyright (C) 2024 Rubén Bautista Reyes
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+	You can contact the author via email: RubenBatis@gmail.com
+*/
+
 import { GLTFLoader } from "GLTFLoader";
 import { AnimationMixer, LoopRepeat } from "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js";
 
@@ -101,16 +121,12 @@ export class Loader {
 	async #listJSONFiles() {
 		if (this.contentFolder) {
 			try {
-console.log(`${this.contentFolder}`);
 				const response = await fetch(`${this.contentFolder}`);
-console.log(response);
 				//const response = await fetch(`${this.contentFolder}/${jsonFile}`);
 				if (!response.ok) {
 					throw new Error(`No se pudo cargar`);
 				}
-console.log(response.ok);
 				const config = await response.json();
-console.log(config);
 				return config;
 			} catch (error) {
 				console.error('Error fetching media:', error);
