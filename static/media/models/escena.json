@@ -1,0 +1,44 @@
+{
+	"resourceFile": "escena.glb",
+	"thumbnailFile": "escena.png",
+	"description": "<p class='text-es'>Bodegón.\n\nLa idea original consistía en ir añadiendo todos los elementos sueltos que fuera creando para practicar a una única escena, como un bodegón. Al final acabé creando tres bodegones diferentes con pocos elementos, creados a propósito para los mismos. Ahora tengo pendiente crear y animar una historia entre el gusano en la manzana y la mosca.</p><p class='text-en'>Still Life.\n\nThe original idea was to add all the loose elements that I was creating to practice a single scene, like a still life. In the end I ended up creating three different still lifes with few elements, created on purpose for them. Now I have to create and animate a story between the worm in the apple and the fly.</p>",
+	"backgroundColor": "#946b85",
+	"camera": {
+		"position": [
+			-44.19,
+			76.39,
+			54.95
+		],
+		"rotation": [
+			0,
+			0,
+			0
+		],
+	"lookAt": [
+			19.06,
+			-17.43,
+			-6.42
+		],
+		"zoom": 1.6
+	},
+	"scale": [
+		1,
+		1,
+		1
+	],
+	"ambientLight": {
+		"intensity": 0.5,
+		"color": "#ffffff"
+	},
+	"lights": [
+		{
+			"position": [
+				0,
+				5,
+				0
+			],
+			"intensity": 2,
+			"color": "#ffffdd"
+		}
+	]
+}

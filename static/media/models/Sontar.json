@@ -1,0 +1,9 @@
+{
+  "resourceFile": "Sontar.mp4",
+  "thumbnailFile": "gorsrino.png",
+  "description": "<p class='text-es'>Y ya que estamos probamos el video</p><p class='text-en'>And while we're at it, let's try the video</p>",
+  "backgroundColor": "#050607",
+  "navigationAllowed": true,
+  "playbackControls": true,
+  "loop": true
+}

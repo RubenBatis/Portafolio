@@ -1,0 +1,64 @@
+{
+	"resourceFile": "Robasto.glb",
+	"thumbnailFile": "Robasto.png",
+	"description": "ROBASTO\n\nMi hermano y yo, de pequeños inventábamos historias, entre otras, sobre un robot gigante al que habíamos llamado Robasto. Mi hermano hizo con cartones de cuadernos viejos y carpetas rotas, papel, palillos de dientes y anillas de remaches, como ojos, un Robasto de cartón, articulado. En 2023, haciendo una reforma en una de las habitaciones, encontré de nuevo el Robasto de cartón, algo roto, en una caja. Entonces creé este modelo intentando replicar las medidas exactas y cada doblez, imperfección y asimetría del robasto de cartón. Después lo puse a andar :)",
+	"backgroundColor": "#5b5b5b",
+	"camera": {
+		"position": [
+			83.41894777814316,
+			-16.228677486106843,
+			67.31454428559375
+		],
+		"rotation": [
+			0,
+			0,
+			0
+		],
+		"lookAt": [
+			8.327581894953571,
+			-11.567246268645906,
+			1.8656494988830974
+		],
+		"zoom": 4.5
+	},
+	"scale": [
+		1,
+		1,
+		1
+	],
+	"animations": [
+		{
+			"name": "Armature",
+			"displayName": "Caminar",
+			"enabled": true,
+			"loop": true,
+			"speed": 1,
+			"repeatDelay": 500
+		}
+	],
+	"activeAnimation": "Armature",
+	"ambientLight": {
+		"intensity": 0.5,
+		"color": "#ffffff"
+	},
+	"lights": [
+		{
+			"position": [
+				1,
+				2,
+				1
+			],
+			"intensity": 4,
+			"color": "#ffd4d4"
+		},
+		{
+			"position": [
+				-1,
+				-2,
+				-1
+			],
+			"intensity": 4,
+			"color": "#d4ffd4"
+		}
+	]
+}

@@ -1,1 +1,5 @@
-C:\Users\Ruben\AppData\Local\Programs\Python\Python311\python F:\Creatividad\Programacion\Portafolio\list_files.py
+@echo off
+call .\.venv\Scripts\activate
+set FLASK_APP=backend.py
+flask run --host=0.0.0.0 --port=12486
+pause

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador de JSON</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px 20%;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+		@media (aspect-ratio > 16/9) {
+			.container {
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			}
+		}
+		@media (aspect-ratio <= 16/9) {
+			.container {
+				grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+			}
+		}
+        .group {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="color"], .form-group input[type="file"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="range"] {
+            width: 80%;
+        }
+        .form-group .range-value {
+            display: inline-block;
+            width: 50px;
+        }
+        .vector-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        .vector-inputs input {
+            width: 30%;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        #output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .floating {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .light-group {
+            border: 1px dashed #aaa;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .collapsed .form-group {
+            display: none;
+        }
+        .light-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .light-toggle, .light-delete {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+        }
+        .light-delete {
+            background-color: #dc3545;
+        }
+        #addLightButton {
+            margin-left: 10px;
+			display: inline;
+        }
+		textarea {
+            width: 100%;
+            height: 80px;
+			resize: none;
+        }
+		.control-3d, .control-image, .control-video {
+			display:none;
+		}		
+    </style>
+</head>
+<body>
+    <h1>Configurador de JSON</h1>
+    <div class="container">
+        <!-- Grupo de archivos -->
+        <div class="group">
+            <h2>Archivos</h2>
+            <div class="form-group">
+                <label for="resourceFile">Archivo :</label>
+                <input type="file" id="resourceFile" accept=".gltf,.glb,.mp4,.webm,.jpg,.png" onchange="cambiarFormularioPorTipo()">
+            </div>
+            <div class="form-group">
+                <label for="thumbnailFile">Miniatura (jpg):</label>
+                <input type="file" id="thumbnailFile" accept=".jpg,.jpeg,.png">
+            </div>
+        </div>
+
+        <!-- Grupo de propiedades generales -->
+        <div class="group">
+            <h2>Propiedades Generales</h2>
+            <div class="form-group">
+                <label for="description">Descripción:</label>
+                <textarea id="description" placeholder="Escribe una descripción..." rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="backgroundColor">Color de Fondo:</label>
+                <input type="color" id="backgroundColor" value="#1a1a1a">
+            </div>
+        </div>
+
+        <!-- Grupo de cámara -->
+        <div class="group control-3d">
+            <h2>Cámara</h2>
+            <div class="form-group">
+                <label>Posición de la Cámara:</label>
+                <div class="vector-inputs">
+                    <input type="number" id="cameraPosX" value="5">
+                    <input type="number" id="cameraPosY" value="3">
+                    <input type="number" id="cameraPosZ" value="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Rotación de la Cámara:</label>
+                <div class="vector-inputs">
+                    <input type="number" id="cameraRotX" value="0">
+                    <input type="number" id="cameraRotY" value="0">
+                    <input type="number" id="cameraRotZ" value="0">
+                </div>
+            </div>
+			<div class="form-group">
+				<label>Objetivo de la cámara (Look At):</label>
+				<div class="vector-inputs">
+					<input type="number" id="targetX" value="0" placeholder="targetX">
+					<input type="number" id="targetY" value="0" placeholder="targetY">
+					<input type="number" id="targetZ" value="0" placeholder="targetZ">
+				</div>
+			</div>
+			<div class="form-group">
+                <label for="cameraZoom">Zoom de la Cámara:</label>
+                <input type="range" id="cameraZoom" min="0.1" max="5" step="0.1" value="1.5" oninput="document.getElementById('zoomValue').textContent = this.value">
+                <span class="range-value" id="zoomValue">1.5</span>
+            </div>
+        </div>
+
+        <!-- Grupo de escala -->
+        <div class="group control-3d">
+            <h2>Escala del Modelo</h2>
+            <div class="form-group">
+                <label>Escala:</label>
+                <div class="vector-inputs">
+                    <input type="number" id="scaleX" value="1">
+                    <input type="number" id="scaleY" value="1">
+                    <input type="number" id="scaleZ" value="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- Grupo de animación -->
+        <div class="group control-3d">
+            <h2>Animación</h2>
+            <div class="form-group">
+                <label>Configuración de Animación:</label>
+                <div>
+                    <input type="checkbox" id="animationEnabled"> Activada
+                    <input type="checkbox" id="animationLoop"> Loop
+                </div>
+            </div>
+        </div>
+
+        <!-- Grupo de luz ambiental -->
+        <div class="group control-3d">
+            <h2>Luz Ambiental</h2>
+            <div class="form-group">
+                <label>Intensidad:</label>
+                <input type="range" id="ambientIntensity" min="0" max="1" step="0.1" value="0.5" oninput="document.getElementById('ambientValue').textContent = this.value">
+                <span class="range-value" id="ambientValue">0.5</span>
+            </div>
+            <div class="form-group">
+                <label>Color:</label>
+                <input type="color" id="ambientColor" value="#ffffff">
+            </div>
+        </div>
+
+        <!-- Grupo de luces adicionales -->
+        <div class="group control-3d" id="lightsContainer">
+            <h2>Luces<button id="addLightButton" onclick="agregarLuz()">+</button></h2>
+			
+            <!-- Template de Luz -->
+            <div id="lightTemplate" class="light-group">
+                <label>Luz #<span class="light-number">1</span>:</label>
+				<div class="light-buttons">
+					<button type="button" class="light-delete" onclick="eliminarLuz(this)">-</button>
+					<button type="button" class="light-toggle" onclick="toggleLight(this)">&#x1F781;</button>
+                </div>
+                <div class="form-group">
+                    <label>Posición:</label>
+                    <div class="vector-inputs">
+                        <input type="number" class="lightPosX" value="0">
+                        <input type="number" class="lightPosY" value="10">
+                        <input type="number" class="lightPosZ" value="5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Intensidad:</label>
+                    <input type="range" class="lightIntensity" min="0" max="1" step="0.1" value="0.8" oninput="this.nextElementSibling.textContent = this.value">
+                    <span class="range-value">0.8</span>
+                </div>
+                <div class="form-group">
+                    <label>Color:</label>
+                    <input type="color" class="lightColor" value="#ffffff">
+                </div>
+            </div>
+        </div>
+		
+		<!-- Controles para imágenes -->
+		<div id="imageControls" class="group control-image">
+			<h2>Configuración de la imagen</h2>
+			<div class="form-group">
+				<label><input type="checkbox" id="navigationAllowed"> Navegación permitida</label>
+			</div>
+		</div>
+
+		<!-- Controles para videos -->
+		<div id="videoControls" class="group control-video">
+			<h2>Configuración del video</h2>
+			<div class="form-group">
+				<label><input type="checkbox" id="navigationAllowed"> Navegación permitida</label>
+			</div>
+			<div class="form-group">
+				<label><input type="checkbox" id="playbackControls"> Controles de reproducción</label>
+			</div>
+		</div>
+    </div>
+
+    <!-- Botón flotante para generar JSON -->
+    <button class="floating" onclick="generarJSON()">Generar JSON</button>
+    <button class="floating" style="bottom: 100px;" onclick="descargarJSON()">Descargar JSON</button>
+	
+	<input type="file" id="loadJsonFile" accept=".json" style="display: none;" onchange="cargarJSON(event)">
+	<button class="floating" style="bottom: 140px;" onclick="document.getElementById('loadJsonFile').click()">Cargar JSON</button>
+
+    <h3>Salida JSON</h3>
+    <pre id="output"></pre>
+
+    <script>
+        let lightCount = 0;
+
+		let lightTemplate;
+
+		const formMap = {
+			'gltf': { type: '3dmodel' },
+			'glb': { type: '3dmodel' },
+			'mp4': { type: 'video' },
+			'webm': { type: 'video' },
+			'jpg': { type: 'image' },
+			'png': { type: 'image' }
+		};
+
+		window.onload = function() {
+			// Guardar el template original en una variable como clon
+			lightTemplate = document.getElementById('lightTemplate').cloneNode(true);
+		};
+				
+		// Función para cambiar los formularios según el tipo de archivo
+		function cambiarFormularioPorTipo() {
+			const fileInput = document.getElementById('resourceFile');
+			const selectedFile = fileInput.files[0];
+			const extension = selectedFile ? selectedFile.name.split('.').pop().toLowerCase() : '';
+
+			const formType = formMap[extension]?.type;
+
+			// Obtener todos los elementos por clase
+			const control3D = document.getElementsByClassName('control-3d');
+			const controlImage = document.getElementsByClassName('control-image');
+			const controlVideo = document.getElementsByClassName('control-video');
+
+			// Función para mostrar u ocultar grupos
+			function toggleDisplay(elements, show) {
+				for (let element of elements) {
+					element.style.display = show ? 'block' : 'none';
+				}
+			}
+
+			// Mostrar/ocultar según el tipo de archivo
+			if (formType === '3dmodel') {
+				toggleDisplay(control3D, true);
+				toggleDisplay(controlImage, false);
+				toggleDisplay(controlVideo, false);
+			} else if (formType === 'image') {
+				toggleDisplay(control3D, false);
+				toggleDisplay(controlImage, true);
+				toggleDisplay(controlVideo, false);
+			} else if (formType === 'video') {
+				toggleDisplay(control3D, false);
+				toggleDisplay(controlImage, false);
+				toggleDisplay(controlVideo, true);
+			} else {
+				toggleDisplay(control3D, false);
+				toggleDisplay(controlImage, false);
+				toggleDisplay(controlVideo, false);
+			}
+		}
+		
+        // Función para agregar una nueva luz
+        function agregarLuz() {
+            lightCount++;
+            const newLight = lightTemplate.cloneNode(true);
+            newLight.querySelector('.light-number').textContent = lightCount;
+
+            // Restablecer valores a los predeterminados
+            newLight.querySelector('.lightPosX').value = 0;
+            newLight.querySelector('.lightPosY').value = 10;
+            newLight.querySelector('.lightPosZ').value = 5;
+            newLight.querySelector('.lightIntensity').value = 0.8;
+            newLight.querySelector('.lightColor').value = '#ffffff';
+            newLight.classList.remove('collapsed'); // Desplegar la nueva luz
+
+            // Plegar todas las luces anteriores
+            const lights = document.querySelectorAll('.light-group');
+            lights.forEach(light => {
+                if (light !== newLight) {
+                    light.classList.add('collapsed');
+                    light.querySelector('button:nth-of-type(2)').textContent = '🞃';
+                }
+            });
+            document.getElementById('lightsContainer').appendChild(newLight);
+        }
+
+        // Función para plegar/expandir luces
+        function toggleLight(button) {
+            const lightGroup = button.closest('.light-group');
+            if (lightGroup.classList.contains('collapsed')) {
+                lightGroup.classList.remove('collapsed');
+                button.textContent = '🞁';
+            } else {
+                lightGroup.classList.add('collapsed');
+                button.textContent = '🞃';
+            }
+        }
+
+        // Función para eliminar una luz
+        function eliminarLuz(button) {
+			lightCount--;
+            button.closest('.light-group').remove();
+        }
+
+        // Función para generar JSON
+        function generarJSON() {
+            const lights = document.querySelectorAll('.light-group');
+            const lightsArray = Array.from(lights).map(light => {
+                return {
+                    position: [
+                        parseFloat(light.querySelector('.lightPosX').value),
+                        parseFloat(light.querySelector('.lightPosY').value),
+                        parseFloat(light.querySelector('.lightPosZ').value)
+                    ],
+                    intensity: parseFloat(light.querySelector('.lightIntensity').value),
+                    color: light.querySelector('.lightColor').value
+                };
+            });
+			
+			const resourceFileName = document.getElementById('resourceFile').files[0]?.name || "";
+			const extension = resourceFileName.split('.').pop().toLowerCase();
+			const fileType = formMap[extension]?.type;
+			const thumbnailFileName = document.getElementById('thumbnailFile').files[0]?.name || "";
+			
+			const data = {
+			    resourceFile: resourceFileName,
+                thumbnailFile: thumbnailFileName,
+                description: document.getElementById('description').value,
+                backgroundColor: document.getElementById('backgroundColor').value,
+			}
+
+			if (fileType === '3dmodel') {
+				data.camera = {
+					position: [
+						parseFloat(document.getElementById('cameraPosX').value),
+						parseFloat(document.getElementById('cameraPosY').value),
+						parseFloat(document.getElementById('cameraPosZ').value)
+					],
+					rotation: [
+						parseFloat(document.getElementById('cameraRotX').value),
+						parseFloat(document.getElementById('cameraRotY').value),
+						parseFloat(document.getElementById('cameraRotZ').value)
+					],
+					lookAt: [
+						parseFloat(document.getElementById('targetX').value),
+						parseFloat(document.getElementById('targetY').value),
+						parseFloat(document.getElementById('targetZ').value)
+					],
+					zoom: parseFloat(document.getElementById('cameraZoom').value)
+				};
+                data.scale = [
+                    parseFloat(document.getElementById('scaleX').value),
+                    parseFloat(document.getElementById('scaleY').value),
+                    parseFloat(document.getElementById('scaleZ').value)
+                ];
+                data.animation = {
+                    enabled: document.getElementById('animationEnabled').checked,
+                    loop: document.getElementById('animationLoop').checked
+                };
+                data.ambientLight = {
+                    intensity: parseFloat(document.getElementById('ambientIntensity').value),
+                    color: document.getElementById('ambientColor').value
+                };
+                data.lights = lightsArray;
+			} else if (fileType === 'image') {
+				data.navigationAllowed = document.getElementById('navigationAllowed').checked;
+			} else if (fileType === 'video') {
+				data.navigationAllowed = document.getElementById('navigationAllowed').checked;
+				data.playbackControls = document.getElementById('playbackControls').checked;
+			}
+
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+            return JSON.stringify(data, null, 2); // Devolvemos el JSON para usarlo en la descarga
+        }
+
+        // Función para descargar el JSON
+        function descargarJSON() {
+            const jsonData = generarJSON();
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+			filename = (document.getElementById('resourceFile').files[0]?.name || "").replace(/\.[^/.]+$/, "");
+            a.download = filename + '.json'; // Nombre del archivo a descargar
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Limpiar la URL
+        }
+		
+		// Función que carga un JSON para verlo o editarlo
+		function cargarJSON(event) {
+			const file = event.target.files[0];
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				try {
+					const jsonData = JSON.parse(e.target.result);
+
+					// Asignar valores a los campos
+					document.getElementById('description').value = jsonData.description || '';
+					document.getElementById('backgroundColor').value = jsonData.backgroundColor || '#ffffff';
+
+					// Cámara
+					if (jsonData.camera) {
+						document.getElementById('cameraPosX').value = jsonData.camera.position[0] || 0;
+						document.getElementById('cameraPosY').value = jsonData.camera.position[1] || 0;
+						document.getElementById('cameraPosZ').value = jsonData.camera.position[2] || 0;
+						document.getElementById('cameraRotX').value = jsonData.camera.rotation[0] || 0;
+						document.getElementById('cameraRotY').value = jsonData.camera.rotation[1] || 0;
+						document.getElementById('cameraRotZ').value = jsonData.camera.rotation[2] || 0;
+						document.getElementById('targetX').value = jsonData.camera.lookAt[0] || 0;
+						document.getElementById('targetY').value = jsonData.camera.lookAt[1] || 0;
+						document.getElementById('targetZ').value = jsonData.camera.lookAt[2] || 0;
+						document.getElementById('cameraZoom').value = jsonData.camera.zoom || 1;
+					}
+
+					// Escala
+					if (jsonData.scale) {
+						document.getElementById('scaleX').value = jsonData.scale[0] || 1;
+						document.getElementById('scaleY').value = jsonData.scale[1] || 1;
+						document.getElementById('scaleZ').value = jsonData.scale[2] || 1;
+					}
+
+					// Animación
+					if (jsonData.animation) {
+						document.getElementById('animationEnabled').checked = jsonData.animation.enabled || false;
+						document.getElementById('animationLoop').checked = jsonData.animation.loop || false;
+					}
+
+					// Luz ambiental
+					if (jsonData.ambientLight) {
+						document.getElementById('ambientIntensity').value = jsonData.ambientLight.intensity || 0.4;
+						document.getElementById('ambientColor').value = jsonData.ambientLight.color || '#ffffff';
+					}
+
+					// Limpiar luces existentes y añadir las nuevas
+					const lightsContainer = document.getElementById('lightsContainer');
+					lightsContainer.querySelectorAll('.light-group').forEach(light => light.remove());
+					lightCount = 0;
+
+					if (jsonData.lights) {
+						jsonData.lights.forEach(light => {
+							agregarLuz(); // Añade una nueva luz
+							const addedLight = lightsContainer.querySelectorAll('.light-group')[lightCount - 1];
+							addedLight.querySelector('.lightPosX').value = light.position[0] || 0;
+							addedLight.querySelector('.lightPosY').value = light.position[1] || 0;
+							addedLight.querySelector('.lightPosZ').value = light.position[2] || 0;
+							addedLight.querySelector('.lightIntensity').value = light.intensity || 0.8;
+							addedLight.querySelector('.lightColor').value = light.color || '#ffffff';
+						});
+					}
+
+					// Controles de navegación para imágenes y videos
+					if (jsonData.hasOwnProperty('navigationAllowed')) {
+						document.getElementById('navigationAllowed').checked = jsonData.navigationAllowed;
+					}
+
+					if (jsonData.hasOwnProperty('playbackControls')) {
+						document.getElementById('playbackControls').checked = jsonData.playbackControls;
+					}
+
+					// Mostrar u ocultar formularios según el tipo de archivo
+					cambiarFormularioPorTipo();
+				} catch (error) {
+					alert('Error al cargar el archivo JSON: ' + error.message);
+				}
+			};
+			reader.readAsText(file);
+		}
+    </script>
+</body>
+</html>

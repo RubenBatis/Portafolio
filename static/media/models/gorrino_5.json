@@ -1,0 +1,7 @@
+{
+  "resourceFile": "gorrino_5.png",
+  "thumbnailFile": "gorrino.png",
+  "description": "<p class='text-es'>Imágenes\n\nEsto es una prueba de concepto del visor de imágenes, para ver, no si peta, si no cómo peta.</p><p class='text-en'>Images\n\nThis is a proof of concept of the image viewer, to see, not if it breaks, but how it breaks.</p>",
+  "backgroundColor": "#3a3a3a",
+  "navigationAllowed": true
+}
