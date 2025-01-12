@@ -160,6 +160,7 @@ export class ImageViewer extends Viewer {
 			reset: false,             // No se necesita para imágenes
 			changeAnimation: false    // No se necesita para imágenes
 		});
+		this.updateLanguage();
 		this.parentElement.offsetHeight;
     }
 

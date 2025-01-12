@@ -158,10 +158,7 @@ export class ModelViewer extends Viewer{
 		if (mixer) {
 			this.currentAction.paused = !this.currentAction.paused;
 			this.togglePauseButtonIcon(!this.currentAction.paused);
-			/*mixer._actions.forEach(action => {
-				action.paused = !action.paused;
-				this.togglePauseButtonIcon(!action.paused)
-			});*/
+
 		}
 	}
 	
@@ -416,6 +413,7 @@ export class ModelViewer extends Viewer{
 		
 		this.toggleResetViewButtonIcon();
 		this.parentElement.offsetHeight;
+		this.updateLanguage();
 	}
 
 	// Animar la escena

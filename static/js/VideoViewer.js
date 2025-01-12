@@ -154,6 +154,7 @@ export class VideoViewer extends Viewer {
 			reset: true,              // Siempre mostrar
 			changeAnimation: false    // No se necesita para videos
 		});
+		this.updateLanguage();
 		this.parentElement.offsetHeight;
     }
 

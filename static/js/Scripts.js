@@ -21,6 +21,7 @@ import { ContentViewer } from './ContentViewer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 	window.scrollTo(0, 0);
+	
 	// Obtener referencias a los elementos necesarios
 	const tabs = document.querySelectorAll('.tab');
 	const contents = document.querySelectorAll('.content');
@@ -194,7 +195,6 @@ export function createCategory(contentFolder, orientation, text = null) {
 export function changeLanguage(viewers = []) {
 	const select = document.getElementById('languageSelect');
 	const selectedLanguage = select.value;
-
 	// Ocultar todos los textos
 	document.querySelectorAll('.text-es, .text-en').forEach(element => {
 		element.style.display = 'none';

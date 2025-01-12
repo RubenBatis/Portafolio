@@ -22,6 +22,7 @@ import { Viewer } from './Viewer.js';
 import { ImageViewer } from './ImageViewer.js';
 import { VideoViewer } from './VideoViewer.js';
 import { ModelViewer } from './ModelViewer.js';
+import { TextViewer } from './TextViewer.js';
 import { Carousel } from './Carousel.js';
 import { Loader } from './Loader.js';
 //Clase envolvente del resto de clases viewer
@@ -103,6 +104,17 @@ export class ContentViewer extends Viewer {
 					controls: this.controls,
 					language: language,
 					upperParent: this.upperParent
+				}),
+			'text': (viewers && viewers["text"]) ? viewers["text"] : 
+				new TextViewer(this.viewerFrame, {
+					loader: this.loader,
+					currentItemIndex: this.currentItemIndex,
+					applyConfigOnInit: false,
+					orientation: orientation,
+					appendControls: maxGeneration === generation,
+					controls: this.controls,
+					language: language,
+					upperParent: this.upperParent
 				})
 		}
 
@@ -127,7 +139,7 @@ export class ContentViewer extends Viewer {
 					this.applyConfig(this.loader.resourceNames[initContent]);
 				}
 			});
-        }).catch(error => {
+        }).then(() => {this.ready = Promise.resolve();} ).catch(error => {
             console.error("Error al cargar el loader:", error);
         });
 	}
@@ -221,7 +233,7 @@ export class ContentViewer extends Viewer {
 		}
 		if(type === "folder") {
 			const config = super.applyConfig(contentName);
-			this.viewers[type].setLoader(this.loader.children[this.currentItemIndex.value]);
+			this.viewers[type].setLoader(this.loader.children[contentName]);
 			
 			let index = 0;
 			if (config.currentItemIndex) {

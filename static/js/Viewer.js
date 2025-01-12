@@ -158,7 +158,7 @@ export class Viewer {
 
 	updateLanguage(selectedLang = this.language) {
 		this.language = selectedLang;
-		const allTextElements = this.descriptionPanel.querySelectorAll('[class^="text-"]');
+		const allTextElements = this.descriptionPanel.querySelectorAll('*[class^="text-"]');
 
 		allTextElements.forEach(textElement => {
 			if (textElement.classList.contains(`text-${selectedLang}`)) {
@@ -182,7 +182,11 @@ export class Viewer {
 			const panel = this.descriptionPanel;
 			
 			// Establece el contenido directamente desde el JSON (añadiendo etiquetas para los saltos de linea)
-			panel.innerHTML = description.replace(/\n/g, '<br>');		
+			if (description) {
+				panel.innerHTML = description.replace(/\n/g, '<br>');
+			} else {
+				panel.innerHTML = "";
+			}
 			panel.offsetHeight;
 			this.updateLanguage();
 		}
@@ -208,6 +212,8 @@ export class Viewer {
 			this.descriptionPanel.scrollBy(0, e.deltaY);
 		}, { passive: false });
 	}
+	
+	saveConfig(contentName) {}
 	
 	// Método que aplica la configuración de cada medio a la visualización
 	applyConfig(contentName) {

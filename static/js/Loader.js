@@ -32,8 +32,8 @@ export class Loader {
 		this.images = {};
 		this.animations = {};
 		this.types = {};
+		this.children = {}; 
 		this.contentFolder = contentFolder;
-		this.children = []; // Agregar el atributo `children`
 		
 		// Llama a la función de carga y asigna la promesa a `this.ready`
 		this.ready = this.loadContentsFromJSON();
@@ -106,7 +106,7 @@ export class Loader {
 			};
 		});
 	}
-
+	
 	#loadThumbnail(thumbnailFile) {
 		const thumbnailElement = document.createElement('img');
 		thumbnailElement.className = "thumbnail";
@@ -137,79 +137,201 @@ export class Loader {
 	}
 
 	async loadContentsFromJSON() {
+		if (!this.contentFolder) {
+			return;
+		}
 		try {
-			const jsonFiles = await this.#listJSONFiles();
-			if (jsonFiles && jsonFiles.length > 0) {
-				const validJsonFiles = jsonFiles.filter(file => file.endsWith('.json'));
-				const resources = [];
-				const loaderPromises = [];
-
-				const extensionToTypeMap = {
-					'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
-					'glb': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
-					'stl': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
-					'mp4': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
-					'webm': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
-					'mkv': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
-					'jpg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
-					'jpeg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
-					'png': { type: 'image', loadFunction: this.#loadImage.bind(this) },
-					'svg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
-				};
-
-				for (const jsonFile of validJsonFiles) {
-					try {
-						const response = await fetch(`${this.contentFolder}/${jsonFile}`);
-						const config = await response.json();
-
-						const order = config.order ?? Number.MAX_SAFE_INTEGER;
-						const isDirectory = !config.resourceFile.includes('.');
-
-						resources.push({
-							configName: config.resourceFile.replace(/\.[^/.]+$/, ""),
-							config,
-							order,
-							isDirectory,
-						});
-
-						this.#loadThumbnail(`${this.contentFolder}/${config.thumbnailFile}`);
-					} catch (error) {
-						console.error(`Error al procesar el JSON ${jsonFile}:`, error);
-					}
-				}
-
-				resources.sort((a, b) => {
-					if (a.order === b.order) return 0;
-					return a.order - b.order;
-				});
-
-				for (const resource of resources) {
-					if (resource.isDirectory) {
-						const subLoader = new Loader(`${this.contentFolder}/${resource.configName}`);
-						//await subLoader.ready;
-						loaderPromises.push(subLoader.ready);
-						this.children.push(subLoader); // Añadir a los hijos
-						this.types[resource.configName] = "folder";
-					} else {
-						this.children.push(null);
-						const extension = resource.config.resourceFile.split('.').pop().toLowerCase();
-						const loader = extensionToTypeMap[extension];
-						if (loader) {
-							this.types[resource.configName] = loader.type;
-							await loader.loadFunction(`${this.contentFolder}/${resource.config.resourceFile}`);
-						} else {
-							console.warn(`Extensión no reconocida: ${extension}`);
-						}
-					}
-					this.resourceNames.push(resource.configName);
-					this.configs[resource.configName] = resource.config;
-				}
-				await Promise.all(loaderPromises);
-			} else {
-				//console.log('No se encontraron archivos JSON.');
+			// Listar ficheros
+			const allFiles = await this.#listJSONFiles();
+			if (!allFiles || allFiles.length === 0) {
+				//console.log("No se encontraron archivos en", this.contentFolder);
+				return;
 			}
+
+			// Quedarme solo con los que acaben en .json
+			const jsonFiles = allFiles.filter(f => f.endsWith(".json"));
+			if (jsonFiles.length === 0) {
+				//console.log("No hay ficheros .json válidos en", this.contentFolder);
+				return;
+			}
+
+			// Leer (fetch) todos los JSON y guardarlos en un map (filename -> contenido)
+			const fileContentMap = {};
+			for (const fileName of jsonFiles) {
+				const response = await fetch(`${this.contentFolder}/${fileName}`);
+				const data = await response.json();
+				fileContentMap[fileName] = data; // data puede ser array (múltiple) u objeto (simple)
+			}
+
+			// Construir el grafo (fichero -> ficheros referenciados) + inDegree
+			const { graph, inDegree } = this.#buildGraph(fileContentMap);
+
+			// Hacer el topological sort de los ficheros
+			const sortedFiles = this.#topologicalSortFiles(graph, inDegree);
+
+			// Separar “aislados” (que no refieren ni son referidos) que van al final
+			const orderedFiles = this.#separateIsolatedAndNonIsolated(sortedFiles, graph, inDegree);
+
+			// Procesar en ese orden
+			await this.#processFilesInOrder(orderedFiles, fileContentMap);
+
+			//console.log("Procesamiento completo de JSONs en orden topológico");
 		} catch (error) {
-			console.error('Error al cargar medios:', error);
+			console.error("Error al cargar o procesar los JSONs:", error);
 		}
 	}
+
+	#buildGraph(fileContentMap) {
+		const graph = new Map();	// nombreFichero -> array de ficheros referenciados
+		const inDegree = new Map(); // nombreFichero -> cuántos lo apuntan
+
+		// Inicializar nodos
+		for (const fileName of Object.keys(fileContentMap)) {
+			graph.set(fileName, []);
+			inDegree.set(fileName, 0);
+		}
+
+		// Rellenar aristas
+		for (const [fileName, content] of Object.entries(fileContentMap)) {
+			// Múltiple (array)
+			if (Array.isArray(content)) {
+				for (const item of content) {
+					if (item.type === "json" && typeof item.resourceFile === "string") {
+						const target = item.resourceFile;
+						// Asegurar que si 'target' no estaba, se registra
+						if (!graph.has(target)) {
+							graph.set(target, []);
+							inDegree.set(target, 0);
+						}
+						// Crear la arista fileName -> target
+						graph.get(fileName).push(target);
+						inDegree.set(target, inDegree.get(target) + 1);
+					}
+				}
+			}
+		}
+		return { graph, inDegree };
+	}
+
+	#topologicalSortFiles(graph, inDegree) {
+		const queue = [];
+		const result = [];
+
+		// Inicial: los que tienen inDegree=0
+		inDegree.forEach((deg, file) => {
+			if (deg === 0) queue.push(file);
+		});
+
+		while (queue.length > 0) {
+			const current = queue.shift();
+			result.push(current);
+
+			// Reducir inDegree de sus sucesores
+			const neighbors = graph.get(current) || [];
+			for (const nxt of neighbors) {
+				inDegree.set(nxt, inDegree.get(nxt) - 1);
+				if (inDegree.get(nxt) === 0) {
+					queue.push(nxt);
+				}
+			}
+		}
+
+		// Si no hemos procesado todos, hay bucles
+		if (result.length !== graph.size) {
+			console.warn("Hay bucles en las referencias. Se forzará un orden igualmente.");
+			const remaining = [...graph.keys()].filter(f => !result.includes(f));
+			result.push(...remaining);
+		}
+
+		return result; // array de ficheros en orden topológico
+	}
+
+	#separateIsolatedAndNonIsolated(sortedFiles, graph, inDegree) {
+		const isolated = [];
+		const nonIsolated = [];
+
+		for (const file of sortedFiles) {
+			const outDegree = (graph.get(file) || []).length;
+			const degIn = inDegree.get(file) ?? 0;
+
+			// Aislado = inDegree=0 y outDegree=0
+			if (degIn === 0 && outDegree === 0) {
+				isolated.push(file);
+			} else {
+				nonIsolated.push(file);
+			}
+		}
+
+		// Primero nonIsolated (con referencias), luego isolated
+		return [...nonIsolated, ...isolated];
+	}
+
+	async #processFilesInOrder(orderedFiles, fileContentMap) {
+		for (const fileName of orderedFiles) {
+			const content = fileContentMap[fileName];
+			if (Array.isArray(content)) {
+				for (const item of content) {
+					await this.#processItem(item);
+				}
+			}
+			else {
+				await this.#processItem(content);
+			}
+		}
+	}
+
+	async #processItem(item) {
+		if (item.type === "text") {
+			const textName = "text" + this.resourceNames.length;
+			this.resourceNames.push(textName);
+			this.configs[textName] = item;
+			this.#loadThumbnail(`${this.contentFolder}/${item.thumbnailFile}`);
+			this.types[textName] = "text";
+		}
+		else if (item.resourceFile) {
+			//Definir el nombre
+			const resourceFile = item.resourceFile;
+
+			const parts = resourceFile.split('/');
+			const lastPart = parts.pop();
+			const resourceName = lastPart.includes('.') ? lastPart.split('.').slice(0, -1).join('.') : lastPart;
+
+			this.resourceNames.push(resourceName);
+			this.configs[resourceName] = item;
+			this.#loadThumbnail(`${this.contentFolder}/${item.thumbnailFile}`);
+			if (!resourceFile.includes('.')) {
+				this.types[resourceName] = "folder";
+				const subLoader = new Loader(`${this.contentFolder}/${resourceFile}`);
+				await subLoader.ready;
+				this.children[resourceName] = subLoader;
+			} else {				
+				const extension = resourceFile.split('.').pop().toLowerCase();
+				const loader = this.#getLoaderMethodFromExtension(extension);
+				if (loader) {
+					this.types[resourceName] = loader.type;
+					await loader.loadFunction(`${this.contentFolder}/${resourceFile}`);
+				} else {
+					console.warn(`No se reconoce extensión: ${extension}`);
+					return;
+				}
+			}
+		} else {
+			console.error("Error: No es un medio");
+		}
+	}
+	
+	#getLoaderMethodFromExtension(extension) {
+		const extensionToTypeMap = {
+			'gltf': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+			'glb': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+			'stl': { type: '3dmodel', loadFunction: this.#loadModel.bind(this) },
+			'mp4': { type: 'video', loadFunction: this.#loadVideo.bind(this) },
+			'jpg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+			'jpeg': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+			'png': { type: 'image', loadFunction: this.#loadImage.bind(this) },
+			'svg': { type: 'image', loadFunction: this.#loadImage.bind(this) }
+		};
+		return extensionToTypeMap[extension];
+	}
+
 }

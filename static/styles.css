@@ -325,32 +325,51 @@ body {
 	min-height: var(--vcarouselsize);
 	min-width: var(--hcarouselsize);
 	flex: 0 0 auto;
+	filter: grayscale(50%);
 }
-
+.text-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	box-sizing: border-box;
+	font-size: 30px;
+	overflow-y: auto;
+	background-color: transparent;
+	color: var(--shared-color);
+	filter: invert(100%);
+}
 /*Los thumbnails horizontales ocupan todo el ancho y el 20% del alto. Los verticales el 20% del ancho y el alto que les quede tras poner los horizontales*/
 .thumbnail-container.top {
 	width: 100%;
 	height: var(--vcarouselsize);
 	flex-direction: row;
-	background: linear-gradient(to top, var(--shared-color), var(--background-black));
+	background-color: var(--shared-color);
+	/*background: linear-gradient(to top, var(--shared-color), var(--background-black));*/
 }
 .thumbnail-container.bottom {
 	width: 100%;
 	height: var(--vcarouselsize);
 	flex-direction: row;
-	background: linear-gradient(to bottom, var(--shared-color), var(--background-black));
+	background-color: var(--shared-color);
+	/*background: linear-gradient(to bottom, var(--shared-color), var(--background-black));*/
 }
 .thumbnail-container.left {
 	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
-	background: linear-gradient(to left, var(--shared-color), var(--background-black));
+	background-color: var(--shared-color);
+	/*background: linear-gradient(to left, var(--shared-color), var(--background-black));*/
 }
 .thumbnail-container.right {
 	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
-	background: linear-gradient(to right, var(--shared-color), var(--background-black));
+	background-color: var(--shared-color);
+	/*background: linear-gradient(to right, var(--shared-color), var(--background-black));*/
 }
 
 .thumbnail-container.right .thumbnail, .thumbnail-container.left .thumbnail {
@@ -872,3 +891,4 @@ p {
 .social-links img:hover {
     transform: scale(1.1); /* Efecto de zoom al pasar el ratón */
 }
+

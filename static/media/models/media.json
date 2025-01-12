@@ -1,0 +1,413 @@
+[
+	{
+		"type": "text",
+		"thumbnailFile" : "",
+		"backgroundColor": "#ffdfbf",
+		"text":  "<p class='text-es'>Estas son las mañanitas\nque cantaba el rey David.\nHoy por ser día de tu santo\nte las cantamos a ti.\n\nDespierta, mi bien, despierta;\nmira que ya amaneció.\nYa los pajaritos cantan;\nla luna ya se metió\n\nQue linda está la manãna\nen que vengo a saludarte;\nvenimos todos con gusto\ny plazer a felicitarte.\n\nEl día en que tu naciste\nNacieron todas las flores\nEn la fila del bautismo\ncantaron los Ruiseñores\n\nYa viene amaneciendo\nYa la luz del día nos dio\nLevántate de mañana\nmira que ya amaneció\n\nSi yo pudiera bajarte\nlas estrellas y un lucero\npara poder demostrarte\nlo mucho que yo te quiero\n\nCon jazmines y flores\nEste día quiero acordar\nHoy por ser día de tu santo\nTe venimos a cantar.</p><p class='text-en'>I don't want to set the world on fire\nI just want to start a flame in your heart\n\nIn my heart I have but one desire\nAnd that one is you, no other will do\n\nI've lost all ambition for worldly acclaim\nI just want to be the one you love\nAnd with your admission that you'd feel the same\nI'll have reached the goal I'm dreaming of, believe me\n\nI don't want to set the world on fire\nI just want to start a flame in your heart\n\nI don't want to set the world on fire, honey\nI love you too much\nI just want to start a great big flame down in your heart\nYou see, way down deep inside of me, darling\nI have only one desire\nAnd that one desire is you\nAnd I know, baby, ain't nobody else gonna do\n\nI've lost all ambition for worldly acclaim\nI just want to be the one you love\nAnd with your admission that you'd feel the same\nI'll have reached the goal I'm dreaming of, believe me\n\nI don't want to set the world on fire\nI just want to start a flame in your heart</p>"
+	},
+	{
+		"type": "resource",
+		"resourceFile": "tullimonstrum.glb",
+		"thumbnailFile": "Tullimonstrum.png",
+		"description": "<p class='text-es'>Tullimonstrum\n\nEl monstruo de Tully (Tullimonstrum gregarium) es un posible pero disputado vertebrado extinto relacionado con las lampreas hallado en Illinois.\n\nhttps://es.wikipedia.org/wiki/Tullimonstrum\n\nModelado poligonal + mirror + subdivisión surface.\nTextura procedural bakeada y retocada sobre el modelo.</p><p class='text-en'>Tullimonstrum\n\nThe Tully's monster (Tullimonstrum gregarium) is a possible but disputed extinct vertebrate related to lampreys found in Illinois.\n\nhttps://es.wikipedia.org/wiki/Tullimonstrum\n\nPolygonal model + mirror + subdivision surface.</p>",
+		"backgroundColor": "#276c81",
+		"camera": {
+			"position": [
+				7.632923979582998,
+				0.34478102671330013,
+				8.431235287497277
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"lookAt": [
+				-1.240812057848576,
+				1.1157758299647114,
+				1.0378344630222882
+			],
+			"zoom": 1.5
+		},
+		"scale": [
+			1,
+			1,
+			1
+		],
+		"animations": [
+			{
+				"name": "TullihuesosAction",
+				"displayName": "Nadar",
+				"enabled": true,
+				"loop": true,
+				"speed": 1,
+				"repeatDelay": 500
+			}
+		],
+		"activeAnimation": "TullihuesosAction",
+		"ambientLight": {
+			"intensity": 0.5,
+			"color": "#aaaaff"
+		},
+		"lights": [
+			{
+				"position": [
+					0,
+					10,
+					0
+				],
+				"intensity": 0.8,
+				"color": "#bfffff"
+			},
+		{
+				"position": [
+					0,
+					-10,
+					0
+				],
+				"intensity": 0.6,
+				"color": "#004488"
+			}
+		]
+	},
+	{
+		"type": "resource",
+		"resourceFile": "borroton.glb",
+		"thumbnailFile": "borroton.png",
+		"description": "<p class='text-es'>Robot lavadora\n\nRobot con animaciones de andar y saltar. Modelado poligonal + modificador mirror. Animación de armadura con partes independientes y constraints</p><p class='text-en'>Washing robot\n\nRobot with walking and jumping animations. Polygonal modelling + mirror modifier. Armature animation with independent parts and constraints.</p>",
+		"backgroundColor": "#a38fa7",
+		"camera": {
+			"position": [
+			17.499335212939496,
+			5.794476876352717,
+			-20.64543350371881			
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"lookAt": [
+				0,
+				2,
+				0
+			],
+			"zoom": 4.5
+		},
+		"scale": [
+			1,
+			1,
+			1
+		],
+		"animations": [
+			{
+				"name": "BorrotoArmCaminar",
+				"displayName": "Caminar",
+				"enabled": true,
+				"loop": true,
+				"speed": 3,
+				"repeatDelay": 500
+			},
+			{
+				"name": "Salto",
+				"displayName": "Saltar",
+				"enabled": true,
+				"loop": true,
+				"speed": 1.5
+			}
+		],
+		"activeAnimation": "BorrotoArmCaminar",
+		"ambientLight": {
+			"intensity": 0.5,
+			"color": "#ffffff"
+		},
+		"lights": [
+			{
+				"position": [
+					1,
+					2,
+					1
+				],
+				"intensity": 2,
+				"color": "#ffd4d4"
+			},
+			{
+				"position": [
+					-1,
+					-2,
+					-1
+				],
+				"intensity": 2,
+				"color": "#d4ffd4"
+			}
+		]
+	},
+	{
+		"type": "resource",
+		"resourceFile": "cangrejo.glb",
+		"thumbnailFile": "cangrejo.png",
+		"description": "<p class='text-es'>Sr. Cangrejo.\n\nDe la famosa serie, Bob Esponja.\nSalvo las pinzas, en las que usé sculpting, el resto del modelo está hecho con modelado poligonal, con modificadores Mirror y Subdivision surface.\nTiempo aproximado: Una hora.</p><p class='text-en'>Mr. Krabs.\n\nFrom the famous series SpongeBob Squarepants.\nExcept for the pincers, where I used sculpting, the rest of the model is made with polygonal modelling, with Mirror and Subdivision surface modifiers.\nApproximate time: One hour.</p>",
+		"backgroundColor": "#5acfbe",
+		"camera": {
+			"position": [
+				6.662177529764231,
+				1.6485896489001592,
+				9.910419489131877
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"lookAt": [
+				0,
+				0.4,
+				0
+			],
+			"zoom": 1.5
+		},
+		"scale": [
+			1,
+			1,
+			1
+		],
+		"animation": {
+			"enabled": false,
+			"loop": false
+		},
+		"ambientLight": {
+			"intensity": 0.5,
+			"color": "#5acfbe"
+		},
+		"lights": [
+			{
+				"position": [
+					3.2,
+					5.01,
+					-3.11
+				],
+				"intensity": 0.3,
+				"color": "#bbffdc"
+			},
+			{
+				"position": [
+					-0.86,
+					-5.9,
+					5.27
+				],
+				"intensity": 0.3,
+				"color": "#4fc4ff"
+			},
+			{
+				"position": [
+					-1.06,
+					0,
+					6.4
+				],
+				"intensity": 1,
+				"color": "#ffffff"
+			}
+		]
+	},
+	{
+		"type": "resource",
+		"resourceFile": "escena.glb",
+		"thumbnailFile": "escena.png",
+		"description": "<p class='text-es'>Bodegón.\n\nLa idea original consistía en ir añadiendo todos los elementos sueltos que fuera creando para practicar a una única escena, como un bodegón. Al final acabé creando tres bodegones diferentes con pocos elementos, creados a propósito para los mismos. Ahora tengo pendiente crear y animar una historia entre el gusano en la manzana y la mosca.</p><p class='text-en'>Still Life.\n\nThe original idea was to add all the loose elements that I was creating to practice a single scene, like a still life. In the end I ended up creating three different still lifes with few elements, created on purpose for them. Now I have to create and animate a story between the worm in the apple and the fly.</p>",
+		"backgroundColor": "#946b85",
+		"camera": {
+			"position": [
+				-44.19,
+				76.39,
+				54.95
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"lookAt": [
+				19.06,
+				-17.43,
+				-6.42
+			],
+			"zoom": 1.6
+		},
+		"scale": [
+			1,
+			1,
+			1
+		],
+		"ambientLight": {
+			"intensity": 0.5,
+			"color": "#ffffff"
+		},
+		"lights": [
+			{
+				"position": [
+					0,
+					5,
+					0
+				],
+				"intensity": 2,
+				"color": "#ffffdd"
+			}
+		]
+	},
+	{
+		"type": "resource",
+		"resourceFile": "gorrino_5.png",
+		"thumbnailFile": "gorrino.png",
+		"description": "<p class='text-es'>Imágenes\n\nEsto es una prueba de concepto del visor de imágenes, para ver, no si peta, si no cómo peta.</p><p class='text-en'>Images\n\nThis is a proof of concept of the image viewer, to see, not if it breaks, but how it breaks.</p>",
+		"backgroundColor": "#3a3a3a",
+		"navigationAllowed": true
+	},	
+	{
+		"type": "resource",
+		"resourceFile": "proceduralp",
+		"thumbnailFile": "procedural.png",
+		"description": "<p class='text-es'>Procedurales\n\nImágenes pensadas como fondos de escritorio movil, generadas proceduralmente desde scripts de python</p><p class='text-en'>Procedurals\n\nImages intended as mobile wallpapers, procedurally generated from python scripts.</p>",
+		"defaultContent": "20230914235102626752draw"
+	},
+	{
+		"type": "resource",
+		"resourceFile": "pruebap",
+		"thumbnailFile": "prueba.svg",
+		"description": "<p class='text-es'>Prueba de carpeta</p><p class='text-en'>Folder test</p>",
+		"defaultContent": "Robasto"
+	},
+	{
+		"type": "resource",
+		"resourceFile": "Robasto.glb",
+		"thumbnailFile": "Robasto.png",
+		"description": "<p class='text-es'>ROBASTO\n\nMi hermano y yo, de pequeños inventábamos historias, entre otras, sobre un robot gigante al que habíamos llamado Robasto. Mi hermano hizo con cartones de cuadernos viejos y carpetas rotas, papel, palillos de dientes y anillas de remaches, como ojos, un Robasto de cartón, articulado. En 2023, haciendo una reforma en una de las habitaciones, encontré de nuevo el Robasto de cartón, algo roto, en una caja. Entonces creé este modelo intentando replicar las medidas exactas y cada doblez, imperfección y asimetría del robasto de cartón. Después lo puse a andar :)</p><p class='text-en'>ROBASTO\n\nWhen we were little, my brother and I used to make up stories, among others, about a giant robot that we called Robasto. My brother made an articulated cardboard Robasto with cardboard from old notebooks and broken folders, paper, toothpicks and rivet rings as eyes. In 2023, while renovating one of the rooms, I found the cardboard Robasto again, a little broken, in a box. Then I created this model trying to replicate the exact measurements and every bend, imperfection and asymmetry of the cardboard Robasto. Then I put it to walk :)</p>",
+		"backgroundColor": "#5b5b5b",
+		"camera": {
+			"position": [
+				83.41894777814316,
+				-16.228677486106843,
+				67.31454428559375
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"lookAt": [
+				8.327581894953571,
+				-11.567246268645906,
+				1.8656494988830974
+			],
+			"zoom": 4.5
+		},
+		"scale": [
+			1,
+			1,
+			1
+		],
+		"animations": [
+			{
+				"name": "Armature",
+				"displayName": "Caminar",
+				"enabled": true,
+				"loop": true,
+				"speed": 1,
+				"repeatDelay": 500
+			}
+		],
+		"activeAnimation": "Armature",
+		"ambientLight": {
+			"intensity": 0.5,
+			"color": "#ffffff"
+		},
+		"lights": [
+			{
+				"position": [
+					1,
+					2,
+					1
+				],
+				"intensity": 4,
+				"color": "#ffd4d4"
+			},
+			{
+				"position": [
+					-1,
+					-2,
+					-1
+				],
+				"intensity": 4,
+				"color": "#d4ffd4"
+			}
+		]
+	},
+	{
+		"type": "resource",
+		"resourceFile": "sculptpig.glb",
+		"thumbnailFile": "sculptpig.png",
+		"description": "<p class='text-es'>Puerco Esculpido.\n\nTuve bastantes problemas para dominar el sculpting. Cuando le pillé el truco, esta fue mi primera creación.</p><p class='text-en'>Sculpted pig. I had a lot of trouble mastering sculpting. When I got the hang of it, this was my first creation.</p>",
+		"backgroundColor": "#242718",
+		"camera": {
+			"position": [
+				17.7537,
+				-0.7186,
+				24.4528
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			],
+			"lookAt": [
+				2.8636,
+				-4.3105,
+				-3.0704
+			],
+			"zoom": 1.5
+		},
+		"scale": [
+			1,
+			1,
+			1
+		],
+		"animation": {
+			"enabled": false,
+			"loop": false
+		},
+		"ambientLight": {
+			"intensity": 0.6,
+			"color": "#ffffff"
+		},
+		"lights": [
+			{
+				"position": [
+					0,
+					-21.86,
+					16.75
+				],
+				"intensity": 0.8,
+				"color": "#ffffff"
+			},
+			{
+				"position": [
+					0,
+					10.97,
+					-13.43
+				],
+				"intensity": 0.8,
+				"color": "#ffffff"
+			}
+		]
+	},
+	{
+		"type": "resource",
+		"resourceFile": "Sontar.mp4",
+		"thumbnailFile": "gorsrino.png",
+		"description": "<p class='text-es'>Y ya que estamos probamos el video</p><p class='text-en'>And while we're at it, let's try the video</p>",
+		"backgroundColor": "#050607",
+		"navigationAllowed": true,
+		"playbackControls": true,
+		"loop": true
+	}
+
+]

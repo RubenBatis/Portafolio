@@ -48,7 +48,7 @@
 			}
 		</script>
 		-->
-		
+
 		<div class="language-menu">
 			<select id="languageSelect">
 				<option value="es" data-flag="🇪🇸">ES</option>
@@ -127,9 +127,9 @@
 							<div class="card">
 								<div>
 									<p class="text-es">
-										Mi pasión es crear. Estoy siempre en busca de nuevos desafíos y me encantaría encontrar una oportunidad en un estudio de animación o cualquier otro proyecto creativo. ¡Gracias por visitar mi portafolio! Espero que lo hayas disfrutado tanto como yo disfruté creándolo.
+										Mi pasión es crear. Estoy siempre en busca de nuevos desafíos y me encantaría encontrar una oportunidad en un estudio de animación o cualquier otro proyecto creativo. ¡Gracias por visitar mi portafolio! Espero que lo disfrutes tanto como yo disfruté creándolo.
 									</p> <p class="text-en">
-										My passion is to create. I'm always looking for new challenges and would love to find an opportunity in an animation studio or any other creative project. Thanks for visiting my portfolio! I hope you enjoyed it as much as I enjoyed creating it.
+										My passion is to create. I'm always looking for new challenges and would love to find an opportunity in an animation studio or any other creative project. Thanks for visiting my portfolio! I hope you enjoy it as much as I enjoyed creating it.
 									</p>
 									<img src="/static/assets/firma.svg">
 								</div>
@@ -183,16 +183,17 @@
 		</div>
 
 		<script type="module">
-		import { createCategory, changeLanguage } from '/static/js/Scripts.js';
-		const orientation = "bottom";
-		const category1 = createCategory('/static/media/models', orientation, '<p class="text-es">Trabajos 3D</p><p class="text-en">3D works</p>');
-		const category2 = createCategory('/static/media/vectorial', orientation, '<p class="text-es">Trabajos 2D</p><p class="text-en">2D works</p>');
-		document.getElementById("languageSelect").addEventListener('change', () => {
-			changeLanguage(window.mviewers);
-		});
-		
-		changeLanguage([category1.viewerInstance, category2.viewerInstance])
-		
+			import { createCategory, changeLanguage } from '/static/js/Scripts.js';
+			const orientation = "bottom";
+			const category1 = createCategory('/static/media/models', orientation, '<p class="text-es">Trabajos 3D</p><p class="text-en">3D works</p>');
+			const category2 = createCategory('/static/media/vectorial', orientation, '<p class="text-es">Trabajos 2D</p><p class="text-en">2D works</p>');
+
+			window.cviewers = [category1.viewerInstance, category2.viewerInstance];
+			
+			document.getElementById("languageSelect").addEventListener('change', () => {
+				changeLanguage(window.cviewers);
+			});
+			
 		</script>
 	</body>
 </html>
