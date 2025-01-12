@@ -107,9 +107,9 @@
 							<div class="card">
 								<div>
 									<p class="text-es">
-										Colaboré con la Universidad Rey Juan Carlos en el proyecto Mozart Virtual, recreando edificios históricos de Viena en 3D.
+										Colaboré con la Universidad Rey Juan Carlos en el proyecto Mozart Virtual, recreando edificios históricos de Viena y otras ciudades europeas en 3D.
 									</p> <p class="text-en">
-										I collaborated with the Universidad Rey Juan Carlos in the Virtual Mozart project, recreating historic buildings in Vienna in 3D.
+										I collaborated with the Universidad Rey Juan Carlos in the project Mozart Virtual, recreating historic buildings in Vienna and other European cities in 3D.
 									</p>
 									<img src="/static/assets/urjc.svg">
 								</div>
@@ -187,8 +187,16 @@
 			const orientation = "bottom";
 			const category1 = createCategory('/static/media/models', orientation, '<p class="text-es">Trabajos 3D</p><p class="text-en">3D works</p>');
 			const category2 = createCategory('/static/media/vectorial', orientation, '<p class="text-es">Trabajos 2D</p><p class="text-en">2D works</p>');
+			
+			const category3 = createCategory('/static/media/models', orientation, '<p class="text-es">Trabajos 4D</p><p class="text-en">4D works</p>');
+			const category4 = createCategory('/static/media/vectorial', orientation, '<p class="text-es">Chocolate</p><p class="text-en">Chocolate</p>');
 
-			window.cviewers = [category1.viewerInstance, category2.viewerInstance];
+			window.cviewers = [
+				category1.viewerInstance, 
+				category2.viewerInstance,
+				category3.viewerInstance, 
+				category4.viewerInstance
+			];
 			
 			document.getElementById("languageSelect").addEventListener('change', () => {
 				changeLanguage(window.cviewers);

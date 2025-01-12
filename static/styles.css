@@ -469,8 +469,12 @@ body {
 	margin: 0.5vmin;
 }
 
-.tab:nth-child(even) {
+.tab:nth-child(3n) {
 	transform: rotate(-4deg);
+}
+
+.tab:nth-child(3n+2) {
+	transform: rotate(2deg);
 }
 
 .tab::before {
