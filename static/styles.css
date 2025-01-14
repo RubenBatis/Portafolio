@@ -155,7 +155,7 @@ body {
 	overflow: hidden;
 	object-fit: contain;
 	object-position: center;
-	background-color: var(--shared-color);
+	background-color: var(--viewer-color);
 }
 
 .viewerContent.bottom {
@@ -200,7 +200,7 @@ body {
 	-webkit-filter: invert(100%);
 	opacity: 0.7;
 	pointer-events:none;
-	color: var(--shared-color);
+	color: var(--viewer-color);
 }
 
 .description-panel::-webkit-scrollbar {
@@ -286,7 +286,7 @@ body {
     -webkit-appearance: none;
     -moz-appearance: none;
 	overflow: visible;
-	color: var(--shared-color);
+	color: var(--viewer-color);
 	outline: none;
 }
 
@@ -339,7 +339,7 @@ body {
 	font-size: 30px;
 	overflow-y: auto;
 	background-color: transparent;
-	color: var(--shared-color);
+	color: var(--viewer-color);
 	filter: invert(100%);
 }
 /*Los thumbnails horizontales ocupan todo el ancho y el 20% del alto. Los verticales el 20% del ancho y el alto que les quede tras poner los horizontales*/
@@ -347,29 +347,29 @@ body {
 	width: 100%;
 	height: var(--vcarouselsize);
 	flex-direction: row;
-	background-color: var(--shared-color);
-	/*background: linear-gradient(to top, var(--shared-color), var(--background-black));*/
+	background-color: var(--viewer-color);
+	/*background: linear-gradient(to top, var(--viewer-color), var(--background-black));*/
 }
 .thumbnail-container.bottom {
 	width: 100%;
 	height: var(--vcarouselsize);
 	flex-direction: row;
-	background-color: var(--shared-color);
-	/*background: linear-gradient(to bottom, var(--shared-color), var(--background-black));*/
+	background-color: var(--viewer-color);
+	/*background: linear-gradient(to bottom, var(--viewer-color), var(--background-black));*/
 }
 .thumbnail-container.left {
 	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
-	background-color: var(--shared-color);
-	/*background: linear-gradient(to left, var(--shared-color), var(--background-black));*/
+	background-color: var(--viewer-color);
+	/*background: linear-gradient(to left, var(--viewer-color), var(--background-black));*/
 }
 .thumbnail-container.right {
 	width: var(--hcarouselsize);
 	height: 100%;
 	flex-direction: column;
-	background-color: var(--shared-color);
-	/*background: linear-gradient(to right, var(--shared-color), var(--background-black));*/
+	background-color: var(--viewer-color);
+	/*background: linear-gradient(to right, var(--viewer-color), var(--background-black));*/
 }
 
 .thumbnail-container.right .thumbnail, .thumbnail-container.left .thumbnail {

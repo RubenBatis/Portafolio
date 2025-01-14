@@ -179,11 +179,11 @@ export class Carousel {
 	}
 	
 	//Modificar el color superior del degradado de fondo del thumbnailContainer /*mejor que dependa de la clase, pero ya lo haré*/
-	updateThumbnailsBackground(backgroundColor) {
+	/*updateThumbnailsBackground(backgroundColor) {
 		if (this.thumbnailContainer) {
 			this.thumbnailContainer.style.background = `linear-gradient(to ${this.position}, ${backgroundColor}, transparent)`;
 		}
-	}
+	}*/
 
 	//Función a llamar desde los eventos que cambien el contenido
 	changeContent(contentNumber) {

@@ -12,7 +12,7 @@ export class TextViewer extends Viewer {
 		language = "es",
 		upperParent = null
     } = {}) {
-        super(parentElement, loader, { orientation, appendControls });
+        super(parentElement, loader, { orientation: orientation, appendControls: appendControls, upperParent: upperParent});
 
         this.textContainer = document.createElement('div');
         this.textContainer.className = "text-container";

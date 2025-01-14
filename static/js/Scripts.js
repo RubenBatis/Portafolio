@@ -43,9 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Desplazar el contenido correspondiente a la vista
 		contents[currentIndex].scrollIntoView({ behavior: "smooth", block: "start" });
-		if (contents[currentIndex].viewerInstance) {
-			contents[currentIndex].viewerInstance.refreshConfig();
-		}
 		
 		/*let owntab = document.querySelector('a[href="#cat' + (currentIndex + 1)+'"]');
 		tabs.forEach(tab => {tab.classList.remove("active");});

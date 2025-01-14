@@ -34,17 +34,18 @@ export class Viewer {
 				this.upperParent = upperParent;
 		} else {
 			this.upperParent = this.parentElement;
+			this.upperParent.style.setProperty("--viewer-color", "black");
+			this.upperParent.dataset["identificador"] = Math.random().toString(36).substr(2, 9);
+			console.log(this.upperParent.style.getPropertyValue("--viewer-color"));
 		}		
 		
 		this.viewerElement = document.createElement("div");
 		this.viewerElement.className = "viewer " + orientation;
 		this.parentElement.appendChild(this.viewerElement);
 		
+//console.log(this.upperParent, this.constructor.name);
+		
 		this.language = language;
-		
-		this.idunico = Math.random().toString(36).substr(2, 9);
-		
-		
 		this.appendControls = appendControls;
 		
 		this.createDescriptionPanel();
@@ -195,7 +196,8 @@ export class Viewer {
 	//Actualizar una variable css que contiene un color que podría usarse en múltiples estilos
 	updateColors(color) {
 		const root = document.documentElement;
-		root.style.setProperty('--shared-color', color);
+		//root.style.setProperty('--shared-color', color);
+		this.upperParent.style.setProperty("--viewer-color", color);
 
 		document.body.offsetHeight; // Forzamos un reflujo para aplicar el color a los estilos que lo utilicen
 	}

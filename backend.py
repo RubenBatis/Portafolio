@@ -23,6 +23,7 @@ import os
 import json
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True #quitar esto al subir a producción
 MEDIA_DIR = '/static/media'
 
 @app.route('/static/media/<path:subdir>', methods=['GET'])
