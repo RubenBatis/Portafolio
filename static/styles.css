@@ -181,19 +181,24 @@ body {
 }
 
 .texts-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	align-self: flex-start !important;
+	justify-self: flex-start !important;
+	display: block !important;
+	margin: 0 !important;
+	align-items: flex-start;
 	text-align: center;
 	width: 100%;
-	height: 100%;
 	padding: 20px;
 	box-sizing: border-box;
 	font-size: 30px;
 	background-color: transparent;
 	color: var(--viewer-color);
 	filter: invert(100%);
-	margin: 0;
+	transform: none; 
+	user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .texts-container [class^="text-"] {
@@ -203,7 +208,6 @@ body {
 	align-items: center;
 	max-height:100%;
 	width: 100%;
-	overflow-y: auto;
 	top: 0px;
 }
 

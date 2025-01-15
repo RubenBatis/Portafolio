@@ -92,9 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				});
 				
 				// Llama a refreshConfig() del ContentViewer asociado a la sección visible
-				if (entry.target.viewerInstance) {
+				/*if (entry.target.viewerInstance) {
 					entry.target.viewerInstance.refreshConfig();
-				}
+				}*/
 			}
 		});
 	}, observerOptions);

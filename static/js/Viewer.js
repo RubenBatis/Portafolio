@@ -207,7 +207,6 @@ export class Viewer {
 		this.appendIfNeeded(this.parentElement, this.descriptionPanel);
 		
 		this.descriptionPanel.addEventListener('wheel', (e) => {
-			e.preventDefault();
 			e.stopPropagation();
 			this.descriptionPanel.scrollBy(0, e.deltaY);
 		}, { passive: false });

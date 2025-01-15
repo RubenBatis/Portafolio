@@ -2,6 +2,7 @@
 	{
 		"type": "text",
 		"thumbnailFile" : "",
+		"size" : 30,
 		"backgroundColor": "#ffdfbf",
 		"text":  "<p class='text-es'>Estas son las mañanitas\nque cantaba el rey David.\nHoy por ser día de tu santo\nte las cantamos a ti.\n\nDespierta, mi bien, despierta;\nmira que ya amaneció.\nYa los pajaritos cantan;\nla luna ya se metió\n\nQue linda está la manãna\nen que vengo a saludarte;\nvenimos todos con gusto\ny plazer a felicitarte.\n\nEl día en que tu naciste\nNacieron todas las flores\nEn la fila del bautismo\ncantaron los Ruiseñores\n\nYa viene amaneciendo\nYa la luz del día nos dio\nLevántate de mañana\nmira que ya amaneció\n\nSi yo pudiera bajarte\nlas estrellas y un lucero\npara poder demostrarte\nlo mucho que yo te quiero\n\nCon jazmines y flores\nEste día quiero acordar\nHoy por ser día de tu santo\nTe venimos a cantar.</p><p class='text-en'>I don't want to set the world on fire\nI just want to start a flame in your heart\n\nIn my heart I have but one desire\nAnd that one is you, no other will do\n\nI've lost all ambition for worldly acclaim\nI just want to be the one you love\nAnd with your admission that you'd feel the same\nI'll have reached the goal I'm dreaming of, believe me\n\nI don't want to set the world on fire\nI just want to start a flame in your heart\n\nI don't want to set the world on fire, honey\nI love you too much\nI just want to start a great big flame down in your heart\nYou see, way down deep inside of me, darling\nI have only one desire\nAnd that one desire is you\nAnd I know, baby, ain't nobody else gonna do\n\nI've lost all ambition for worldly acclaim\nI just want to be the one you love\nAnd with your admission that you'd feel the same\nI'll have reached the goal I'm dreaming of, believe me\n\nI don't want to set the world on fire\nI just want to start a flame in your heart</p>"
 	},
@@ -74,7 +75,7 @@
 		"type": "resource",
 		"resourceFile": "borroton.glb",
 		"thumbnailFile": "borroton.png",
-		"description": "<p class='text-es'>Robot lavadora\n\nRobot con animaciones de andar y saltar. Modelado poligonal + modificador mirror. Animación de armadura con partes independientes y constraints</p><p class='text-en'>Washing robot\n\nRobot with walking and jumping animations. Polygonal modelling + mirror modifier. Armature animation with independent parts and constraints.</p>",
+		"description": "<p class='text-es'>Robot lavadora\n\nRobot con animaciones de andar y saltar. Modelado poligonal + modificador mirror. Animación de armadura con partes independientes y constraints</p><p class='text-en'>Washing Machine robot\n\nRobot with walking and jumping animations. Polygonal modelling + mirror modifier. Armature animation with independent parts and constraints.</p>",
 		"backgroundColor": "#a38fa7",
 		"camera": {
 			"position": [
