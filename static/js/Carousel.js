@@ -142,7 +142,7 @@ export class Carousel {
 			this.#addClickEvent(thumbnailElement, thumbnailIndex);
 		});
 	}
-	
+		
 	// Crear y añadir los botones laterales
 	#createNavigationButtons() {
 		const previousArrow = this.thumbnailContainer.querySelector('.arrow.left, .arrow.top');
@@ -177,13 +177,6 @@ export class Carousel {
 			this.thumbnailContainer.appendChild(newRightArrow);
 		}
 	}
-	
-	//Modificar el color superior del degradado de fondo del thumbnailContainer /*mejor que dependa de la clase, pero ya lo haré*/
-	/*updateThumbnailsBackground(backgroundColor) {
-		if (this.thumbnailContainer) {
-			this.thumbnailContainer.style.background = `linear-gradient(to ${this.position}, ${backgroundColor}, transparent)`;
-		}
-	}*/
 
 	//Función a llamar desde los eventos que cambien el contenido
 	changeContent(contentNumber) {

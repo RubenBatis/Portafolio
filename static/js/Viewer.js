@@ -35,8 +35,6 @@ export class Viewer {
 		} else {
 			this.upperParent = this.parentElement;
 			this.upperParent.style.setProperty("--viewer-color", "black");
-			this.upperParent.dataset["identificador"] = Math.random().toString(36).substr(2, 9);
-			console.log(this.upperParent.style.getPropertyValue("--viewer-color"));
 		}		
 		
 		this.viewerElement = document.createElement("div");

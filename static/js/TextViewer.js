@@ -15,7 +15,7 @@ export class TextViewer extends Viewer {
         super(parentElement, loader, { orientation: orientation, appendControls: appendControls, upperParent: upperParent});
 
         this.textContainer = document.createElement('div');
-        this.textContainer.className = "text-container";
+        this.textContainer.className = "texts-container";
 
 
         this.viewerElement.appendChild(this.textContainer);
@@ -49,8 +49,8 @@ export class TextViewer extends Viewer {
         const config = super.applyConfig(textName);
 
         // Configurar el texto
-		this.text = config.text || "";
-        this.textContainer.innerHTML = config.text || "";
+		this.text = config.text.replace(/\n/g, '<br>') || "";
+        this.textContainer.innerHTML = this.text || "";
 		if (config.size) textContainer.style.fontSize = config.size;
 		if (config.color) textContainer.style.color = config.color;
 		
